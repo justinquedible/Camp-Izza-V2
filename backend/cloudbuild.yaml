@@ -1,0 +1,14 @@
+steps:
+# Build the container image
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['build', '-t', 'gcr.io/rugged-sunbeam-229808/sql_api', '.']
+# Push the container image to Container Registry
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['push', 'gcr.io/rugged-sunbeam-229808/sql_api']
+# Deploy container image to Cloud Run
+- name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+  entrypoint: gcloud
+  args: ['run', 'deploy', 'sql-api', '--image', 'gcr.io/rugged-sunbeam-229808/sql_api', '--region',
+         'us-west2']
+images:
+- gcr.io/rugged-sunbeam-229808/sql_api
