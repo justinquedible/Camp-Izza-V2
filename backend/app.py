@@ -1,4 +1,4 @@
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
 from flask_cors import CORS
 import mysql.connector
 import os
@@ -29,6 +29,15 @@ def getUser(user_id):
     cursor.execute("select * from users where id = %s", (user_id,))
     row = cursor.fetchone()
     return jsonify(row)
+
+
+@app.route("/users/addUser", methods=["POST"])
+def addUser():
+    data = request.get_json()
+    print(data)
+    # cursor.execute("insert into users (name, email, password) values (%s, %s, %s)", (data["name"], data["email"], data["password"]))
+    # db.commit()
+    return jsonify(data)
 
 
 if __name__ == "__main__":
