@@ -1,97 +1,94 @@
 // Page for users to login
 
-import React from 'react';
+import "./Login.css";
+import React from "react";
+import { Form, Button } from "react-bootstrap";
+import { useHistory } from "react-router-dom";
+import { getAuth, signInWithEmailAndPassword, User } from "firebase/auth";
 
-import {Redirect} from 'react-router-dom';
-import {FormControl, Form, Button} from 'react-bootstrap';
-import './Login.css';
-import AuthService from './services/auth-service';
+export default function Login() {
+  const [email, setEmail] = React.useState("");
+  const [password, setPassword] = React.useState("");
+  const [isLoading, setIsLoading] = React.useState(false);
+  const history = useHistory();
+  const auth = getAuth();
 
-import axios from 'axios';
+  const routeUser = React.useCallback(
+    async (user: User) => {
+      //   getUserRole(user.uid).then((userRole) => {
+      //     if (userRole === "parent") {
+      //       history.push("/parent");
+      //     }
+      //   });
+      // TODO: Get user role and redirect accordingly
+    },
+    [history]
+  );
 
-interface loginDetailsProp {
-    email: string,
-    password: string
-}
-
-const Login: React.FC<loginDetailsProp> = () => {
-    const [values, setValues] = React.useState({
-        loginEmail: '',
-        password: ''
+  React.useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged((user) => {
+      if (user) {
+        // console.log(user);
+        routeUser(user);
+      }
     });
-    const handleSubmit = async (e: { preventDefault: () => void; }) => {
-        e.preventDefault();
-        const {loginEmail, password} = values;
-        await AuthService.login(loginEmail, password);
+    return unsubscribe;
+  }, [auth, routeUser]);
 
-        if (AuthService.currentUser().roles.indexOf("adminRole") > -1){
-            window.location.href="/#/admin"
-            window.location.reload();
-        }
-        else if (AuthService.currentUser().roles.indexOf("parentRole") > -1){
-            window.location.href="/#/parent"
-            window.location.reload();
-        }
-        else if (AuthService.currentUser().roles.indexOf("counselorPending") > -1){
-            window.location.href="/#/counselor/pending"
-            window.location.reload();
-        }
-        else if (AuthService.currentUser().roles.indexOf("counselorRole") > -1){
-            window.location.href="/#/counselor"
-            window.location.reload();
-        }
-        else{
-            window.location.href="/#/parent"
-            window.location.reload();
-        }
-        //window.location.href="/#/parent"
-        //window.location.reload();
-    };
-    const handleChange = (name: string) => (e: { target: { value: any; }; }) => {
-        setValues({...values, [name]: e.target.value});
-    };
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setIsLoading(true);
+    signInWithEmailAndPassword(auth, email, password)
+      .then(() => {
+        console.log("logged in");
+      })
+      .catch((error) => {
+        setIsLoading(false);
+        console.log(error);
+        alert(error.code);
+      });
+  };
 
-    return (
-            <div className={"login"}>
+  return (
+    <div className="login">
+      <div className="login-form">
+        <h3>Welcome Back</h3>
+        <Form onSubmit={handleSubmit}>
+          <Form.Group controlId="Email">
+            <Form.Control
+              type="email"
+              placeholder="Email"
+              className="login-form-input"
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+          </Form.Group>
+          <Form.Group controlId="Password">
+            <Form.Control
+              type="password"
+              placeholder="Password"
+              className="login-form-input"
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+          </Form.Group>
 
-            <div className={"login-form"}>
-                <h3>
-                    Welcome Back!
-                </h3>
-                <Form onSubmit={handleSubmit}>
-                    <Form.Group controlId={"Email"}>
+          <Button variant="outline-primary" className="login-button" type="submit" disabled={isLoading}>
+            {isLoading ? "Signing In..." : "Sign In"}
+          </Button>
+        </Form>
+        <br />
 
-                        <Form.Control type={"email"} placeholder={"Email"} className={"login-form-input"}
-                                      onChange={handleChange('loginEmail')} required/>
-                    </Form.Group>
-                    <Form.Group controlId={"Password"}>
-                        <span className={"rounded-pill"}>
-
-                        <Form.Control type={"password"} placeholder={"Password"} className={"login-form-input"}
-                                      onChange={handleChange('password')} required/>
-                        </span>
-                    </Form.Group>
-
-                <Button variant="outline-primary" className="login-button"  type="submit">
-                    Sign In
-                </Button>
-                </Form>
-                <br />
-
-                <Button className="newuser-button" href="/#/signup">
-                    New Guardian
-                </Button>
-                <Button className="newuser-button" href="/#/signupcounselor">
-                    New Counselor
-                </Button>
-                <Button className="password-button" href="/#/resetpassword">
-                    Forgot Password?
-                </Button>
-
-            </div>
-
-            </div>
-        );
-    }
-
-export default Login;
+        <Button className="newuser-button" onClick={() => history.push("/signupParent")}>
+          New Guardian
+        </Button>
+        <Button className="newuser-button" onClick={() => history.push("/signupCounselor")}>
+          New Counselor
+        </Button>
+        <Button className="password-button" onClick={() => history.push("/resetPassword")}>
+          Forgot Password?
+        </Button>
+      </div>
+    </div>
+  );
+}

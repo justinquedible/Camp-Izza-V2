@@ -13,7 +13,7 @@ import AttendanceReport from "./AttendanceReport";
 import BonusCamper from "./BonusCamper";
 import Parent from "./Parent";
 import Login from "./Login";
-import Signup from "./Signup";
+import SignupParent from "./SignupParent";
 import SignUpCounselor from "./NewSignupCounselor";
 import Pending from "./Pending";
 import ResetPassword from "./ResetPassword";
@@ -24,7 +24,7 @@ import Profile from "./Profile";
 import Checkout from "./Checkout";
 import ResetConfirmation from "./ResetConfirmation";
 import UpdateSuccess from "./UpdateSuccess";
-import UpdatePasswordRequest from "./UpdatePasswordRequest";
+import UpdatePasswordRequest from "./UpdatePassword";
 import NewScheduling from "./NewScheduling";
 import Roster from "./Roster";
 import { NewManageCampers } from "./NewManageCampers";
@@ -71,8 +71,15 @@ function App() {
         <HashRouter>
           <div>
             <Switch>
+              <Route exact path={"/"} component={Login} />
+              <Route exact path={"/home"} component={Login} />
+              <Route exact path={"/login"} component={Login} />
+              <Route exact path={"/signupParent"} component={SignupParent} />
+              <Route exact path={"/resetPassword"} component={ResetPassword} />
+              <Route exact path={"/resetConfirmation"} component={ResetConfirmation} />
+
               <Route exact path={"/parent"} component={Parent} />
-              <Route path={"/admin"} component={Admin} exact />
+              <Route exact path={"/admin"} component={Admin} />
               <Route exact path={"/admin/managecampers"} component={NewManageCampers} />
               <Route exact path={"/admin/sessions"} component={Sessions} />
               <Route exact path={"/admin/groups"} component={Groups} />
@@ -83,16 +90,10 @@ function App() {
               <Route exact path={"/admin/managecounselors"} component={ManageCounselors} />
               <Route exact path={"/admin/AdminCamperForm"} component={AdminCamperForm} />
               <Route exact path={"/admin/emergencyform"} component={EmergencyForm} />
-              <Route exact path={"/"} component={Login} />
-              <Route exact path={"/home"} component={Login} />
-              <Route exact path={"/login"} component={Login} />
-              <Route exact path={"/signup"} component={Signup} />
               <Route exact path={"/signupCounselor"} component={SignUpCounselor} />
               <Route exact path={"/counselor/pending"} component={Pending} />
-              <Route exact path={"/resetPassword"} component={ResetPassword} />
               <Route exact path={"/updatePasswordRequest/:token"} component={UpdatePasswordRequest} />
               <Route exact path={"/updateSuccess"} component={UpdateSuccess} />
-              <Route exact path={"/resetConfirmed"} component={ResetConfirmation} />
               <Route exact path={"/HouseholdForm"} component={Household} />
               <Route exact path={"/CamperInfo"} component={CamperInfo} />
               <Route exact path={"/CamperForm"} component={FinalCamperForm} />
