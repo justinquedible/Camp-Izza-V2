@@ -1,18 +1,15 @@
 from flask import Flask, jsonify
+from flask_cors import CORS
 import mysql.connector
 import os
+from config import config
 
 app = Flask(__name__)
+CORS(app)
 
-db = mysql.connector.connect(
-    host="34.94.55.153",
-    user="root",
-    passwd="campizza",
-    database="camp_izza",
-    autocommit=True
-)
+db = mysql.connector.connect(**config)
 
-cursor = db.cursor()
+cursor = db.cursor(dictionary=True)
 
 
 @app.route("/")
@@ -27,4 +24,13 @@ def getUsers():
     return jsonify(rows)
 
 
-app.run(host="0.0.0.0", port=os.environ.get("PORT", 8080))
+@app.route("/users/getUser/<int:user_id>")
+def getUser(user_id):
+    cursor.execute("select * from users where id = %s", (user_id,))
+    row = cursor.fetchone()
+    return jsonify(row)
+
+
+if __name__ == "__main__":
+    from waitress import serve
+    serve(app, host="0.0.0.0", port=os.environ.get("PORT", 8080))

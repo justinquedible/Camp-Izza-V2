@@ -1,0 +1,150 @@
+@import url('https://fonts.googleapis.com/css2?family=Comfortaa:wght@300;500;700&display=swap');
+
+.Text-Form, .Schedule-Table, .Checkout-Table{
+    align-content: center;
+    width: 80%;
+    font-family: 'Comfortaa', sans-serif;
+    font-weight: 500;
+    padding-top: 130px;
+}
+
+p {
+  font-weight: 700;
+  margin-bottom: 2px;
+}
+
+b{
+  color: #ff0000;
+}
+
+p.terms {
+  font-size: 12px;
+  line-height: 20px;
+  font-weight: 300;
+}
+
+input, select {
+  margin-bottom: 16px;
+  width: 100%;
+  padding: 8px 8px;
+}
+
+input:focus {
+  background-color: #f2f2f2;
+}
+
+h5 {
+  color: white;
+  border: 2px solid #0085FF;
+  background-color: #61B3FF;
+  margin-bottom: 16px;
+  width: 100%;
+  padding: 8px 8px;
+}
+
+/* input[type="text2"], textarea {
+  background-color: #D3D3D3;
+} */
+
+.check {
+  width: 30px;
+  height: 30px;
+}
+
+.center {
+  text-align: center;
+}
+
+.buttonTxt {
+  width: 150px;
+  font-weight: 700;
+  font-size: 150%;
+}
+
+a.cancel {
+  color: red;
+}
+
+a.cancel:hover {
+  color: red;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+select.sameRow {
+  width: 15%;
+  margin-right: 10px;
+}
+
+.sameRow {
+  width: 75%;
+}
+
+.numberInput {
+  width: 15%;
+}
+
+textarea {
+  width: 100%;
+  height: 100px;
+}
+
+table.schedule {
+  border: 1px solid black;
+}
+
+table {
+  width: 100%;
+}
+
+td {
+  font-weight: 500;
+  padding: 20px;
+}
+
+.center-td {
+  text-align: center;
+}
+
+td.checkout {
+  font-size: 75%;
+}
+
+th {
+  padding-left: 20px;
+  padding-right: 20px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
+.summaryBlock {
+  margin-left: auto;
+  margin-right: 0;
+  width: 50%;
+}
+
+/* Chrome, Safari, Edge, Opera Number Input no Decoration */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox Number Input no Decoration */
+input[type=number] {
+  -moz-appearance: textfield;
+}
+
+/* Add styles to the form container */
+.form-container {
+  padding: 20px;
+}
+
+.form-popup {
+  margin-top: 20px;
+  border: 3px solid #f1f1f1;
+}
+
+.formBtn {
+  margin-top: 5px;
+}

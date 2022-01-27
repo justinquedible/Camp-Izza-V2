@@ -1,0 +1,250 @@
+@import url("https://fonts.googleapis.com/css2?family=Comfortaa:wght@300;500;700&display=swap");
+
+body {
+}
+
+.Admin-Buttons {
+  align-content: center;
+  /*background-color: grey;*/
+  width: 80%;
+  font-family: "Comfortaa", sans-serif;
+  font-weight: 500;
+  padding-top: 130px;
+  min-height: 85vh;
+}
+
+.Counselor-Buttons {
+  align-content: center;
+  margin-left: 30%;
+  margin-right: 30%;
+  min-width: 300px;
+  font-family: "Comfortaa", sans-serif;
+  font-weight: 500;
+}
+
+.Admin-Buttons img {
+  width: 20px;
+  margin-right: 10px;
+}
+
+.Admin-Button {
+  padding: 20px;
+  border-radius: 20px;
+  color: black;
+  background-color: #afecaf;
+  border-color: darkgreen;
+  border-width: medium;
+  min-width: 100%;
+  margin-bottom: 5%;
+}
+.Admin-Button:hover {
+  color: black;
+  background-color: white;
+}
+
+.householdProfileButton {
+  float: right;
+}
+
+h3,
+h6 {
+  font-family: "Comfortaa";
+  font-weight: 700;
+  text-align: center;
+}
+
+.householdProfileButton {
+  float: right;
+}
+
+select.resize {
+  width: 30%;
+  min-width: 250px;
+  margin-right: 10px;
+}
+
+.resize {
+  min-width: 100px;
+  width: 15%;
+}
+
+a.blue {
+  font-size: 100%;
+  color: blue;
+  cursor: pointer;
+}
+
+a.red {
+  font-size: 100%;
+  color: red;
+  cursor: pointer;
+}
+
+p.addPadding {
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+p.group {
+  font-size: 100%;
+  font-weight: 700;
+}
+
+p.fineText {
+  font-size: 12px;
+  color: #737373;
+}
+
+.resizeCredit {
+  width: 200px;
+  margin-right: 10px;
+}
+
+.manageTable {
+  border-spacing: 2px;
+  border: 1px solid #b3b3b3;
+}
+
+td.absentX {
+  color: red;
+}
+
+.attendanceTable,
+tr,
+td {
+  border: 1px solid #b3b3b3;
+}
+
+td.shadedWeek {
+  background-color: #f2f2f2;
+}
+
+/* Create two equal columns that floats next to each other */
+.column {
+  float: left;
+  width: 50%;
+  padding: 20px;
+}
+
+/* Create two equal columns that floats next to each other */
+.column4 {
+  float: left;
+  width: 25%;
+  padding: 20px;
+}
+
+.column16 {
+  float: left;
+  width: 16%;
+  padding: 20px;
+}
+
+.column33 {
+  float: left;
+  width: 33%;
+  padding: 20px;
+}
+
+/* Clear floats after the columns */
+.row:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
+/* Responsive layout - makes the two columns stack on top of each other instead of next to each other */
+@media screen and (max-width: 600px) {
+  .column {
+    width: 100%;
+  }
+  .column4 {
+    width: 100%;
+  }
+  .column16 {
+    width: 100%;
+  }
+  .column33 {
+    width: 100%;
+  }
+}
+
+Button.groupBtn {
+  margin: 10px;
+  margin-bottom: 40px;
+}
+
+Button.holidayBtn {
+  margin: 10px;
+}
+
+.buttonToggle {
+  text-align: center;
+}
+
+.sessionsForms {
+  text-align: left;
+}
+
+.shadeGray {
+  background-color: #f2f2f2;
+}
+
+.groupBox {
+  border: 1px solid #3c3c3c;
+}
+
+ol {
+  margin-top: 20px;
+}
+
+li {
+  text-align: left;
+}
+
+.oneRow {
+  width: 25%;
+}
+
+hr {
+  border: 2px solid #61b3ff;
+}
+
+.sameLineForm {
+  width: 25%;
+}
+
+/*label, input [type='checkbox'] {*/
+/*}*/
+
+.sameLine {
+  display: inline-block;
+  width: 30%;
+}
+
+.overflowTable {
+  overflow-x: auto;
+}
+
+ol.holidays {
+  margin-top: 10px !important;
+  padding-top: 10px !important;
+  margin: 0;
+  padding: 0;
+  list-style-type: none;
+}
+
+.disclaimerBox {
+  background-color: #e0e0e0;
+  margin-top: 20px;
+  padding: 20px;
+  font-size: 12px;
+}
+
+.notRequired {
+  border: none;
+}
+
+.notRequiredGray {
+  border: none;
+  background-color: #f2f2f2;
+}
