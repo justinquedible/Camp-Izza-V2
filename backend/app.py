@@ -3,8 +3,10 @@ from flask_cors import CORS
 import mysql.connector
 import os
 from config import config
+from PrefixMiddleware import PrefixMiddleware
 
 app = Flask(__name__)
+app.wsgi_app = PrefixMiddleware(app.wsgi_app, prefix='/api')
 CORS(app)
 
 db = mysql.connector.connect(**config)
@@ -15,6 +17,13 @@ cursor = db.cursor(dictionary=True)
 @app.route("/")
 def hello():
     return "Hello World!"
+
+
+# @app.route("/api/users/getUsers")
+# def api():
+#     cursor.execute("select * from users")
+#     rows = cursor.fetchall()
+#     return jsonify(rows)
 
 
 # USERS

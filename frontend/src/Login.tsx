@@ -29,9 +29,15 @@ export default function Login() {
     const unsubscribe = auth.onAuthStateChanged((user) => {
       if (user) {
         // console.log(user);
+        setIsLoading(false);
         routeUser(user);
       }
     });
+    fetch("api/users/getUsers")
+      .then((res) => res.json())
+      .then((data) => {
+        console.log(data);
+      });
     return unsubscribe;
   }, [auth, routeUser]);
 
