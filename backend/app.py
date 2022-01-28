@@ -43,10 +43,9 @@ def getUser(user_id):
 
 @app.route("/users/addUser", methods=["POST"])
 def addUser():
-    data = request.form
+    data = request.get_json()
     cursor.execute("insert into users (id, email, role) values (%s, %s, %s)",
                    (data["id"], data["email"], data["role"]))
-    # db.commit()
     return jsonify({"status": "success"})
 
 
@@ -65,9 +64,9 @@ def getParent(parent_id):
     row = cursor.fetchone()
     return jsonify(row)
 
-@app.route("/parents/addParents", methods=["POST"])
-def addParents():
-    data = request.form
+@app.route("/parents/addParent", methods=["POST"])
+def addParent():
+    data = request.get_json()
     cursor.execute("insert into parents (id, email, firstName, lastName, phone, addressLine1, addressLine2, city, "
                    "zipCode, state, country) values (%s, %s, %s, %s, %s, %s,%s, %s, %s,%s, %s)",
                    (data["id"], data["email"], data["firstName"], data["lastName"], data["phone"], data["addressLine1"],

@@ -42,6 +42,10 @@ body {
   background-color: white;
 }
 
+.addCamperButton {
+  margin-bottom: 20px;
+}
+
 .householdProfileButton {
   float: right;
 }

@@ -4,7 +4,8 @@ import "./Login.css";
 import React from "react";
 import { Link, useHistory } from "react-router-dom";
 import { Form, Button } from "react-bootstrap";
-import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
+import { getAuth, createUserWithEmailAndPassword, UserCredential } from "firebase/auth";
+import axios from "axios";
 
 export default function SignUp() {
   const [email, setEmail] = React.useState("");
@@ -19,12 +20,26 @@ export default function SignUp() {
     if (password === passwordConfirm) {
       setIsLoading(true);
       createUserWithEmailAndPassword(auth, email, password)
-        .then((userCredential) => {
-          //   const parent: Parent = { uid: userCredential.user.uid, email: email };
-          //   addParent(parent).then(() => {
-          //     history.push("/parent");
-          //   });
-          // TODO: Add user and parent to database
+        .then(async (userCredential: UserCredential) => {
+          await axios.post(process.env.REACT_APP_API + "api/users/addUser", {
+            id: userCredential.user.uid,
+            email: userCredential.user.email,
+            role: "parent",
+          });
+          await axios.post(process.env.REACT_APP_API + "api/parents/addParent", {
+            id: userCredential.user.uid,
+            email: userCredential.user.email,
+            firstName: "",
+            lastName: "",
+            phone: "",
+            addressLine1: "",
+            addressLine2: "",
+            city: "",
+            zipCode: "",
+            state: "",
+            country: "",
+          });
+          history.push("/parent");
         })
         .catch((error) => {
           setIsLoading(false);

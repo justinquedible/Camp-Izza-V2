@@ -5,6 +5,7 @@ import React from "react";
 import { Form, Button } from "react-bootstrap";
 import { useHistory } from "react-router-dom";
 import { getAuth, signInWithEmailAndPassword, User } from "firebase/auth";
+import axios from "axios";
 
 export default function Login() {
   const [email, setEmail] = React.useState("");
@@ -15,12 +16,16 @@ export default function Login() {
 
   const routeUser = React.useCallback(
     async (user: User) => {
-      //   getUserRole(user.uid).then((userRole) => {
-      //     if (userRole === "parent") {
-      //       history.push("/parent");
-      //     }
-      //   });
-      // TODO: Get user role and redirect accordingly
+      axios.get(process.env.REACT_APP_API + "api/users/getUser/" + user.uid).then((res) => {
+        console.log(res.data);
+        if (res.data.role === "parent") {
+          history.push("/parent");
+        } else if (res.data.role === "counselor") {
+          history.push("/counselor");
+        } else if (res.data.role === "admin") {
+          history.push("/admin");
+        }
+      });
     },
     [history]
   );
@@ -33,11 +38,6 @@ export default function Login() {
         routeUser(user);
       }
     });
-    fetch("api/users/getUsers")
-      .then((res) => res.json())
-      .then((data) => {
-        console.log(data);
-      });
     return unsubscribe;
   }, [auth, routeUser]);
 
