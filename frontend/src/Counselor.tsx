@@ -39,12 +39,12 @@ export const Counselor: React.FC<Props> = () => {
     // CamperService.getGroupInfo(group).then((response) => {
     //   setList1(response.data);
     // });
-    fetch("https://sql-api-f36qdjpc6a-wl.a.run.app/users/getUsers")
-      .then((response) => response.json())
-      .then((json) => {
-        console.log(json);
-      })
-      .catch((error) => console.log(error));
+    // fetch("https://sql-api-f36qdjpc6a-wl.a.run.app/users/getUsers")
+    //   .then((response) => response.json())
+    //   .then((json) => {
+    //     console.log(json);
+    //   })
+    //   .catch((error) => console.log(error));
   }, []);
 
   return (
