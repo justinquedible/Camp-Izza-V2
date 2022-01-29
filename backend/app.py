@@ -107,7 +107,7 @@ def getCounselor(counselor_id):
 
 @app.route("/counselors/addCounselor", methods=["POST"])
 def addCounselor():
-    data = request.form
+    data = request.get_json()
     cursor.execute("insert into counselors (id, email, firstName, lastName, gender, dob, phone, altphone, "
                    "approved, active) values (%s, %s, %s, %s, %s, %s,%s, %s, %s,%s)",
                    (data["id"], data["email"], data["firstName"], data["lastName"], data["gender"], data["dob"],
@@ -118,7 +118,7 @@ def addCounselor():
 
 @app.route("/counselors/updateCounselors/<counselor_id>", methods=["PUT"])
 def updateCounselors(counselor_id):
-    data = request.form
+    data = request.get_json()
     cursor.execute("update counselors set email=%s, firstName=%s, lastName=%s, gender=%s, dob=%s, phone=%s,"
                    " altphone=%s,approved=%s, active=%s where id = %s",
                    (data["email"], data["firstName"], data["lastName"], data["gender"], data["dob"],
@@ -143,9 +143,16 @@ def getCamper(camper_id):
     return jsonify(row)
 
 
+@app.route("/campers/getCampers/<parent_id>")
+def getCamperByParent_id(parent_id):
+    cursor.execute("select * from campers where parent_id = %s", (parent_id,))
+    row = cursor.fetchall()
+    return jsonify(row)
+
+
 @app.route("/campers/addCamper", methods=["POST"])
 def addCamper():
-    data = request.form
+    data = request.get_json()
     cursor.execute("insert into campers (id, parent_id, firstName, lastName, gender, dob, grade, school, "
                    "shirtSize, credit, numShirts,paid) values (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)",
                    (data["id"], data["parent_id"], data["firstName"], data["lastName"], data["gender"], data["dob"],
@@ -156,7 +163,7 @@ def addCamper():
 
 @app.route("/campers/updateCampers/<camper_id>", methods=["PUT"])
 def updateCampers(camper_id):
-    data = request.form
+    data = request.get_json()
     cursor.execute("update campers set firstName=%s, lastName=%s, gender=%s, dob=%s,  grade=%s, school=%s, "
                    "shirtSize=%s, credit=%s, numShirts=%s,paid=%s where id = %s",
                    (data["firstName"], data["lastName"], data["gender"], data["dob"], data["grade"],
@@ -168,7 +175,6 @@ def updateCampers(camper_id):
 @app.route("/campers/deleteCamper/<camper_id>", methods=["DELETE"])
 def deleteCamper(camper_id):
     cursor.execute("delete from campers where id = %s", (camper_id,))
-    # row = cursor.fetchone()
     return jsonify({"status": "success"})
 
 
@@ -202,27 +208,26 @@ def getCounselor_Attendances():
 @app.route("/counselor_attendances/getCounselor_AttendanceByCounselorID/<counselor_id>")
 def getCounselor_AttendanceByCounselorID(counselor_id):
     cursor.execute("select * from counselor_attendances where counselor_id = %s", (counselor_id,))
-    row = cursor.fetchone()
+    row = cursor.fetchall()
     return jsonify(row)
 
 
-# TODO: figure out if "comment" in data
+# TODO: figure our how to update using two givens
 @app.route("/counselor_attendances/updateCounselor_Attendance/<counselor_id>", methods=["PUT"])
 def updateCounselor_Attendance(counselor_id):
-    data = request.form
+    data = request.get_json()
     cursor.execute("update counselor_attendances set date=%s, present=%s, comment=%s where counselor_id = %s ",
-                   (data["date"], data["present"], data["comment"] if "comment" in data else "", counselor_id))
+                   (data["date"], data["present"], data["comment"], counselor_id))
 
     return jsonify({"status": "success"})
 
 
-# TODO: figure out how to fix counselor attendance (works but doesn't have data["comment"] if "comment" in data else "")
 @app.route("/counselor_attendances/addCounselor_Attendance", methods=["POST"])
 def addCounselor_Attendance():
-    data = request.form
-    cursor.execute("insert into counselor_attendances (id, counselor_id, date, present) "
-                   "values (%s, %s, %s, %s)",
-                   (data["id"], data["counselor_id"], data["date"], data["present"]))
+    data = request.get_json()
+    cursor.execute("insert into counselor_attendances (id, counselor_id, date, present, comment) "
+                   "values (%s, %s, %s, %s, %s)",
+                   (data["id"], data["counselor_id"], data["date"], data["present"], data["comment"]))
     # db.commit()
     return jsonify({"status": "success"})
 
@@ -240,13 +245,13 @@ def getCamper_Attendances():
 @app.route("/camper_attendances/getCamper_AttendanceByCamperID/<int:camper_id>")
 def getCamper_AttendanceByCamperID(camper_id):
     cursor.execute("select * from camper_attendances where camper_id = %s", (camper_id,))
-    row = cursor.fetchone()
+    row = cursor.fetchall()
     return jsonify(row)
 
 
 @app.route("/camper_attendances/updateCamper_Attendance/<camper_id>", methods=["PUT"])
 def updateCamper_Attendance(camper_id):
-    data = request.form
+    data = request.get_json()
     cursor.execute("update camper_attendances set date=%s, present=%s, comment=%s where camper_id = %s ",
                    (data["date"], data["present"], data["comment"] if "comment" in data else "", camper_id))
 
@@ -255,7 +260,7 @@ def updateCamper_Attendance(camper_id):
 
 @app.route("/camper_attendances/addCamper_Attendance", methods=["POST"])
 def addCamper_Attendance():
-    data = request.form
+    data = request.get_json()
     cursor.execute("insert into camper_attendances (id, camper_id, date, present, pickedUp, comment) "
                    "values (%s, %s, %s, %s, %s, %s)",
                    (data["id"], data["camper_id"], data["date"], data["present"], data["pickedUp"],
@@ -283,7 +288,7 @@ def getCamp_Week(camp_weeks_id):
 
 @app.route("/camp_weeks/updateCamp_Weeks/<int:camp_week_id>", methods=["PUT"])
 def updateCamp_Week(camp_week_id):
-    data = request.form
+    data = request.get_json()
     cursor.execute("update camp_weeks set name=%s, start=%s, end=%s, cost=%s where id = %s ",
                    (data["name"], data["start"], data["end"], data["cost"], camp_week_id))
 
@@ -292,7 +297,7 @@ def updateCamp_Week(camp_week_id):
 
 @app.route("/camp_weeks/addCamp_Weeks", methods=["POST"])
 def addCamp_Week():
-    data = request.form
+    data = request.get_json()
     cursor.execute("insert into camp_weeks (id, name, start, end, cost) "
                    "values (%s, %s, %s, %s, %s)",
                    (data["id"], data["name"], data["start"], data["end"], data["cost"]))
@@ -318,13 +323,13 @@ def getALlRegistered_Camper_Weeks():
 @app.route("/registered_camper_weeks/getRegistered_Camper_WeekByCamperID/<camper_id>")
 def getRegistered_Camper_WeekByCamperID(camper_id):
     cursor.execute("select * from registered_camper_weeks where camper_id = %s", (camper_id,))
-    rows = cursor.fetchone()
+    rows = cursor.fetchall()
     return jsonify(rows)
 
 
 @app.route("/registered_camper_weeks/addRegistered_Camper_Week", methods=["POST"])
 def addRegistered_Camper_Week():
-    data = request.form
+    data = request.get_json()
     cursor.execute("insert into registered_camper_weeks (id, camper_id, camp_week_id) "
                    "values (%s, %s, %s)", (data["id"], data["camper_id"], data["camp_week_id"]))
     # db.commit()
@@ -342,14 +347,14 @@ def getALlRegistered_Counselor_Weeks():
 @app.route("/registered_couselor_weeks/getRegistered_Counselor_WeekByCounselorID/<counselor_id>")
 def getRegistered_Counselor_WeekByCounselorID(counselor_id):
     cursor.execute("select * from registered_counselor_weeks where counselor_id = %s", (counselor_id,))
-    rows = cursor.fetchone()
+    rows = cursor.fetchall()
     return jsonify(rows)
 
 
 @app.route("/registered_counselor_weeks/updateRegistered_Counselor_Week/<int:registered_counselor_weeks_id>",
            methods=["PUT"])
 def updateRegistered_Counselor_Weeks(registered_counselor_weeks_id):
-    data = request.form
+    data = request.get_json()
     cursor.execute("update registered_counselor_weeks set counselor_id=%s, camp_week_id=%s where id = %s ",
                    (data["counselor_id"], data["camp_week_id"], registered_counselor_weeks_id))
 
@@ -358,7 +363,7 @@ def updateRegistered_Counselor_Weeks(registered_counselor_weeks_id):
 
 @app.route("/registered_counselor_weeks/addRegistered_Counselor_Week", methods=["POST"])
 def addRegistered_Counselor_Week():
-    data = request.form
+    data = request.get_json()
     cursor.execute("insert into registered_counselor_weeks (id, counselor_id, camp_week_id) "
                    "values (%s, %s, %s)",
                    (data["id"], data["counselor_id"], data["camp_week_id"]))
@@ -383,7 +388,7 @@ def getCamper_Medical_RecordByCamperID(camper_id):
 
 @app.route("/camper_medical_records/updateCamper_Medical_Record/<int:camper_id>", methods=["PUT"])
 def updateCamper_Medical_Record(camper_id):
-    data = request.form
+    data = request.get_json()
     cursor.execute("update camper_medical_records set doctorName=%s, doctorPhone=%s, insuranceCarrier=%s, "
                    "policyHolder=%s, allergies=%s, restrictedActivities=%s, illnesses=%s, immunizations=%s, "
                    "medicalTreatments=%s, medications=%s, tetanusDate=%s, comments=%s where camper_id = %s ",
@@ -397,7 +402,7 @@ def updateCamper_Medical_Record(camper_id):
 
 @app.route("/camper_medical_records/addCamper_Medical_Record", methods=["POST"])
 def addCamper_Medical_Record():
-    data = request.form
+    data = request.get_json()
     cursor.execute("insert into camper_medical_records (id, camper_id, doctorName, doctorPhone, insuranceCarrier, "
                    "policyHolder, allergies, restrictedActivities, illnesses, immunizations, medicalTreatments,"
                    "medications, tetanusDate, comments) "
@@ -427,7 +432,7 @@ def getCounselor_Medical_RecordByCounselorID(counselor_id):
 
 @app.route("/counselor_medical_records/updateCounselor_Medical_Record/<counselor_id>", methods=["PUT"])
 def updateCounselor_Medical_Record(counselor_id):
-    data = request.form
+    data = request.get_json()
     cursor.execute("update counselor_medical_records set doctorName=%s, doctorPhone=%s, insuranceCarrier=%s, "
                    "policyHolder=%s, illnesses=%s, allergies=%s, immunizations=%s, medications=%s, "
                    "accommodations=%s where counselor_id = %s ",
@@ -440,7 +445,7 @@ def updateCounselor_Medical_Record(counselor_id):
 
 @app.route("/counselor_medical_records/addCounselor_Medical_Record", methods=["POST"])
 def addCounselor_Medical_Record():
-    data = request.form
+    data = request.get_json()
     cursor.execute(
         "insert into counselor_medical_records (id, counselor_id, doctorName, doctorPhone, insuranceCarrier, "
         "policyHolder, illnesses, allergies, immunizations, medications, accommodations) "
@@ -471,7 +476,7 @@ def getGroup(group_id):
 
 @app.route("/groups/updateGroup/<int:group_id>", methods=["PUT"])
 def updateGroup(group_id):
-    data = request.form
+    data = request.get_json()
     cursor.execute("update `groups` set name=%s, camperLimit=%s where id = %s ",
                    (data["name"], data["camperLimit"], group_id))
 
@@ -480,7 +485,7 @@ def updateGroup(group_id):
 
 @app.route("/groups/addGroup", methods=["POST"])
 def addGroup():
-    data = request.form
+    data = request.get_json()
     cursor.execute("insert into `groups` (id, name, camperLimit) "
                    "values (%s, %s, %s)",
                    (data["id"], data["name"], data["camperLimit"]))
@@ -529,12 +534,34 @@ def addEmergency_Contact():
     # db.commit()
     return jsonify({"status": "success"})
 
-#TODO: Ask Justin about parameters for the getPayment_Information function
-# # PAYMENT INFORMATION
-# @app.route("/payment_informations/getPayment_Information")
-# def getPayment_Information():
-#     pass
-#
+
+# PAYMENT INFORMATION
+@app.route("/payment_informations/getPayment_Informations")
+def getAllPayment_informations():
+    cursor.execute("select * from payment_informations")
+    row = cursor.fetchall()
+    return jsonify(row)
+
+
+@app.route("/payment_informations/getPayment_Information/<user_id>")
+def getPayment_InformationByUser_id(user_id):
+    cursor.execute("select * from payment_informations where user_id = %s", (user_id,))
+    row = cursor.fetchall()
+    return jsonify(row)
+
+
+#TODO: cannot add payment yet check everything once you get the add to work 
+@app.route("/payment_informations/addPayment_Information")
+def addPayment_informations():
+    data = request.get_json()
+    cursor.execute("insert into payment_informations (id, user_id, registered_camper_weeks_id, numShirts, totalCost, "
+                   "totalPaidUSD, totalPaidCredit, transactionTime) "
+                   "values (%s, %s, %s, %s, %s, %s, %s, %s)",
+                   (data["id"], data["user_id"], data["registered_camper_weeks_id"], data["numShirts"],
+                    data["totalCost"], data["totalPaidUSD"], data["totalPaidCredit"], data["transactionTime"]))
+    # db.commit()
+    return jsonify({"status": "success"})
+
 
 # SHIRTS
 # All shirts
@@ -554,7 +581,7 @@ def getShirt(shirt_id):
 
 @app.route("/shirts/updateShirt/<shirt_id>", methods=["PUT"])
 def updateShirt(shirt_id):
-    data = request.form
+    data = request.get_json()
     cursor.execute("update shirts set name=%s, size=%s, price=%s where id = %s ",
                    (data["name"], data["size"], data["price"], shirt_id))
 
@@ -563,7 +590,7 @@ def updateShirt(shirt_id):
 
 @app.route("/shirts/addShirt", methods=["POST"])
 def addShirt():
-    data = request.form
+    data = request.get_json()
     cursor.execute("insert into shirts (id, name, size, price) "
                    "values (%s, %s, %s, %s)",
                    (data["id"], data["name"], data["size"], data["price"]))
