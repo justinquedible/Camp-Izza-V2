@@ -14,6 +14,8 @@ import UpdatePassword from "./UpdatePassword";
 import Parent from "./Parent";
 import HouseholdForm from "./HouseholdForm";
 
+import CamperForm from "./CamperForm";
+
 import Admin from "./Admin";
 import Sessions from "./Sessions";
 import Groups from "./Groups";
@@ -23,7 +25,7 @@ import BonusCamper from "./BonusCamper";
 import SignUpCounselor from "./NewSignupCounselor";
 import Pending from "./Pending";
 import ManageCounselors from "./ManageCounselors";
-import FinalCamperForm from "./FinalCamperForm";
+
 import Profile from "./Profile";
 import Checkout from "./Checkout";
 import NewScheduling from "./NewScheduling";
@@ -82,6 +84,7 @@ function App() {
 
               <Route exact path={"/parent"} component={Parent} />
               <Route exact path={"/parent/householdForm"} component={HouseholdForm} />
+              <Route exact path={"/parent/camperForm"} component={CamperForm} />
 
               <Route exact path={"/admin"} component={Admin} />
               <Route exact path={"/admin/managecampers"} component={NewManageCampers} />
@@ -98,7 +101,7 @@ function App() {
               <Route exact path={"/counselor/pending"} component={Pending} />
 
               <Route exact path={"/CamperInfo"} component={CamperInfo} />
-              <Route exact path={"/CamperForm"} component={FinalCamperForm} />
+
               <Route exact path={"/Profile"} component={Profile} />
               <Route exact path={"/NewScheduling"} component={NewScheduling} />
               <Route exact path={"/Checkout"} component={Checkout} />

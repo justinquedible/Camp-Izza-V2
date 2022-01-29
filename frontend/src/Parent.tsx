@@ -13,6 +13,7 @@ import {
   Row,
   Col,
 } from "react-bootstrap";
+import { useHistory } from "react-router-dom";
 import { getAuth } from "firebase/auth";
 import axios from "axios";
 
@@ -26,24 +27,17 @@ import Campers from "./components/Campers";
 // import AuthService from "./services/auth-service";
 
 export default function ParentDashboard() {
-  // const currentUser = AuthService.currentUser();
-  // console.log(currentUser);
-
-  // const [parent, setParent] = React.useState<Parent | null>(null);
   const [disableAddCamper, setDisableAddCamper] = React.useState(true);
   const auth = getAuth();
+  const history = useHistory();
 
   React.useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
       if (user) {
-        // console.log(user);
-        // getParent(user.uid).then((parent) => {
-        //   console.log(parent);
-        //   setParent(parent);
-        // });
         axios.get(process.env.REACT_APP_API + "api/parents/getParent/" + user.uid).then((res) => {
           console.log(res.data);
           setDisableAddCamper(!!!res.data.firstName);
+          // TODO: get campers
         });
       }
     });
@@ -54,6 +48,7 @@ export default function ParentDashboard() {
     // const currentUser = AuthService.currentUser();
     // localStorage.setItem("currentChild", "");
     // window.location.href = "#/CamperForm";
+    history.push("/parent/camperForm");
   };
 
   return (

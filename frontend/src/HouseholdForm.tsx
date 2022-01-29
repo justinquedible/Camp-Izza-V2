@@ -166,10 +166,11 @@ export default function HouseholdForm() {
         <Button variant="primary" className="backButton" href="/#/parent">
           Back
         </Button>
+        <br />
         <h3>Household Profile</h3>
         <br />
         <p>
-          <b>*</b> indicates a mandatory field.
+          <b>*</b> Indicates a mandatory field.
         </p>
 
         <Form onSubmit={handleSubmit}>

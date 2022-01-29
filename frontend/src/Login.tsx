@@ -19,11 +19,11 @@ export default function Login() {
       axios.get(process.env.REACT_APP_API + "api/users/getUser/" + user.uid).then((res) => {
         console.log(res.data);
         if (res.data.role === "parent") {
-          history.push("/parent");
+          history.replace("/parent");
         } else if (res.data.role === "counselor") {
-          history.push("/counselor");
+          history.replace("/counselor");
         } else if (res.data.role === "admin") {
-          history.push("/admin");
+          history.replace("/admin");
         }
       });
     },
