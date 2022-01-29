@@ -3,5 +3,6 @@ config = {
     "user": "root",
     "passwd": "campizza",
     "database": "camp_izza",
-    "autocommit": True
+    "autocommit": True,
+    "connection_timeout": 60
 }

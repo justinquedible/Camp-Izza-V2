@@ -34,14 +34,12 @@ def getUsers():
     rows = cursor.fetchall()
     return jsonify(rows)
 
-
 # A user
 @app.route("/users/getUser/<user_id>")
 def getUser(user_id):
     cursor.execute("select * from users where id = %s", (user_id,))
     row = cursor.fetchone()
     return jsonify(row)
-
 
 @app.route("/users/addUser", methods=["POST"])
 def addUser():
@@ -58,7 +56,6 @@ def getParents():
     cursor.execute("select * from parents")
     rows = cursor.fetchall()
     return jsonify(rows)
-
 
 # A parent
 @app.route("/parents/getParent/<parent_id>")
@@ -78,9 +75,9 @@ def addParent():
     # db.commit()
     return jsonify({"status": "success"})
 
-@app.route("/parents/updateParents/<parent_id>", methods=["PUT"])
-def updateParents(parent_id):
-    data = request.form
+@app.route("/parents/updateParent/<parent_id>", methods=["PUT"])
+def updateParent(parent_id):
+    data = request.get_json()
     cursor.execute("update parents set firstName=%s, lastName=%s, phone=%s, addressLine1=%s, addressLine2=%s, city=%s, "
                    "zipCode=%s, state=%s, country=%s where id = %s",
                    (data["firstName"], data["lastName"], data["phone"], data["addressLine1"],
@@ -506,29 +503,28 @@ def getEmergency_Contact():
     return jsonify(rows)
 
 
-@app.route("/emergency_contacts/getEmergency_ContactByUserID/<user_id>")
+@app.route("/emergency_contacts/getEmergency_ContactsByUserID/<user_id>")
 def getEmergency_ContactByUserID(user_id):
-    cursor.execute("select * from emergency_contacts where id = %s", (user_id,))
-    row = cursor.fetchone()
+    cursor.execute("select * from emergency_contacts where user_id = %s", (user_id,))
+    row = cursor.fetchall()
     return jsonify(row)
 
 
-@app.route("/emergency_contacts/updateEmergency_Contact/<user_id>", methods=["PUT"])
-def updateEmergency_Contact(user_id):
-    data = request.form
+@app.route("/emergency_contacts/updateEmergency_Contact/<emergency_contact_id>", methods=["PUT"])
+def updateEmergency_Contact(emergency_contact_id):
+    data = request.get_json()
     cursor.execute("update emergency_contacts set firstName=%s, lastName=%s, relation=%s, phone=%s, "
                    "authPickUp=%s where id = %s ", (data["firstName"], data["lastName"], data["relation"],
-                                                    data["phone"], data["authPickUp"], user_id))
-
+                                                    data["phone"], data["authPickUp"], emergency_contact_id))
     return jsonify({"status": "success"})
 
 
 @app.route("/emergency_contacts/addEmergency_Contact", methods=["POST"])
 def addEmergency_Contact():
-    data = request.form
-    cursor.execute("insert into emergency_contacts (id, user_id, firstName, lastName, relation, phone, authPickUp) "
-                   "values (%s, %s, %s, %s, %s, %s, %s)",
-                   (data["id"], data["user_id"], data["firstName"], data["lastName"], data["relation"],
+    data = request.get_json()
+    cursor.execute("insert into emergency_contacts (user_id, firstName, lastName, relation, phone, authPickUp) "
+                   "values (%s, %s, %s, %s, %s, %s)",
+                   (data["user_id"], data["firstName"], data["lastName"], data["relation"],
                     data["phone"], data["authPickUp"]))
     # db.commit()
     return jsonify({"status": "success"})

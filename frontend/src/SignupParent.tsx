@@ -36,9 +36,19 @@ export default function SignUp() {
             addressLine2: "",
             city: "",
             zipCode: "",
-            state: "",
-            country: "",
+            state: "CA",
+            country: "USA",
           });
+          for (let i = 0; i < 2; i++) {
+            await axios.post(process.env.REACT_APP_API + "api/emergency_contacts/addEmergency_Contact", {
+              user_id: userCredential.user.uid,
+              firstName: "",
+              lastName: "",
+              relation: "",
+              phone: "",
+              authPickUp: false,
+            });
+          }
           history.push("/parent");
         })
         .catch((error) => {

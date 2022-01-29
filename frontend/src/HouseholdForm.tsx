@@ -7,28 +7,19 @@ import { Button, Container, Form, FormCheck, Col, Row } from "react-bootstrap";
 import { getAuth } from "firebase/auth";
 import intlTelInput from "intl-tel-input";
 import axios from "axios";
-// import { Parent, getParent } from "./models/Parent";
-
-// import { Router, Switch, Route } from "react-router-dom";
-
-// import NavBarInstance from "./NavBar";
-// import FooterInstance from "./Footer";
-// import axios from "axios";
-// import currentUser from "./services/auth-service";
-// import authHeader from "./services/auth-header";
-// import ParentService from "./services/parent-service";
-// import AuthService from "./services/auth-service";
+import FormCheckInput from "react-bootstrap/esm/FormCheckInput";
 
 export default function HouseholdForm() {
-  //   const [parent, setParent] = React.useState<Parent | null>(null);
   const auth = getAuth();
+  const [isSaving, setIsSaving] = React.useState(false);
+  const [showSaved, setShowSaved] = React.useState(false);
+  const checkbox1 = React.useRef<HTMLInputElement>(null);
+  const checkbox2 = React.useRef<HTMLInputElement>(null);
 
   // Initialize international telephjone input plugin
   const input1 = React.useRef<HTMLInputElement>(null);
   const input2 = React.useRef<HTMLInputElement>(null);
   const input3 = React.useRef<HTMLInputElement>(null);
-  // const input4 = React.useRef<HTMLInputElement>(null);
-  // const [telInputs, setTelInputs] = React.useState<intlTelInput.Plugin[]>([]);
   const [telInput1, setTelInput1] = React.useState<intlTelInput.Plugin>();
   const [telInput2, setTelInput2] = React.useState<intlTelInput.Plugin>();
   const [telInput3, setTelInput3] = React.useState<intlTelInput.Plugin>();
@@ -70,10 +61,10 @@ export default function HouseholdForm() {
     phone: "",
     addressLine1: "",
     addressLine2: "",
-    country: "",
     city: "",
-    state: "",
     zipCode: "",
+    state: "",
+    country: "",
     emergency1FirstName: "",
     emergency1LastName: "",
     emergency1Relation: "",
@@ -87,30 +78,81 @@ export default function HouseholdForm() {
   });
 
   React.useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged((user) => {
+    const unsubscribe = auth.onAuthStateChanged(async (user) => {
       if (user) {
-        axios.get(process.env.REACT_APP_API + "api/parents/getParent/" + user.uid).then((res) => {
-          console.log(res.data);
+        await axios.get(process.env.REACT_APP_API + "api/parents/getParent/" + user.uid).then((res) => {
           setValues((values) => ({
             ...values,
-            email: res.data.email,
-            firstName: res.data.firstName,
-            lastName: res.data.lastName,
-            phone: res.data.phone,
-            addressLine1: res.data.addressLine1,
-            addressLine2: res.data.addressLine2,
+            ...res.data,
           }));
         });
+        await axios
+          .get(process.env.REACT_APP_API + "api/emergency_contacts/getEmergency_ContactsByUserID/" + user.uid)
+          .then((res) => {
+            setValues((values) => ({
+              ...values,
+              emergency1FirstName: res.data[0].firstName,
+              emergency1LastName: res.data[0].lastName,
+              emergency1Relation: res.data[0].relation,
+              emergency1Phone: res.data[0].phone,
+              emergency1AuthPickUp: Boolean(res.data[0].authPickUp),
+              emergency2FirstName: res.data[1].firstName,
+              emergency2LastName: res.data[1].lastName,
+              emergency2Relation: res.data[1].relation,
+              emergency2Phone: res.data[1].phone,
+              emergency2AuthPickUp: Boolean(res.data[1].authPickUp),
+            }));
+            if (checkbox1.current && checkbox2.current) {
+              checkbox1.current.checked = Boolean(res.data[0].authPickUp);
+              checkbox2.current.checked = Boolean(res.data[1].authPickUp);
+            }
+          });
       }
     });
+
     return unsubscribe;
   }, [auth]);
 
   const handleSubmit = async (e: React.FormEvent) => {
+    setIsSaving(true);
     e.preventDefault();
-    console.log(e);
-    // console.log(telInput?.getNumber());
-    // console.log(telInput?.isValidNumber());
+    await axios.put(process.env.REACT_APP_API + "api/parents/updateParent/" + auth.currentUser?.uid, {
+      firstName: values.firstName,
+      lastName: values.lastName,
+      phone: values.phone,
+      addressLine1: values.addressLine1,
+      addressLine2: values.addressLine2,
+      city: values.city,
+      zipCode: values.zipCode,
+      state: values.state,
+      country: values.country,
+    });
+    await axios
+      .get(process.env.REACT_APP_API + "api/emergency_contacts/getEmergency_ContactsByUserID/" + auth.currentUser?.uid)
+      .then(async (res) => {
+        await axios.put(
+          process.env.REACT_APP_API + "api/emergency_contacts/updateEmergency_Contact/" + res.data[0].id,
+          {
+            firstName: values.emergency1FirstName,
+            lastName: values.emergency1LastName,
+            relation: values.emergency1Relation,
+            phone: values.emergency1Phone,
+            authPickUp: values.emergency1AuthPickUp,
+          }
+        );
+        await axios.put(
+          process.env.REACT_APP_API + "api/emergency_contacts/updateEmergency_Contact/" + res.data[1].id,
+          {
+            firstName: values.emergency2FirstName,
+            lastName: values.emergency2LastName,
+            relation: values.emergency2Relation,
+            phone: values.emergency2Phone,
+            authPickUp: values.emergency2AuthPickUp,
+          }
+        );
+      });
+    setIsSaving(false);
+    window.location.reload();
   };
 
   const handleChange = (name: string) => (e: { target: { value: any } }) => {
@@ -137,13 +179,13 @@ export default function HouseholdForm() {
               <Form.Label>
                 <b>* </b>First Name
               </Form.Label>
-              <Form.Control required onChange={handleChange(values.firstName)} />
+              <Form.Control required defaultValue={values.firstName} onChange={handleChange("firstName")} />
             </Form.Group>
             <Form.Group as={Col} controlId="guardian1LastName">
               <Form.Label>
                 <b>* </b>Last Name
               </Form.Label>
-              <Form.Control required onChange={handleChange(values.lastName)} />
+              <Form.Control required defaultValue={values.lastName} onChange={handleChange("lastName")} />
             </Form.Group>
           </Row>
           <Row>
@@ -153,7 +195,7 @@ export default function HouseholdForm() {
               </Form.Label>
               <Form.Control type="email" readOnly required defaultValue={values.email} />
             </Form.Group>
-            <Form.Group as={Col} xs="auto" controlId="guardian1PhoneNumber">
+            <Form.Group as={Col} controlId="guardian1PhoneNumber">
               <div className="phone">
                 <Row>
                   <Form.Label>
@@ -161,7 +203,13 @@ export default function HouseholdForm() {
                   </Form.Label>
                 </Row>
                 <Row>
-                  <Form.Control ref={input1} type="tel" required />
+                  <Form.Control
+                    ref={input1}
+                    type="tel"
+                    required
+                    defaultValue={values.phone}
+                    onChange={handleChange("phone")}
+                  />
                 </Row>
               </div>
             </Form.Group>
@@ -206,12 +254,17 @@ export default function HouseholdForm() {
               <Form.Control
                 required
                 placeholder="Street address or P.O. Box"
-                onChange={handleChange(values.addressLine1)}
+                defaultValue={values.addressLine1}
+                onChange={handleChange("addressLine1")}
               />
             </Form.Group>
             <Form.Group as={Col} controlId="address2">
               <Form.Label>Address 2</Form.Label>
-              <Form.Control placeholder="Apt, suite, unit, etc." onChange={handleChange(values.addressLine2)} />
+              <Form.Control
+                placeholder="Apt, suite, unit, etc."
+                defaultValue={values.addressLine2}
+                onChange={handleChange("addressLine2")}
+              />
             </Form.Group>
           </Row>
           <Row>
@@ -219,25 +272,25 @@ export default function HouseholdForm() {
               <Form.Label>
                 <b>* </b>City
               </Form.Label>
-              <Form.Control required onChange={handleChange(values.city)} />
+              <Form.Control required defaultValue={values.city} onChange={handleChange("city")} />
             </Form.Group>
             <Form.Group as={Col} xs="3" controlId="state">
               <Form.Label>
                 <b>* </b>State
               </Form.Label>
-              <Form.Control required defaultValue="California" onChange={handleChange(values.state)} />
+              <Form.Control required defaultValue={values.state} onChange={handleChange("state")} />
             </Form.Group>
             <Form.Group as={Col} xs="2" controlId="postalCode">
               <Form.Label>
                 <b>* </b>ZIP Code
               </Form.Label>
-              <Form.Control required onChange={handleChange(values.zipCode)} />
+              <Form.Control required defaultValue={values.zipCode} onChange={handleChange("zipCode")} />
             </Form.Group>
             <Form.Group as={Col} xs="3" controlId="country">
               <Form.Label>
                 <b>* </b>Country
               </Form.Label>
-              <Form.Control required defaultValue="United States" onChange={handleChange(values.country)} />
+              <Form.Control required defaultValue={values.country} onChange={handleChange("country")} />
             </Form.Group>
           </Row>
 
@@ -248,13 +301,21 @@ export default function HouseholdForm() {
               <Form.Label>
                 <b>* </b>First Name
               </Form.Label>
-              <Form.Control required onChange={handleChange(values.emergency1FirstName)} />
+              <Form.Control
+                required
+                defaultValue={values.emergency1FirstName}
+                onChange={handleChange("emergency1FirstName")}
+              />
             </Form.Group>
             <Form.Group as={Col} controlId="emergencyContact1LastName">
               <Form.Label>
                 <b>* </b>Last Name
               </Form.Label>
-              <Form.Control required onChange={handleChange(values.emergency1LastName)} />
+              <Form.Control
+                required
+                defaultValue={values.emergency1LastName}
+                onChange={handleChange("emergency1LastName")}
+              />
             </Form.Group>
           </Row>
           <Row>
@@ -262,9 +323,13 @@ export default function HouseholdForm() {
               <Form.Label>
                 <b>* </b>Relation to Camper(s)
               </Form.Label>
-              <Form.Control required onChange={handleChange(values.emergency1Relation)} />
+              <Form.Control
+                required
+                defaultValue={values.emergency1Relation}
+                onChange={handleChange("emergency1Relation")}
+              />
             </Form.Group>
-            <Form.Group as={Col} xs="auto" controlId="emergencyContact1Phone">
+            <Form.Group as={Col} controlId="emergencyContact1Phone">
               <div className="phone">
                 <Row>
                   <Form.Label>
@@ -272,18 +337,24 @@ export default function HouseholdForm() {
                   </Form.Label>
                 </Row>
                 <Row>
-                  <Form.Control ref={input2} type="tel" required />
+                  <Form.Control
+                    ref={input2}
+                    type="tel"
+                    required
+                    defaultValue={values.emergency1Phone}
+                    onChange={handleChange("emergency1Phone")}
+                  />
                 </Row>
               </div>
             </Form.Group>
           </Row>
           <Form.Group controlId="check">
             <Row>
-              <Col xs="1">
-                <Form.Control
+              <Col xs="auto">
+                <FormCheckInput
+                  ref={checkbox1}
                   className="check"
                   type="checkbox"
-                  isValid={values.emergency1AuthPickUp}
                   onChange={() => {
                     setValues((values) => ({ ...values, emergency1AuthPickUp: !values.emergency1AuthPickUp }));
                   }}
@@ -302,13 +373,21 @@ export default function HouseholdForm() {
               <Form.Label>
                 <b>* </b>First Name
               </Form.Label>
-              <Form.Control required onChange={handleChange(values.emergency2FirstName)} />
+              <Form.Control
+                required
+                defaultValue={values.emergency2FirstName}
+                onChange={handleChange("emergency2FirstName")}
+              />
             </Form.Group>
             <Form.Group as={Col} controlId="emergencyContact2LastName">
               <Form.Label>
                 <b>* </b>Last Name
               </Form.Label>
-              <Form.Control required onChange={handleChange(values.emergency2LastName)} />
+              <Form.Control
+                required
+                defaultValue={values.emergency2LastName}
+                onChange={handleChange("emergency2LastName")}
+              />
             </Form.Group>
           </Row>
           <Row>
@@ -316,9 +395,13 @@ export default function HouseholdForm() {
               <Form.Label>
                 <b>* </b>Relation to Camper(s)
               </Form.Label>
-              <Form.Control required onChange={handleChange(values.emergency2Relation)} />
+              <Form.Control
+                required
+                defaultValue={values.emergency2Relation}
+                onChange={handleChange("emergency2Relation")}
+              />
             </Form.Group>
-            <Form.Group as={Col} xs="auto" controlId="emergencyContact2Phone">
+            <Form.Group as={Col} controlId="emergencyContact2Phone">
               <div className="phone">
                 <Row>
                   <Form.Label>
@@ -326,18 +409,24 @@ export default function HouseholdForm() {
                   </Form.Label>
                 </Row>
                 <Row>
-                  <Form.Control ref={input3} type="tel" required />
+                  <Form.Control
+                    ref={input3}
+                    type="tel"
+                    defaultValue={values.emergency2Phone}
+                    required
+                    onChange={handleChange("emergency2Phone")}
+                  />
                 </Row>
               </div>
             </Form.Group>
           </Row>
           <Form.Group controlId="check">
             <Row>
-              <Col xs="1">
-                <Form.Control
+              <Col xs="auto">
+                <FormCheckInput
+                  ref={checkbox2}
                   className="check"
                   type="checkbox"
-                  isValid={values.emergency2AuthPickUp}
                   onChange={() => {
                     setValues((values) => ({ ...values, emergency2AuthPickUp: !values.emergency2AuthPickUp }));
                   }}
@@ -350,8 +439,8 @@ export default function HouseholdForm() {
           </Form.Group>
 
           <div className="center">
-            <Button type="submit" variant="success" className="buttonTxt">
-              Save
+            <Button type="submit" variant="success" className="buttonTxt" disabled={isSaving}>
+              {isSaving ? "Saving..." : "Save"}
             </Button>
           </div>
         </Form>

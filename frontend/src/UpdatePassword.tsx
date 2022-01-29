@@ -11,37 +11,45 @@ export default function UpdatePasswordRequest() {
   const [password, setPassword] = React.useState("");
   const [passwordConfirm, setPasswordConfirm] = React.useState("");
   const [showPasswordUpdated, setShowPasswordUpdated] = React.useState(false);
+  const [isUpdating, setIsUpdating] = React.useState(false);
   const history = useHistory();
   const auth = getAuth();
 
-  const checkOldPassword = async () => {
+  const verifyOldPassword = async () => {
+    let isCorrect = false;
     if (auth.currentUser && auth.currentUser.email) {
       await signInWithEmailAndPassword(auth, auth.currentUser.email, passwordOld)
         .then(() => {
-          return true;
+          isCorrect = true;
         })
         .catch((error) => {
           console.log(error);
           alert(error.message);
         });
     }
-    return false;
+    return isCorrect;
   };
 
   const handleSubmit = async (e: { preventDefault: () => void }) => {
     e.preventDefault();
-    await checkOldPassword();
+    if (!(await verifyOldPassword())) {
+      console.log("Old password is incorrect");
+      return;
+    }
     if (auth.currentUser) {
       if (password === passwordConfirm) {
+        setIsUpdating(true);
         updatePassword(auth.currentUser, password)
           .then(() => {
             setShowPasswordUpdated(true);
+            setIsUpdating(false);
             console.log("password updated");
           })
           .catch((error) => {
             console.log(error);
             alert(error.message);
           });
+        setIsUpdating(false);
       }
     }
   };
@@ -86,8 +94,8 @@ export default function UpdatePasswordRequest() {
 
           {showPasswordUpdated && <h6 style={{ color: "green" }}>Password Updated!</h6>}
 
-          <Button className="newuser-button" type="submit">
-            Update
+          <Button className="newuser-button" type="submit" disabled={isUpdating}>
+            {isUpdating ? "Updating..." : "Update"}
           </Button>
         </Form>
 

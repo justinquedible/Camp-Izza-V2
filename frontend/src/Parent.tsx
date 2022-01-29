@@ -60,7 +60,7 @@ export default function ParentDashboard() {
     <div className="Parent">
       <br />
       <Container className="Admin-Buttons">
-        <Button variant="primary" className="householdProfileButton" href="/#/householdform">
+        <Button variant="primary" className="householdProfileButton" href="/#/parent/householdForm">
           Household Profile
         </Button>
         <br />
@@ -76,7 +76,7 @@ export default function ParentDashboard() {
             <Campers />
             <br />
             <Button
-              variant="outline-success"
+              variant="success"
               className="addCamperButton"
               onClick={handleCamperForm}
               disabled={disableAddCamper}

@@ -4,27 +4,28 @@ import React, { Component } from "react";
 import logo from "./logo.svg";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./Footer.css";
-import { HashRouter, BrowserRouter, Route, Switch, Link } from "react-router-dom";
+import { HashRouter, Route, Switch } from "react-router-dom";
+import Login from "./Login";
+import SignupParent from "./SignupParent";
+import ResetPassword from "./ResetPassword";
+import ResetConfirmation from "./ResetConfirmation";
+import UpdatePassword from "./UpdatePassword";
+
+import Parent from "./Parent";
+import HouseholdForm from "./HouseholdForm";
+
 import Admin from "./Admin";
 import Sessions from "./Sessions";
 import Groups from "./Groups";
 import AdminAttendance from "./AdminAttendance";
 import AttendanceReport from "./AttendanceReport";
 import BonusCamper from "./BonusCamper";
-import Parent from "./Parent";
-import Login from "./Login";
-import SignupParent from "./SignupParent";
 import SignUpCounselor from "./NewSignupCounselor";
 import Pending from "./Pending";
-import ResetPassword from "./ResetPassword";
-import Household from "./HouseholdForm";
 import ManageCounselors from "./ManageCounselors";
 import FinalCamperForm from "./FinalCamperForm";
 import Profile from "./Profile";
 import Checkout from "./Checkout";
-import ResetConfirmation from "./ResetConfirmation";
-import UpdateSuccess from "./UpdateSuccess";
-import UpdatePasswordRequest from "./UpdatePassword";
 import NewScheduling from "./NewScheduling";
 import Roster from "./Roster";
 import { NewManageCampers } from "./NewManageCampers";
@@ -77,8 +78,11 @@ function App() {
               <Route exact path={"/signupParent"} component={SignupParent} />
               <Route exact path={"/resetPassword"} component={ResetPassword} />
               <Route exact path={"/resetConfirmation"} component={ResetConfirmation} />
+              <Route exact path={"/updatePassword"} component={UpdatePassword} />
 
               <Route exact path={"/parent"} component={Parent} />
+              <Route exact path={"/parent/householdForm"} component={HouseholdForm} />
+
               <Route exact path={"/admin"} component={Admin} />
               <Route exact path={"/admin/managecampers"} component={NewManageCampers} />
               <Route exact path={"/admin/sessions"} component={Sessions} />
@@ -92,9 +96,7 @@ function App() {
               <Route exact path={"/admin/emergencyform"} component={EmergencyForm} />
               <Route exact path={"/signupCounselor"} component={SignUpCounselor} />
               <Route exact path={"/counselor/pending"} component={Pending} />
-              <Route exact path={"/updatePasswordRequest/:token"} component={UpdatePasswordRequest} />
-              <Route exact path={"/updateSuccess"} component={UpdateSuccess} />
-              <Route exact path={"/HouseholdForm"} component={Household} />
+
               <Route exact path={"/CamperInfo"} component={CamperInfo} />
               <Route exact path={"/CamperForm"} component={FinalCamperForm} />
               <Route exact path={"/Profile"} component={Profile} />
