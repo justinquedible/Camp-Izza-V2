@@ -28,6 +28,7 @@ import Campers from "./components/Campers";
 
 export default function ParentDashboard() {
   const [disableAddCamper, setDisableAddCamper] = React.useState(true);
+  const [campers, setCampers] = React.useState([]);
   const auth = getAuth();
   const history = useHistory();
 
@@ -35,19 +36,20 @@ export default function ParentDashboard() {
     const unsubscribe = auth.onAuthStateChanged((user) => {
       if (user) {
         axios.get(process.env.REACT_APP_API + "api/parents/getParent/" + user.uid).then((res) => {
-          console.log(res.data);
+          // console.log(res.data);
           setDisableAddCamper(!!!res.data.firstName);
-          // TODO: get campers
+          axios.get(process.env.REACT_APP_API + "api/campers/getCampersByParentID/" + user.uid).then((res) => {
+            // console.log(res.data);
+            setCampers(res.data);
+          });
         });
       }
     });
     return unsubscribe;
   }, [auth]);
 
-  const handleCamperForm = async (e: { preventDefault: () => void }) => {
-    // const currentUser = AuthService.currentUser();
-    // localStorage.setItem("currentChild", "");
-    // window.location.href = "#/CamperForm";
+  const handleAddCamper = async (e: { preventDefault: () => void }) => {
+    sessionStorage.setItem("camper_id", "");
     history.push("/parent/camperForm");
   };
 
@@ -68,14 +70,10 @@ export default function ParentDashboard() {
             My Campers
             <br />
             <br />
-            <Campers />
+            {/* {console.log(campers)} */}
+            <Campers campers={campers} />
             <br />
-            <Button
-              variant="success"
-              className="addCamperButton"
-              onClick={handleCamperForm}
-              disabled={disableAddCamper}
-            >
+            <Button variant="success" className="addCamperButton" onClick={handleAddCamper} disabled={disableAddCamper}>
               + Add New Camper
             </Button>
             {disableAddCamper && <p>Please fill out the Household Profile to add a camper</p>}

@@ -62,6 +62,7 @@
     ]
   },
   "devDependencies": {
-    "@types/intl-tel-input": "^17.0.4"
+    "@types/intl-tel-input": "^17.0.4",
+    "@types/react-datepicker": "^4.3.4"
   }
 }

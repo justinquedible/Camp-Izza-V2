@@ -29,6 +29,10 @@ p.terms {
   margin-bottom: 30px;
 }
 
+.checkbox-row {
+  margin-left: 8px;
+}
+
 input,
 select {
   margin-bottom: 16px;

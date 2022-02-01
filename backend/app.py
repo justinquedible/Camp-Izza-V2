@@ -72,7 +72,6 @@ def addParent():
                 (data["id"], data["email"], data["firstName"], data["lastName"], data["phone"], data["addressLine1"],
                 data["addressLine2"] if "addressLine2" in data else "", data["city"], data["zipCode"],
                 data["state"], data["country"]))
-    # db.commit()
     return jsonify({"status": "success"})
 
 @app.route("/parents/updateParent/<parent_id>", methods=["PUT"])
@@ -83,7 +82,6 @@ def updateParent(parent_id):
                    (data["firstName"], data["lastName"], data["phone"], data["addressLine1"],
                     data["addressLine2"] if "addressLine2" in data else "", data["city"], data["zipCode"],
                     data["state"], data["country"], parent_id))
-    # db.commit()
     return jsonify({"status": "success"})
 
 
@@ -143,7 +141,7 @@ def getCamper(camper_id):
     return jsonify(row)
 
 
-@app.route("/campers/getCampers/<parent_id>")
+@app.route("/campers/getCampersByParentID/<parent_id>")
 def getCamperByParent_id(parent_id):
     cursor.execute("select * from campers where parent_id = %s", (parent_id,))
     row = cursor.fetchall()
@@ -153,16 +151,15 @@ def getCamperByParent_id(parent_id):
 @app.route("/campers/addCamper", methods=["POST"])
 def addCamper():
     data = request.get_json()
-    cursor.execute("insert into campers (id, parent_id, firstName, lastName, gender, dob, grade, school, "
-                   "shirtSize, credit, numShirts,paid) values (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)",
-                   (data["id"], data["parent_id"], data["firstName"], data["lastName"], data["gender"], data["dob"],
+    cursor.execute("insert into campers (parent_id, firstName, lastName, gender, dob, grade, school, "
+                   "shirtSize, credit, numShirts, paid) values (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)",
+                   (data["parent_id"], data["firstName"], data["lastName"], data["gender"], data["dob"],
                     data["grade"], data["school"], data["shirtSize"], data["credit"], data["numShirts"], data["paid"]))
-    # db.commit()
-    return jsonify({"status": "success"})
+    return jsonify({"status": "success", "camper_id": cursor.lastrowid})
 
 
-@app.route("/campers/updateCampers/<camper_id>", methods=["PUT"])
-def updateCampers(camper_id):
+@app.route("/campers/updateCamper/<camper_id>", methods=["PUT"])
+def updateCamper(camper_id):
     data = request.get_json()
     cursor.execute("update campers set firstName=%s, lastName=%s, gender=%s, dob=%s,  grade=%s, school=%s, "
                    "shirtSize=%s, credit=%s, numShirts=%s,paid=%s where id = %s",
@@ -381,7 +378,7 @@ def getAllCamper_Medical_Records():
 
 @app.route("/camper_medical_records/getCamper_Medical_RecordByCamperID/<int:camper_id>")
 def getCamper_Medical_RecordByCamperID(camper_id):
-    cursor.execute("select * from camper_medical_records where id = %s", (camper_id,))
+    cursor.execute("select * from camper_medical_records where camper_id = %s", (camper_id,))
     rows = cursor.fetchone()
     return jsonify(rows)
 
@@ -392,26 +389,24 @@ def updateCamper_Medical_Record(camper_id):
     cursor.execute("update camper_medical_records set doctorName=%s, doctorPhone=%s, insuranceCarrier=%s, "
                    "policyHolder=%s, allergies=%s, restrictedActivities=%s, illnesses=%s, immunizations=%s, "
                    "medicalTreatments=%s, medications=%s, tetanusDate=%s, comments=%s where camper_id = %s ",
-                   (data["restrictedActivities"], data["allergies"], data["doctorName"],
-                    data["doctorPhone"], data["insuranceCarrier"], data["policyHolder"], data["illnesses"],
+                   (data["doctorName"], data["doctorPhone"], data["insuranceCarrier"],
+                    data["policyHolder"], data["allergies"], data["restrictedActivities"], data["illnesses"],
                     data["immunizations"], data["medicalTreatments"], data["medications"],
-                    data["tetanusDate"], data["comments"] if "comments" in data else "", camper_id))
-
+                    data["tetanusDate"], data["comments"], camper_id))
     return jsonify({"status": "success"})
 
 
 @app.route("/camper_medical_records/addCamper_Medical_Record", methods=["POST"])
 def addCamper_Medical_Record():
     data = request.get_json()
-    cursor.execute("insert into camper_medical_records (id, camper_id, doctorName, doctorPhone, insuranceCarrier, "
+    cursor.execute("insert into camper_medical_records (camper_id, doctorName, doctorPhone, insuranceCarrier, "
                    "policyHolder, allergies, restrictedActivities, illnesses, immunizations, medicalTreatments,"
                    "medications, tetanusDate, comments) "
-                   "values (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s,%s, %s)",
-                   (data["id"], data["camper_id"], data["doctorName"], data["doctorPhone"], data["insuranceCarrier"],
+                   "values (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s,%s, %s)",
+                   (data["camper_id"], data["doctorName"], data["doctorPhone"], data["insuranceCarrier"],
                     data["policyHolder"], data["allergies"], data["restrictedActivities"], data["illnesses"],
                     data["immunizations"], data["medicalTreatments"], data["medications"],
-                    data["tetanusDate"], data["comments"] if "comments" in data else ""))
-    # db.commit()
+                    data["tetanusDate"], data["comments"]))
     return jsonify({"status": "success"})
 
 
@@ -591,10 +586,9 @@ def updateShirt(shirt_id):
 @app.route("/shirts/addShirt", methods=["POST"])
 def addShirt():
     data = request.get_json()
-    cursor.execute("insert into shirts (id, name, size, price) "
-                   "values (%s, %s, %s, %s)",
-                   (data["id"], data["name"], data["size"], data["price"]))
-    # db.commit()
+    cursor.execute("insert into shirts (name, size, price) "
+                   "values (%s, %s, %s)",
+                   (data["name"], data["size"], data["price"]))
     return jsonify({"status": "success"})
 
 
