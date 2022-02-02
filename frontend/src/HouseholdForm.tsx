@@ -137,6 +137,7 @@ export default function HouseholdForm() {
           <h5>My Information</h5>
           <Row>
             <Form.Group as={Col} controlId="guardian1FirstName">
+              {/* TODO: make read only after initial set */}
               <Form.Label>
                 <b>* </b>First Name
               </Form.Label>

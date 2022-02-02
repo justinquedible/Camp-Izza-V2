@@ -20,10 +20,6 @@ export default function CamperForm() {
   const [initFirstName, setInitFirstName] = React.useState("");
   const [initLastName, setInitLastName] = React.useState("");
 
-  const handleCancelDeleteCamperForm = () => {
-    setDelForm(false);
-  };
-
   const [camperValues, setCamperValues] = React.useState({
     firstName: "",
     lastName: "",
@@ -118,10 +114,17 @@ export default function CamperForm() {
     // }
     // window.location.href = "#/Parent";
     // window.location.reload();
+    await axios.delete(process.env.REACT_APP_API + "api/campers/deleteCamper/" + sessionStorage.getItem("camper_id"));
+    sessionStorage.removeItem("camper_id");
+    history.push("/parent");
   };
 
   const handleDeleteCamperForm = () => {
     setDelForm(true);
+  };
+
+  const handleCancelDeleteCamperForm = () => {
+    setDelForm(false);
   };
 
   const handleGoBack = () => {
@@ -131,16 +134,14 @@ export default function CamperForm() {
 
   const DelForm = () => (
     <div className="form-popup" id="myForm">
-      <form className="form-container center">
-        <p> Are you sure you want to delete this camper? </p>
-        <Button variant="danger" className="formBtn" onClick={handleDeleteCamper}>
-          Delete
-        </Button>
-        <br />
-        <Button variant="secondary" className="formBtn" onClick={handleCancelDeleteCamperForm}>
-          Cancel
-        </Button>
-      </form>
+      <p> Are you sure you want to delete this camper? </p>
+      <Button variant="danger" className="formBtn" onClick={handleDeleteCamper}>
+        Delete
+      </Button>
+      <br />
+      <Button variant="secondary" className="formBtn" onClick={handleCancelDeleteCamperForm}>
+        Cancel
+      </Button>
     </div>
   );
 
