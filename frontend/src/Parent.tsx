@@ -2,29 +2,11 @@
 
 import "./Dashboard.css";
 import React from "react";
-import {
-  ToggleButtonGroup,
-  ToggleButton,
-  ButtonGroup,
-  Button,
-  CardDeck,
-  Card,
-  Container,
-  Row,
-  Col,
-} from "react-bootstrap";
+import { Button, Container } from "react-bootstrap";
 import { useHistory } from "react-router-dom";
 import { getAuth } from "firebase/auth";
 import axios from "axios";
-
-// import {Router, Switch, Route} from "react-router-dom";
-
-// import NavBarInstance from './NavBar';
-// import FooterInstance from './Footer';
-// import campersIcon from './AdminIcons/campers-icon.png';
-// import homeIcon from './AdminIcons/home-icon.png';
 import Campers from "./components/Campers";
-// import AuthService from "./services/auth-service";
 
 export default function ParentDashboard() {
   const [disableAddCamper, setDisableAddCamper] = React.useState(true);

@@ -3,25 +3,18 @@ import { Button } from "react-bootstrap";
 
 const CompletedTransaction = () => {
   return (
-    <div>
+    <div style={{ textAlign: "center" }}>
       <br />
       <br />
       <br />
       <br />
       <br />
       <br />
-      <body style={{ textAlign: "center" }}>
-        <h1>Thank you for registering!</h1>
-        <br />
-        <Button
-          variant="outline-primary"
-          className="backButton"
-          href="/#/parent"
-        >
-          {" "}
-          Back to Dashboard{" "}
-        </Button>
-      </body>
+      <h1>Thank you for registering!</h1>
+      <br />
+      <Button variant="outline-primary" className="backButton" href="/#/parent">
+        Back to Dashboard
+      </Button>
     </div>
   );
 };

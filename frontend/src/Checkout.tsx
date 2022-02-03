@@ -1,290 +1,294 @@
 // Page for parents to checkout so they can pay for the camp
 
-import React, {Component, useState} from 'react';
-import {Button, Container, Row, Col} from 'react-bootstrap';
-import './HouseholdForm.css';
-import ReactDOM from "react-dom";
-import {Router, Switch, Route} from "react-router-dom";
-
-import NavBarInstance from './NavBar';
-import FooterInstance from './Footer';
+import React from "react";
+import { Button, Container, Table } from "react-bootstrap";
+import "./HouseholdForm.css";
+import { useHistory } from "react-router-dom";
+import axios from "axios";
 import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js";
-import CamperService from "./services/camper-service"
-import AuthService from "./services/auth-service";
-import AdminService from "./services/admin-service";
+import { dateTimeToDate, dateTimeToTime, dateTimeToDateInput, dateTimeToMilitaryTime } from "./util/DateTimeUtil";
+import { getAuth, User } from "firebase/auth";
 
-interface IWeek {
-
-    weekID: string;
-    startDate: string,
-    endDate: string,
-    status: string,
-    newStatus: string,
-
+interface Camp_Week {
+  id: number;
+  term: string;
+  name: string;
+  start: string;
+  end: string;
+  early_cost: number;
+  regular_cost: number;
+  early_cut_off: string;
 }
 
-interface camperProps {
-    numShirts: number,
-    amountPaid: number,
-    credit: number
+interface Camper {
+  id: number;
+  firstName: string;
+  lastName: string;
+  dob: string;
+  shirtSize: string;
+  numShirts: number;
+  paid: number;
+  credit: number;
 }
 
-const defaultWeeks:IWeek[] = [];
+export default function Checkout() {
+  const history = useHistory();
+  const auth = getAuth();
 
-const Checkout = () => {
-    // DEVS: SET AMOUNT HERE IN USESTATE
-    // Next step: Update camper account balance on approved payment
-    // Docs: https://paypal.github.io/react-paypal-js/?path=/docs/example-paypalbuttons--dynamic-amount
-    const currentUserID = AuthService.currentUser().id;
-    const [amount, setAmount] = useState(295);
-    const [data, setData]: [IWeek[], (weeks: IWeek[]) => void] = React.useState(defaultWeeks);
-    const [credit,setCredit] = React.useState({
-        credit: 0
-    });
-    const [paid,setPaid] = React.useState({
-        amountPaid: 0
-    });
-    const [orderID, setOrderID] = useState(false);
-    const [shirts, setNum] = React.useState({
-        numShirts: 0
-    });
-    const [price, setPrice] = React.useState({
-        pricing_base_rate: 0,
-        pricing_extra_rate: 0,
-        extra_shirts: 0,
-        extended_rate: 0,
+  let numShirtsStr = sessionStorage.getItem("numShirts");
+  const numShirts = numShirtsStr ? parseInt(numShirtsStr) : 0;
+
+  const [user, setUser] = React.useState<User>();
+  const [camper, setCamper] = React.useState<Camper>();
+  const [campWeeksSelected, setCampWeeksSelected] = React.useState<Camp_Week[]>();
+  const [shirtPrice, setShirtPrice] = React.useState(0);
+  const [total, setTotal] = React.useState(0);
+  const [isEarlyBird, setIsEarlyBird] = React.useState(false);
+
+  // const [orderID, setOrderID] = React.useState();
+
+  React.useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged((user) => {
+      if (user) {
+        setUser(user);
+      }
     });
 
-    const [weeks, setWeeks] = React.useState({
-        week1start: "",
-        week1end: "",
-        week1id: 0,
-        week1holidays: [],
-        week2start: "",
-        week2end: "",
-        week2id: 0,
-        week3start: "",
-        week3end: "",
-        week3id: 0,
-        week4start: "",
-        week4end: "",
-        week4id: 0,
-        week5start: "",
-        week5end: "",
-        week5id: 0,
-        week6start: "",
-        week6end: "",
-        week6id: 0,
-        week7start: "",
-        week7end: "",
-        week7id: 0,
-        week8start: "",
-        week8end: "",
-        week8id: 0,
-        week9start: "",
-        week9end: "",
-        week9id: 0,
-        week10start: "",
-        week10end: "",
-        week10id: 0,
-        weekHoliday: "",
-        currentWeekID: 0,
-        cutoff: ""
-
-    });
-    // const currentUserID = AuthService.currentUser().id;
-
-
-    let camperName = AuthService.currentChild();
-    let currentDate = Date();
-    let cutoffDate = Date.parse(weeks.cutoff);
-    function currentUserPrice(){
-        var currentPrice = 0;
-        if (Date.parse(currentDate) <= cutoffDate) {
-            currentPrice = price.pricing_base_rate;
-        }
-        else{
-            currentPrice = price.pricing_extra_rate;
-        }
-        return currentPrice;
-    }
-    React.useEffect( () => {
-        // const currentUserID = AuthService.currentUser().id;
-        let camperName = AuthService.currentChild();
-        let userID = AuthService.currentUser().id;
-        AdminService.getProgramPrice().then(response => {
-            setPrice(response.data)
-        })
-        AdminService.getProgramInfo().then(response => {
-
-            weeks.cutoff = response.data;
-        })
-    //     CamperService.getScheduleInfo(camperName, userID).then(response => {
-    //
-    //         setData(response.data.currentWeeksRegistered);
-    //         setNum(response.data);
-    //
-    // })
-        let num = Number.parseInt(localStorage.getItem("numShirts") as string)
-        let regWeeks = JSON.parse(localStorage.getItem("schedule") as string)
-        setData(regWeeks)
-
-
-        shirts.numShirts = num
-        CamperService.getCredit(userID).then(response =>{
-            setCredit(response.data);
-            })
-        CamperService.getPaid(userID).then(response =>{
-                setPaid(response.data);
-            })
-    }, [])
-
-    // @ts-ignore
-    // function onChange({ target: { value } }) {
-    //     setAmount(value);
-    //     setOrderID(false);
-    // }
-
-    let TShirtTotal = shirts.numShirts*price.extra_shirts;
-    function CountWeeksReg(dataList:any){
-        var count = 0;
-        for (var i=0; i < dataList.length; i++) {
-            if (dataList[i].status === "full") {
-                count++
-            }
-        }
-        return count;
-    }
-    const subtotal = CountWeeksReg(data)*currentUserPrice()+TShirtTotal;
-    // function orderdue() {
-    //     // setAmount(subtotal-credit.credit)
-    //     return subtotal-credit.credit;
-    // }
-    let orderdue = subtotal-credit.credit;
-    function checkRegistered(item:any){
-        return item.status === "full";
-    }
-    let newpaid = orderdue+paid.amountPaid;
-    async function UpdatePaid() {
-        const currentUser = localStorage.currentUser();
-        let userID = currentUser.id;
-        let name = localStorage.getItem("currentChild") as string
-        await CamperService.assignPaid(userID, newpaid);
-        await CamperService.addCamperSchedule(name, userID, shirts.numShirts, data);
-        window.location.href="/#/CompletedTransaction";
-    }
-    let currentWeeks = data.filter(checkRegistered)
-    function createOrder(data:any, actions:any) {
-        // UpdatePaid();
-        return actions.order
-            .create({
-                purchase_units: [
-                    {
-                        amount: {
-                            value: orderdue,
-                            currency_code: "USD"
-                        },
-                    },
-                ],
-            })
-            .then((orderID:any) => {
-                setOrderID(orderID);
-                return orderID;
+    (async () => {
+      let shirtPrice = 0;
+      await axios
+        .get(process.env.REACT_APP_API + "api/campers/getCamper/" + sessionStorage.getItem("camper_id"))
+        .then(async (response) => {
+          setCamper(response.data);
+          await axios
+            .get(process.env.REACT_APP_API + "api/shirts/getShirtByShirtNameAndSize/generic/" + response.data.shirtSize)
+            .then((response) => {
+              shirtPrice = response.data.price;
+              setShirtPrice(shirtPrice);
             });
+          // console.log(response.data);
+        });
+      await axios.get(process.env.REACT_APP_API + "api/camp_weeks/getCamp_Weeks").then((response) => {
+        sessionStorage.getItem("weeksSelected");
+        const weeksSelected = filterAndSortWeeks(response.data);
+        setCampWeeksSelected(weeksSelected);
+        let isEarlyBird = false;
+        if (Date.now() < Date.parse(response.data[0].early_cut_off)) {
+          isEarlyBird = true;
+          setIsEarlyBird(isEarlyBird);
+        }
+        let price = 0;
+        for (let week of weeksSelected) {
+          if (isEarlyBird) {
+            price += week.early_cost;
+          } else {
+            price += week.regular_cost;
+          }
+        }
+        setTotal(numShirts * shirtPrice + price);
+      });
+    })();
+    return unsubscribe;
+  }, [auth, numShirts]);
+
+  const filterAndSortWeeks = (weeks: Camp_Week[]) => {
+    const currentYear = new Date().getFullYear();
+    const weeksSelected = sessionStorage.getItem("weeksSelected")?.split(",");
+    weeks = weeks.filter(
+      (week) => new Date(week.start).getFullYear() === currentYear && weeksSelected?.includes(week.id.toString())
+    );
+    return weeks.sort((a, b) => {
+      return new Date(a.start).getTime() - new Date(b.start).getTime();
+    });
+  };
+
+  const onApprove = async () => {
+    // Update camper credit, numShirts, paid
+    await axios.put(process.env.REACT_APP_API + "api/campers/updateCamper/" + camper?.id, {
+      ...camper,
+      dob: camper?.dob ? dateTimeToDateInput(camper.dob) : "",
+      credit: 0,
+      numShirts: camper ? camper.numShirts + numShirts : numShirts,
+      paid: camper ? camper.paid + total : total,
+    });
+
+    // Post to registered_camper_weeks and payment_informations, one for each campWeeksSelected
+    const currentDateTime =
+      dateTimeToDateInput(new Date().toString()) + " " + dateTimeToMilitaryTime(new Date().toString());
+    if (campWeeksSelected) {
+      for (let week of campWeeksSelected) {
+        console.log(week);
+        await axios
+          .post(process.env.REACT_APP_API + "api/registered_camper_weeks/addRegistered_Camper_Week", {
+            camper_id: camper?.id,
+            camp_week_id: week.id,
+          })
+          .then(async (response) => {
+            console.log(response);
+            await axios.post(process.env.REACT_APP_API + "api/payment_informations/addPayment_Information", {
+              user_id: user?.uid,
+              registered_camper_weeks_id: response.data.registered_camper_weeks_id,
+              numShirts: 0,
+              totalCost: total,
+              totalPaidUSD: camper ? total - camper?.credit : 0,
+              totalPaidCredit: camper?.credit,
+              transactionTime: currentDateTime,
+            });
+          });
+      }
+    }
+    if (numShirts > 0) {
+      await axios.post(process.env.REACT_APP_API + "api/payment_informations/addPayment_Information", {
+        user_id: user?.uid,
+        numShirts: numShirts,
+        totalCost: total,
+        totalPaidUSD: camper ? total - camper?.credit : 0,
+        totalPaidCredit: camper?.credit,
+        transactionTime: currentDateTime,
+      });
     }
 
-        return (
-            <div className="Checkout">
-                <body>
-                <br/>
-                <Container className="Checkout-Table">
-                    <Button variant="primary" className="backButton" href="/#/newscheduling"> Back </Button>
-                    <br/><br/>
-                    <h3> Checkout </h3>
-                    <br/>
+    history.replace("/parent/completedTransaction");
+  };
 
-                    <p> Checkout for: {camperName} </p>
-                    <br/>
-                    <p> Terms and Conditions </p>
-                    <p className="terms">
-                        I am aware of the camp activities described on the camp website and I give my permission for my
-                        child to participate in these activities, unless indicated. <br/>
-                        The information submitted is true to the best of my knowledge. I understand that I am
-                        financially responsible for all fees and that all payments must be received by the first day of
-                        camp. All fees are non-refundable and there will be no refunds or exchanges for missed days.
-                        Guardians agree to screen their children for symptoms of illness or infection and keep their
-                        children home if symptoms are found. Guardians agree to notify Camp Izza if their child is ill
-                        or will not be attending as expected. Camp Director will attempt to call guardians and/or
-                        emergency contacts if campers do not attend camp when expected. <br/>
-                        I authorize Camp Izza to have and use the photos and video of my child to be used in promotional
-                        materials.<br/>
-                        I agree to release, hold harmless, and indemnify Camp Izza, its trustees, staff, family members
-                        of employees, vendors, students, volunteers or insurers, or their heirs or representatives for
-                        any and all claims of any nature whatsoever, including, but not limited to, those related to and
-                        arising from personal injuries, illnesses, or fatality that my child may suffer or incur while
-                        he/she is on the Camp Izza campus or while using the facilities and equipment. I agree to not
-                        hold Camp Izza responsible for loss of or damage to any possessions my child brings to the camp.
-                        I hereby agree to indemnify Camp Izza against any claims of any third parties (including, but
-                        not exclusively, members of the child's family and other camp participants) for damages or
-                        losses incurred by them as a result of a child's participation in Camp Izza or presence on
-                        campus. <br/>
-                        I understand that registration is on a first-come, first serve basis, that my child spot will
-                        only be reserved upon receipt of payment and that returned checks will incur a $25 fee.
-                    </p>
-                    <br/>
+  const createOrder = (data: any, actions: any) => {
+    return actions.order
+      .create({
+        purchase_units: [
+          {
+            amount: {
+              value: camper ? total - camper?.credit : 0,
+              currency: "USD",
+            },
+          },
+        ],
+      })
+      .then((orderID: any) => {
+        // setOrderID(orderID);
+        return orderID;
+      });
+  };
 
-                    <table>
-                        <tr>
-                            <th> Item</th>
-                            <th className="center-td"> Quantity</th>
-                            <th className="center-td"> Price</th>
-                        </tr>
-                        {currentWeeks.map(item => (
-                            <tr>
-                                <td> <strong>Camp Week {item.weekID}: {item.startDate} - {item.endDate}</strong> <br />
-                            Full Day: 9:30am - 3:00pm</td>
-                            <td> 1 </td>
-                            <td> ${currentUserPrice()}  </td>
-                            </tr>
+  const handleBack = () => {
+    history.goBack();
+  };
 
-                        ))}
-                        <tr>
-                            <td> <strong>Additional T Shirt</strong> </td>
-                            <td> {shirts.numShirts}  </td>
-                            <td> ${TShirtTotal}  </td>
-                        </tr>
-                    </table>
-                    <br/>
+  return (
+    <div className="Checkout">
+      <br />
+      <Container className="Checkout-Table">
+        <Button variant="primary" className="backButton" onClick={handleBack}>
+          Back
+        </Button>
+        <br />
+        <br />
+        <h3> Checkout </h3>
+        <br />
 
-                    <div className="summaryBlock">
-                        <h5> Order Summary </h5>
-                        <table>
-                            <tr>
-                                <td className="checkout"> Subtotal</td>
-                                <td className="checkout"> ${subtotal}</td>
-                            </tr>
-                            <tr>
-                                <td className="checkout"> Credit</td>
-                                <td className="checkout"> ${credit.credit}</td>
-                            </tr>
-                            <tr>
-                                <td> Order Due</td>
-                                <td> ${orderdue}</td>
-                            </tr>
-                        </table>
-                        {/*{UpdatePaid}*/}
-                        {/*<p>New Paid: {newpaid}</p>*/}
-                        <PayPalScriptProvider options={{ "client-id": "AXAAL08JOUWnKxbfv1qpK2f_UEfhbNPh7ahJrnpsCBKpHlQUJI_5NePpekQ6DryGsXkw33N6f6R09VLL"}}>
-                            {/*<PayPalButtons  createOrder={createOrder} forceReRender={orderdue} style={{ color: "blue", label: "pay", height: 40 }}  />*/}
-                            <PayPalButtons  createOrder={createOrder} onApprove={UpdatePaid} forceReRender={orderdue} style={{ color: "blue", label: "pay", height: 40 }}  />
-                        </PayPalScriptProvider>
-                    </div>
-                </Container>
-                </body>
-            </div>
-        )
+        <p>
+          Checkout for: {camper?.firstName} {camper?.lastName}
+        </p>
+        <br />
+        <p> Terms and Conditions </p>
+        <p className="terms">
+          I am aware of the camp activities described on the camp website and I give my permission for my child to
+          participate in these activities, unless indicated. <br />
+          The information submitted is true to the best of my knowledge. I understand that I am financially responsible
+          for all fees and that all payments must be received by the first day of camp. All fees are non-refundable and
+          there will be no refunds or exchanges for missed days. Guardians agree to screen their children for symptoms
+          of illness or infection and keep their children home if symptoms are found. Guardians agree to notify Camp
+          Izza if their child is ill or will not be attending as expected. Camp Director will attempt to call guardians
+          and/or emergency contacts if campers do not attend camp when expected. <br />
+          I authorize Camp Izza to have and use the photos and video of my child to be used in promotional materials.
+          <br />I agree to release, hold harmless, and indemnify Camp Izza, its trustees, staff, family members of
+          employees, vendors, students, volunteers or insurers, or their heirs or representatives for any and all claims
+          of any nature whatsoever, including, but not limited to, those related to and arising from personal injuries,
+          illnesses, or fatality that my child may suffer or incur while he/she is on the Camp Izza campus or while
+          using the facilities and equipment. I agree to not hold Camp Izza responsible for loss of or damage to any
+          possessions my child brings to the camp. I hereby agree to indemnify Camp Izza against any claims of any third
+          parties (including, but not exclusively, members of the child's family and other camp participants) for
+          damages or losses incurred by them as a result of a child's participation in Camp Izza or presence on campus.
+          <br />I understand that registration is on a first-come, first serve basis, that my child spot will only be
+          reserved upon receipt of payment and that returned checks will incur a $25 fee.
+        </p>
+        <br />
 
+        <Table>
+          <thead>
+            <tr>
+              <th> Item</th>
+              <th className="center-td"> Quantity</th>
+              <th className="center-td"> Price</th>
+            </tr>
+          </thead>
+          <tbody>
+            {campWeeksSelected && campWeeksSelected.length > 0 ? (
+              campWeeksSelected.map((item: Camp_Week) => (
+                <tr key={item.id}>
+                  <td>
+                    <strong>
+                      {item.name}: {dateTimeToDate(item.start)} - {dateTimeToDate(item.end)}
+                    </strong>
+                    <br />
+                    Full Day: {dateTimeToTime(item.start)} - {dateTimeToTime(item.end)}
+                  </td>
+                  <td> 1 </td>
+                  <td> ${isEarlyBird ? item.early_cost : item.regular_cost} </td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td>
+                  <strong>No Weeks Selected</strong>
+                </td>
+              </tr>
+            )}
+            <tr>
+              <td>
+                <strong>Additional T Shirt(s)</strong>
+              </td>
+              <td> {numShirts} </td>
+              <td>
+                ${numShirts * shirtPrice} ({numShirts} x ${shirtPrice})
+              </td>
+            </tr>
+          </tbody>
+        </Table>
+        <br />
+
+        <div className="summaryBlock">
+          <h5> Order Summary </h5>
+          <Table>
+            <tbody>
+              <tr>
+                <td className="checkout"> Subtotal</td>
+                <td className="checkout"> ${total}</td>
+              </tr>
+              <tr>
+                <td className="checkout"> Credit</td>
+                <td className="checkout"> ${camper?.credit}</td>
+              </tr>
+              <tr>
+                <td> Order Due</td>
+                <td> ${camper ? total - camper?.credit : 0}</td>
+              </tr>
+            </tbody>
+          </Table>
+
+          <PayPalScriptProvider
+            options={{
+              "client-id": "AXAAL08JOUWnKxbfv1qpK2f_UEfhbNPh7ahJrnpsCBKpHlQUJI_5NePpekQ6DryGsXkw33N6f6R09VLL",
+            }}
+          >
+            <PayPalButtons
+              createOrder={createOrder}
+              onApprove={onApprove}
+              forceReRender={camper ? total - camper?.credit : 0}
+              style={{ color: "blue", label: "pay", height: 40 }}
+            />
+          </PayPalScriptProvider>
+        </div>
+      </Container>
+    </div>
+  );
 }
-
-export default Checkout;
-

@@ -20,6 +20,10 @@ export default function HouseholdForm() {
     lastName: "",
     email: "",
     phone: "",
+    guardian2FirstName: "",
+    guardian2LastName: "",
+    guardian2Email: "",
+    guardian2Phone: "",
     addressLine1: "",
     addressLine2: "",
     city: "",
@@ -80,6 +84,10 @@ export default function HouseholdForm() {
       firstName: values.firstName,
       lastName: values.lastName,
       phone: values.phone,
+      guardian2FirstName: values.guardian2FirstName,
+      guardian2LastName: values.guardian2LastName,
+      guardian2Email: values.guardian2Email,
+      guardian2Phone: values.guardian2Phone,
       addressLine1: values.addressLine1,
       addressLine2: values.addressLine2,
       city: values.city,
@@ -134,7 +142,7 @@ export default function HouseholdForm() {
         </p>
 
         <Form onSubmit={handleSubmit}>
-          <h5>My Information</h5>
+          <h5>Primary Guardian</h5>
           <Row>
             <Form.Group as={Col} controlId="guardian1FirstName">
               {/* TODO: make read only after initial set */}
@@ -157,7 +165,7 @@ export default function HouseholdForm() {
               </Form.Label>
               <Form.Control type="email" readOnly required value={values.email} />
             </Form.Group>
-            <Form.Group as={Col} controlId="guardian1PhoneNumber">
+            <Form.Group as={Col} controlId="guardian1Phone">
               <Form.Label>
                 <b>* </b>Phone Number
               </Form.Label>
@@ -172,34 +180,34 @@ export default function HouseholdForm() {
             </Form.Group>
           </Row>
 
-          {/* <br />
+          <br />
           <h5>Secondary Guardian</h5>
           <Row>
             <Form.Group as={Col} controlId="guardian2FirstName">
               <Form.Label>First Name</Form.Label>
-              <Form.Control />
+              <Form.Control value={values.guardian2FirstName} onChange={handleChange("guardian2FirstName")} />
             </Form.Group>
             <Form.Group as={Col} controlId="guardian2LastName">
               <Form.Label>Last Name</Form.Label>
-              <Form.Control />
+              <Form.Control value={values.guardian2LastName} onChange={handleChange("guardian2LastName")} />
             </Form.Group>
           </Row>
           <Row>
             <Form.Group as={Col} controlId="guardian2Email">
               <Form.Label>Email</Form.Label>
-              <Form.Control type="email" />
+              <Form.Control type="email" value={values.guardian2Email} onChange={handleChange("guardian2Email")} />
             </Form.Group>
-            <Form.Group as={Col} controlId="guardian2PhoneNumber">
-              <div className="phone">
-                <Row>
-                  <Form.Label>Phone Number</Form.Label>
-                </Row>
-                <Row>
-                  <Form.Control ref={input2} type="tel" />
-                </Row>
-              </div>
+            <Form.Group as={Col} controlId="guardian2Phone">
+              <Form.Label>Phone Number</Form.Label>
+              <input
+                className="form-control"
+                type="tel"
+                pattern="[0-9]{10}"
+                value={values.guardian2Phone}
+                onChange={handleChange("guardian2Phone")}
+              />
             </Form.Group>
-          </Row> */}
+          </Row>
 
           <br />
           <h5>Residence</h5>

@@ -18,6 +18,7 @@ export default function Login() {
     async (user: User) => {
       axios.get(process.env.REACT_APP_API + "api/users/getUser/" + user.uid).then((res) => {
         console.log(res.data);
+        setIsLoading(false);
         if (res.data.role === "parent") {
           history.replace("/parent");
         } else if (res.data.role === "counselor") {
@@ -34,7 +35,6 @@ export default function Login() {
     const unsubscribe = auth.onAuthStateChanged((user) => {
       if (user) {
         // console.log(user);
-        setIsLoading(false);
         routeUser(user);
       }
     });

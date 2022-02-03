@@ -6,9 +6,7 @@ import { Button, Container, Form, Row, Col } from "react-bootstrap";
 import { useHistory } from "react-router-dom";
 import { getAuth } from "firebase/auth";
 import axios from "axios";
-// import AuthService from "./services/auth-service";
-// import CamperService from "./services/camper-service";
-// import ParentService from "./services/parent-service";
+import { dateTimeToDateInput } from "./util/DateTimeUtil";
 
 export default function CamperForm() {
   const auth = getAuth();
@@ -51,7 +49,7 @@ export default function CamperForm() {
       axios
         .get(process.env.REACT_APP_API + "api/campers/getCamper/" + camper_id)
         .then((res) => {
-          setCamperValues({ ...res.data, dob: new Date(res.data.dob).toISOString().substring(0, 10) });
+          setCamperValues({ ...res.data, dob: dateTimeToDateInput(res.data.dob) });
         })
         .then(() => {
           axios
@@ -61,7 +59,7 @@ export default function CamperForm() {
             .then((res) => {
               setMedicalRecordValues({
                 ...res.data,
-                tetanusDate: new Date(res.data.tetanusDate).toISOString().substring(0, 10),
+                tetanusDate: dateTimeToDateInput(res.data.tetanusDate),
               });
             });
         });
@@ -70,6 +68,7 @@ export default function CamperForm() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setIsSaving(true);
     const camper_id = sessionStorage.getItem("camper_id");
     if (camper_id === "") {
       const res = await axios.post(process.env.REACT_APP_API + "api/campers/addCamper", {
@@ -94,6 +93,7 @@ export default function CamperForm() {
         }
       );
     }
+    setIsSaving(false);
     sessionStorage.removeItem("camper_id");
     history.push("/parent");
   };
@@ -107,13 +107,6 @@ export default function CamperForm() {
   };
 
   const handleDeleteCamper = async (e: { preventDefault: () => void }) => {
-    // e.preventDefault();
-    // let camperID = localStorage.getItem("currentChildID");
-    // if (camperID != null) {
-    //   await CamperService.delCamper(parseInt(camperID));
-    // }
-    // window.location.href = "#/Parent";
-    // window.location.reload();
     await axios.delete(process.env.REACT_APP_API + "api/campers/deleteCamper/" + sessionStorage.getItem("camper_id"));
     sessionStorage.removeItem("camper_id");
     history.push("/parent");
@@ -181,11 +174,7 @@ export default function CamperForm() {
               <Form.Control as="select" custom value={camperValues.gender} onChange={handleCamperChange("gender")}>
                 <option value="male">Male</option>
                 <option value="female">Female</option>
-                <option value="non-binary">Non-binary</option>
-                <option value="transgender">Transgender</option>
-                <option value="intersex">Intersex</option>
                 <option value="other">Other</option>
-                <option value="prefer not to say">I prefer not to say</option>
               </Form.Control>
             </Form.Group>
           </Row>
@@ -226,7 +215,7 @@ export default function CamperForm() {
               </Form.Label>
               <Form.Control as="select" custom value={camperValues.grade} onChange={handleCamperChange("grade")}>
                 <option value="0">Kindergarten</option>
-                {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map((grade) => (
+                {[1, 2, 3, 4, 5, 6, 7, 8].map((grade) => (
                   <option key={grade} value={grade}>
                     {grade}
                   </option>
@@ -398,11 +387,13 @@ export default function CamperForm() {
           <br />
           <hr />
           <br />
-          <div className="center">
-            <Button variant="danger" onClick={handleDeleteCamperForm}>
-              Delete Camper
-            </Button>
-          </div>
+          {sessionStorage.getItem("camper_id") && (
+            <div className="center">
+              <Button variant="danger" onClick={handleDeleteCamperForm}>
+                Delete Camper
+              </Button>
+            </div>
+          )}
 
           {showDelForm && <DelForm />}
         </Form>

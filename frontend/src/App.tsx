@@ -10,11 +10,11 @@ import SignupParent from "./SignupParent";
 import ResetPassword from "./ResetPassword";
 import ResetConfirmation from "./ResetConfirmation";
 import UpdatePassword from "./UpdatePassword";
-
 import Parent from "./Parent";
 import HouseholdForm from "./HouseholdForm";
-
 import CamperForm from "./CamperForm";
+import CamperScheduling from "./CamperScheduling";
+import Checkout from "./Checkout";
 
 import Admin from "./Admin";
 import Sessions from "./Sessions";
@@ -25,10 +25,7 @@ import BonusCamper from "./BonusCamper";
 import SignUpCounselor from "./NewSignupCounselor";
 import Pending from "./Pending";
 import ManageCounselors from "./ManageCounselors";
-
 import Profile from "./Profile";
-import Checkout from "./Checkout";
-import NewScheduling from "./NewScheduling";
 import Roster from "./Roster";
 import { NewManageCampers } from "./NewManageCampers";
 import Counselor from "./Counselor";
@@ -85,6 +82,9 @@ function App() {
               <Route exact path={"/parent"} component={Parent} />
               <Route exact path={"/parent/householdForm"} component={HouseholdForm} />
               <Route exact path={"/parent/camperForm"} component={CamperForm} />
+              <Route exact path={"/parent/camperScheduling"} component={CamperScheduling} />
+              <Route exact path={"/parent/checkout"} component={Checkout} />
+              <Route exact path={"/parent/completedTransaction"} component={CompletedTransaction} />
 
               <Route exact path={"/admin"} component={Admin} />
               <Route exact path={"/admin/managecampers"} component={NewManageCampers} />
@@ -103,9 +103,7 @@ function App() {
               <Route exact path={"/CamperInfo"} component={CamperInfo} />
 
               <Route exact path={"/Profile"} component={Profile} />
-              <Route exact path={"/NewScheduling"} component={NewScheduling} />
-              <Route exact path={"/Checkout"} component={Checkout} />
-              <Route exact path={"/CompletedTransaction"} component={CompletedTransaction} />
+
               <Route exact path={"/counselor"} component={Counselor} />
               <Route exact path={"/counselorInfo"} component={CounselorInfo} />
               <Route exact path={"/counselorForm"} component={CounselorForm} />

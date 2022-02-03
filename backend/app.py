@@ -34,12 +34,14 @@ def getUsers():
     rows = cursor.fetchall()
     return jsonify(rows)
 
+
 # A user
 @app.route("/users/getUser/<user_id>")
 def getUser(user_id):
     cursor.execute("select * from users where id = %s", (user_id,))
     row = cursor.fetchone()
     return jsonify(row)
+
 
 @app.route("/users/addUser", methods=["POST"])
 def addUser():
@@ -57,6 +59,7 @@ def getParents():
     rows = cursor.fetchall()
     return jsonify(rows)
 
+
 # A parent
 @app.route("/parents/getParent/<parent_id>")
 def getParent(parent_id):
@@ -64,26 +67,30 @@ def getParent(parent_id):
     row = cursor.fetchone()
     return jsonify(row)
 
+
 @app.route("/parents/addParent", methods=["POST"])
 def addParent():
     data = request.get_json()
-    cursor.execute("insert into parents (id, email, firstName, lastName, phone, addressLine1, addressLine2, city, "
-                "zipCode, state, country) values (%s, %s, %s, %s, %s, %s,%s, %s, %s,%s, %s)",
-                (data["id"], data["email"], data["firstName"], data["lastName"], data["phone"], data["addressLine1"],
-                data["addressLine2"] if "addressLine2" in data else "", data["city"], data["zipCode"],
-                data["state"], data["country"]))
+    cursor.execute("insert into parents (id, email, firstName, lastName, phone, guardian2FirstName, "
+                   "guardian2LastName, guardian2Email, guardian2Phone, addressLine1, addressLine2, city, zipCode, "
+                   "state, country) values (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)",
+                   (data["id"], data["email"], data["firstName"], data["lastName"], data["phone"],
+                    data["guardian2FirstName"], data["guardian2LastName"], data["guardian2Email"],
+                    data["guardian2Phone"], data["addressLine1"], data["addressLine2"], data["city"], data["zipCode"],
+                    data["state"], data["country"]))
     return jsonify({"status": "success"})
+
 
 @app.route("/parents/updateParent/<parent_id>", methods=["PUT"])
 def updateParent(parent_id):
     data = request.get_json()
-    cursor.execute("update parents set firstName=%s, lastName=%s, phone=%s, addressLine1=%s, addressLine2=%s, city=%s, "
-                   "zipCode=%s, state=%s, country=%s where id = %s",
-                   (data["firstName"], data["lastName"], data["phone"], data["addressLine1"],
-                    data["addressLine2"] if "addressLine2" in data else "", data["city"], data["zipCode"],
-                    data["state"], data["country"], parent_id))
+    cursor.execute("update parents set firstName=%s, lastName=%s, phone=%s, guardian2FirstName=%s, "
+                   "guardian2LastName=%s, guardian2Email=%s, guardian2Phone=%s, addressLine1=%s, addressLine2=%s, "
+                   "city=%s, zipCode=%s, state=%s, country=%s where id = %s",
+                   (data["firstName"], data["lastName"], data["phone"], data["guardian2FirstName"],
+                    data["guardian2LastName"], data["guardian2Email"], data["guardian2Phone"], data["addressLine1"],
+                    data["addressLine2"], data["city"], data["zipCode"], data["state"], data["country"], parent_id))
     return jsonify({"status": "success"})
-
 
 
 # COUNSELORS
@@ -132,6 +139,7 @@ def getCampers():
     cursor.execute("select * from campers")
     rows = cursor.fetchall()
     return jsonify(rows)
+
 
 # A camper
 @app.route("/campers/getCamper/<camper_id>")
@@ -215,7 +223,6 @@ def updateCounselor_Attendance(counselor_id):
     data = request.get_json()
     cursor.execute("update counselor_attendances set date=%s, present=%s, comment=%s where counselor_id = %s ",
                    (data["date"], data["present"], data["comment"], counselor_id))
-
     return jsonify({"status": "success"})
 
 
@@ -225,13 +232,12 @@ def addCounselor_Attendance():
     cursor.execute("insert into counselor_attendances (id, counselor_id, date, present, comment) "
                    "values (%s, %s, %s, %s, %s)",
                    (data["id"], data["counselor_id"], data["date"], data["present"], data["comment"]))
-    # db.commit()
     return jsonify({"status": "success"})
 
 
 # CAMPERS' ATTENDANCE
 # Attendance of all campers
-@app.route("/camper_attendances/getAll_Camper_Attendances")
+@app.route("/camper_attendances/getCamper_Attendances")
 def getCamper_Attendances():
     cursor.execute("select * from camper_attendances")
     rows = cursor.fetchall()
@@ -251,7 +257,6 @@ def updateCamper_Attendance(camper_id):
     data = request.get_json()
     cursor.execute("update camper_attendances set date=%s, present=%s, comment=%s where camper_id = %s ",
                    (data["date"], data["present"], data["comment"] if "comment" in data else "", camper_id))
-
     return jsonify({"status": "success"})
 
 
@@ -262,13 +267,12 @@ def addCamper_Attendance():
                    "values (%s, %s, %s, %s, %s, %s)",
                    (data["id"], data["camper_id"], data["date"], data["present"], data["pickedUp"],
                     data["comment"] if "comment" in data else ""))
-    # db.commit()
     return jsonify({"status": "success"})
 
 
 # CAMP WEEKS
 # All camp weeks
-@app.route("/camp_weeks/getAllCamp_Weeks")
+@app.route("/camp_weeks/getCamp_Weeks")
 def getCamp_Weeks():
     cursor.execute("select * from camp_weeks")
     rows = cursor.fetchall()
@@ -310,10 +314,10 @@ def deleteCamp_Week(camp_week_id):
 
 
 # REGISTERED CAMPER WEEKS
-@app.route("/registered_camper_weeks/getAllRegistered_Camper_Weeks")
-def getALlRegistered_Camper_Weeks():
+@app.route("/registered_camper_weeks/getRegistered_Camper_Weeks")
+def getRegistered_Camper_Weeks():
     cursor.execute("select * from registered_camper_weeks")
-    rows = cursor.fetchone()
+    rows = cursor.fetchall()
     return jsonify(rows)
 
 
@@ -327,15 +331,14 @@ def getRegistered_Camper_WeekByCamperID(camper_id):
 @app.route("/registered_camper_weeks/addRegistered_Camper_Week", methods=["POST"])
 def addRegistered_Camper_Week():
     data = request.get_json()
-    cursor.execute("insert into registered_camper_weeks (id, camper_id, camp_week_id) "
-                   "values (%s, %s, %s)", (data["id"], data["camper_id"], data["camp_week_id"]))
-    # db.commit()
-    return jsonify({"status": "success"})
+    cursor.execute("insert into registered_camper_weeks (camper_id, camp_week_id) "
+                   "values (%s, %s)", (data["camper_id"], data["camp_week_id"]))
+    return jsonify({"status": "success", "registered_camper_weeks_id": cursor.lastrowid})
 
 
 # REGISTERED COUNSELOR WEEKS
-@app.route("/registered_couselor_weeks/getAllRegistered_Counselor_Weeks")
-def getALlRegistered_Counselor_Weeks():
+@app.route("/registered_couselor_weeks/getRegistered_Counselor_Weeks")
+def getRegistered_Counselor_Weeks():
     cursor.execute("select * from registered_counselor_weeks")
     rows = cursor.fetchall()
     return jsonify(rows)
@@ -354,7 +357,6 @@ def updateRegistered_Counselor_Weeks(registered_counselor_weeks_id):
     data = request.get_json()
     cursor.execute("update registered_counselor_weeks set counselor_id=%s, camp_week_id=%s where id = %s ",
                    (data["counselor_id"], data["camp_week_id"], registered_counselor_weeks_id))
-
     return jsonify({"status": "success"})
 
 
@@ -364,12 +366,11 @@ def addRegistered_Counselor_Week():
     cursor.execute("insert into registered_counselor_weeks (id, counselor_id, camp_week_id) "
                    "values (%s, %s, %s)",
                    (data["id"], data["counselor_id"], data["camp_week_id"]))
-    # db.commit()
     return jsonify({"status": "success"})
 
 
 # CAMPERS' MEDICAL RECORDS
-@app.route("/camper_medical_records/getAllCamper_Medical_Records")
+@app.route("/camper_medical_records/getCamper_Medical_Records")
 def getAllCamper_Medical_Records():
     cursor.execute("select * from camper_medical_records")
     rows = cursor.fetchall()
@@ -411,7 +412,7 @@ def addCamper_Medical_Record():
 
 
 # COUNSELORS' MEDICAL RECORDS
-@app.route("/counselor_medical_records/getAllCounselor_Medical_Records")
+@app.route("/counselor_medical_records/getCounselor_Medical_Records")
 def getAllCounselor_Medical_Records():
     cursor.execute("select * from counselor_medical_records")
     rows = cursor.fetchall()
@@ -434,7 +435,6 @@ def updateCounselor_Medical_Record(counselor_id):
                    (data["doctorName"], data["doctorPhone"], data["insuranceCarrier"],
                     data["policyHolder"], data["illnesses"], data["allergies"], data["immunizations"],
                     data["medications"], data["accommodations"], counselor_id))
-
     return jsonify({"status": "success"})
 
 
@@ -448,7 +448,6 @@ def addCounselor_Medical_Record():
         (data["id"], data["counselor_id"], data["doctorName"], data["doctorPhone"], data["insuranceCarrier"],
          data["policyHolder"], data["illnesses"], data["allergies"], data["immunizations"],
          data["medications"], data["accommodations"]))
-    # db.commit()
     return jsonify({"status": "success"})
 
 
@@ -474,7 +473,6 @@ def updateGroup(group_id):
     data = request.get_json()
     cursor.execute("update `groups` set name=%s, camperLimit=%s where id = %s ",
                    (data["name"], data["camperLimit"], group_id))
-
     return jsonify({"status": "success"})
 
 
@@ -484,14 +482,12 @@ def addGroup():
     cursor.execute("insert into `groups` (id, name, camperLimit) "
                    "values (%s, %s, %s)",
                    (data["id"], data["name"], data["camperLimit"]))
-    # db.commit()
     return jsonify({"status": "success"})
 
 
 @app.route("/groups/deleteGroup/<int:group_id>", methods=["DELETE"])
 def deleteGroup(group_id):
     cursor.execute("delete from `groups` where id = %s ", (group_id,))
-
     return jsonify({"status": "success"})
 
 
@@ -526,7 +522,6 @@ def addEmergency_Contact():
                    "values (%s, %s, %s, %s, %s, %s)",
                    (data["user_id"], data["firstName"], data["lastName"], data["relation"],
                     data["phone"], data["authPickUp"]))
-    # db.commit()
     return jsonify({"status": "success"})
 
 
@@ -545,15 +540,16 @@ def getPayment_InformationByUser_id(user_id):
     return jsonify(row)
 
 
-#TODO: cannot add payment yet check everything once you get the add to work 
-@app.route("/payment_informations/addPayment_Information")
+# TODO: cannot add payment yet check everything once you get the add to work
+@app.route("/payment_informations/addPayment_Information", methods=["POST"])
 def addPayment_informations():
     data = request.get_json()
-    cursor.execute("insert into payment_informations (id, user_id, registered_camper_weeks_id, numShirts, totalCost, "
+    cursor.execute("insert into payment_informations (user_id, registered_camper_weeks_id, numShirts, totalCost, "
                    "totalPaidUSD, totalPaidCredit, transactionTime) "
-                   "values (%s, %s, %s, %s, %s, %s, %s, %s)",
-                   (data["id"], data["user_id"], data["registered_camper_weeks_id"], data["numShirts"],
-                    data["totalCost"], data["totalPaidUSD"], data["totalPaidCredit"], data["transactionTime"]))
+                   "values (%s, %s, %s, %s, %s, %s, %s)",
+                   (data["user_id"], data["registered_camper_weeks_id"] if "registered_camper_weeks_id" in data else
+                   None, data["numShirts"], data["totalCost"], data["totalPaidUSD"], data["totalPaidCredit"],
+                    data["transactionTime"]))
     # db.commit()
     return jsonify({"status": "success"})
 
@@ -566,10 +562,18 @@ def getShirts():
     rows = cursor.fetchall()
     return jsonify(rows)
 
+
 # A shirt
 @app.route("/shirts/getShirt/<shirt_id>")
 def getShirt(shirt_id):
     cursor.execute("select * from shirts where id = %s", (shirt_id,))
+    row = cursor.fetchone()
+    return jsonify(row)
+
+
+@app.route("/shirts/getShirtByShirtNameAndSize/<shirt_name>/<shirt_size>")
+def getShirtByShirtNameAndSize(shirt_name, shirt_size):
+    cursor.execute("select * from shirts where name = %s and size = %s ", (shirt_name, shirt_size))
     row = cursor.fetchone()
     return jsonify(row)
 
@@ -601,4 +605,5 @@ def deleteShirt(shirt_id):
 
 if __name__ == "__main__":
     from waitress import serve
+
     serve(app, host="0.0.0.0", port=os.environ.get("PORT", 8080))
