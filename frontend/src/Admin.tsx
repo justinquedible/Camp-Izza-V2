@@ -19,7 +19,7 @@ export default function AdminDashboard() {
         <br />
         <Row className="Admin-Buttons-rows">
           <Col>
-            <Button variant="outline-success" className="Admin-Button" href="/#/admin/managecampers">
+            <Button variant="outline-success" className="Admin-Button" href="/#/admin/manageCampers">
               <img src={campersIcon} alt="icon" />
               Campers
             </Button>

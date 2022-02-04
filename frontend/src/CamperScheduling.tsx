@@ -6,6 +6,8 @@ import { Button, Container, Form, Table } from "react-bootstrap";
 import "./HouseholdForm.css";
 import { useHistory } from "react-router-dom";
 import { dateTimeToTime, dateTimeToDate } from "./util/DateTimeUtil";
+import { filterAndSortWeeks } from "./util/FilterAndSortUtil";
+import { Camp_Week } from "./models/models";
 import axios from "axios";
 
 interface Camper {
@@ -13,17 +15,6 @@ interface Camper {
   lastName: string;
   shirtSize: string;
   numShirts: number;
-}
-
-interface Camp_Week {
-  id: number;
-  term: string;
-  name: string;
-  start: string;
-  end: string;
-  early_cost: number;
-  regular_cost: number;
-  early_cut_off: string;
 }
 
 export default function CamperScheduling() {
@@ -52,7 +43,7 @@ export default function CamperScheduling() {
       await axios.get(process.env.REACT_APP_API + "api/camp_weeks/getCamp_Weeks").then((response) => {
         setCampWeeks(filterAndSortWeeks(response.data));
         setEarlyCutOffDate(
-          new Date(response.data[0].early_cut_off.substring(0, response.data[0].early_cut_off.length - 3))
+          new Date(response.data[0].earlyCutOff.substring(0, response.data[0].earlyCutOff.length - 3))
             .toDateString()
             .substring(4, 15)
         );
@@ -69,14 +60,6 @@ export default function CamperScheduling() {
         });
     })();
   }, []);
-
-  const filterAndSortWeeks = (weeks: Camp_Week[]) => {
-    const currentYear = new Date().getFullYear();
-    weeks = weeks.filter((week) => new Date(week.start).getFullYear() === currentYear);
-    return weeks.sort((a, b) => {
-      return new Date(a.start).getTime() - new Date(b.start).getTime();
-    });
-  };
 
   const handleSubmit = async (e: { preventDefault: () => void }) => {
     e.preventDefault();
@@ -126,11 +109,11 @@ export default function CamperScheduling() {
         </p>
         <br />
         <p>
-          Camp Prices (Early Bird by {earlyCutOffDate}): <u>${campWeeks ? campWeeks[0].early_cost : ""}/week</u>
+          Camp Prices (Early Bird by {earlyCutOffDate}): <u>${campWeeks ? campWeeks[0].earlyCost : ""}/week</u>
         </p>
         <br />
         <p>
-          Camp Prices (Regular): <u>${campWeeks ? campWeeks[0].regular_cost : ""}/week</u>
+          Camp Prices (Regular): <u>${campWeeks ? campWeeks[0].regularCost : ""}/week</u>
         </p>
         <br />
         <br />

@@ -290,19 +290,20 @@ def getCamp_Week(camp_weeks_id):
 @app.route("/camp_weeks/updateCamp_Weeks/<int:camp_week_id>", methods=["PUT"])
 def updateCamp_Week(camp_week_id):
     data = request.get_json()
-    cursor.execute("update camp_weeks set name=%s, start=%s, end=%s, cost=%s where id = %s ",
-                   (data["name"], data["start"], data["end"], data["cost"], camp_week_id))
-
+    cursor.execute("update camp_weeks set term=%s, name=%s, start=%s, end=%s, earlyCost=%s, regularCost=%s, "
+                   "earlyCutOff=%s where id = %s ",
+                   (data["term"], data["name"], data["start"], data["end"], data["earlyCost"], data["regularCost"],
+                    data["earlyCutOff"], camp_week_id))
     return jsonify({"status": "success"})
 
 
 @app.route("/camp_weeks/addCamp_Weeks", methods=["POST"])
 def addCamp_Week():
     data = request.get_json()
-    cursor.execute("insert into camp_weeks (id, name, start, end, cost) "
-                   "values (%s, %s, %s, %s, %s)",
-                   (data["id"], data["name"], data["start"], data["end"], data["cost"]))
-    # db.commit()
+    cursor.execute("insert into camp_weeks (term, name, start, end, earlyCost, regularCost, earlyCutOff) "
+                   "values (%s, %s, %s, %s, %s, %s, %s)",
+                   (data["term"], data["name"], data["start"], data["end"], data["earlyCost"], data["regularCost"],
+                    data["earlyCutOff"]))
     return jsonify({"status": "success"})
 
 

@@ -16,8 +16,9 @@ import CamperForm from "./CamperForm";
 import CamperScheduling from "./CamperScheduling";
 import Checkout from "./Checkout";
 import Admin from "./Admin";
-
 import Sessions from "./Sessions";
+
+import ManageCampers from "./ManageCampers";
 import Groups from "./Groups";
 import AdminAttendance from "./AdminAttendance";
 import AttendanceReport from "./AttendanceReport";
@@ -27,7 +28,7 @@ import Pending from "./Pending";
 import ManageCounselors from "./ManageCounselors";
 import Profile from "./Profile";
 import Roster from "./Roster";
-import { NewManageCampers } from "./NewManageCampers";
+
 import Counselor from "./Counselor";
 import CounselorAttendance from "./CounselorAttendance";
 import EmergencyForm from "./EmergencyForm";
@@ -88,9 +89,9 @@ function App() {
               <Route exact path={"/parent/completedTransaction"} component={CompletedTransaction} />
               {/* Admin */}
               <Route exact path={"/admin"} component={Admin} />
-
-              <Route exact path={"/admin/managecampers"} component={NewManageCampers} />
               <Route exact path={"/admin/sessions"} component={Sessions} />
+
+              <Route exact path={"/admin/manageCampers"} component={ManageCampers} />
               <Route exact path={"/admin/groups"} component={Groups} />
               <Route exact path={"/admin/attendance"} component={AdminAttendance} />
               <Route exact path={"/admin/attendance/bonuscamper"} component={BonusCamper} />

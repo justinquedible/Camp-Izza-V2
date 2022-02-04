@@ -14,6 +14,7 @@ export default function CamperForm() {
   const [showDelForm, setDelForm] = React.useState(false);
   const [isSaving, setIsSaving] = React.useState(false);
   const [isNameReadOnly, setIsNameReadOnly] = React.useState(false);
+  const camper_id = sessionStorage.getItem("camper_id");
 
   const [camperValues, setCamperValues] = React.useState({
     firstName: "",
@@ -67,7 +68,6 @@ export default function CamperForm() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSaving(true);
-    const camper_id = sessionStorage.getItem("camper_id");
     if (camper_id === "") {
       const res = await axios.post(process.env.REACT_APP_API + "api/campers/addCamper", {
         parent_id: auth.currentUser?.uid,
@@ -148,7 +148,7 @@ export default function CamperForm() {
         <p>
           <b>*</b> Indicates a mandatory field.
         </p>
-        <p>Note: Please email omarezz@gmail.com to change camper's name.</p>
+        {camper_id ? <p>Note: Please email info@campizza.com to change camper's name.</p> : null}
 
         <Form onSubmit={handleSubmit}>
           <h5>Camper Info</h5>

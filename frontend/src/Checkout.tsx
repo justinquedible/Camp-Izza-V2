@@ -7,18 +7,8 @@ import { useHistory } from "react-router-dom";
 import axios from "axios";
 import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js";
 import { dateTimeToDate, dateTimeToTime, dateTimeToDateInput, dateTimeToMilitaryTime } from "./util/DateTimeUtil";
+import { Camp_Week } from "./models/models";
 import { getAuth, User } from "firebase/auth";
-
-interface Camp_Week {
-  id: number;
-  term: string;
-  name: string;
-  start: string;
-  end: string;
-  early_cost: number;
-  regular_cost: number;
-  early_cut_off: string;
-}
 
 interface Camper {
   id: number;
@@ -73,16 +63,16 @@ export default function Checkout() {
         const weeksSelected = filterAndSortWeeks(response.data);
         setCampWeeksSelected(weeksSelected);
         let isEarlyBird = false;
-        if (Date.now() < Date.parse(response.data[0].early_cut_off)) {
+        if (Date.now() < Date.parse(response.data[0].earlyCutOff)) {
           isEarlyBird = true;
           setIsEarlyBird(isEarlyBird);
         }
         let price = 0;
         for (let week of weeksSelected) {
           if (isEarlyBird) {
-            price += week.early_cost;
+            price += week.earlyCost;
           } else {
-            price += week.regular_cost;
+            price += week.regularCost;
           }
         }
         setTotal(numShirts * shirtPrice + price);
@@ -233,7 +223,7 @@ export default function Checkout() {
                     Full Day: {dateTimeToTime(item.start)} - {dateTimeToTime(item.end)}
                   </td>
                   <td> 1 </td>
-                  <td> ${isEarlyBird ? item.early_cost : item.regular_cost} </td>
+                  <td> ${isEarlyBird ? item.earlyCost : item.regularCost} </td>
                 </tr>
               ))
             ) : (
