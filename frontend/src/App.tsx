@@ -15,8 +15,8 @@ import HouseholdForm from "./HouseholdForm";
 import CamperForm from "./CamperForm";
 import CamperScheduling from "./CamperScheduling";
 import Checkout from "./Checkout";
-
 import Admin from "./Admin";
+
 import Sessions from "./Sessions";
 import Groups from "./Groups";
 import AdminAttendance from "./AdminAttendance";
@@ -71,6 +71,7 @@ function App() {
         <HashRouter>
           <div>
             <Switch>
+              {/* Login and Registration */}
               <Route exact path={"/"} component={Login} />
               <Route exact path={"/home"} component={Login} />
               <Route exact path={"/login"} component={Login} />
@@ -78,15 +79,16 @@ function App() {
               <Route exact path={"/resetPassword"} component={ResetPassword} />
               <Route exact path={"/resetConfirmation"} component={ResetConfirmation} />
               <Route exact path={"/updatePassword"} component={UpdatePassword} />
-
+              {/* Parent */}
               <Route exact path={"/parent"} component={Parent} />
               <Route exact path={"/parent/householdForm"} component={HouseholdForm} />
               <Route exact path={"/parent/camperForm"} component={CamperForm} />
               <Route exact path={"/parent/camperScheduling"} component={CamperScheduling} />
               <Route exact path={"/parent/checkout"} component={Checkout} />
               <Route exact path={"/parent/completedTransaction"} component={CompletedTransaction} />
-
+              {/* Admin */}
               <Route exact path={"/admin"} component={Admin} />
+
               <Route exact path={"/admin/managecampers"} component={NewManageCampers} />
               <Route exact path={"/admin/sessions"} component={Sessions} />
               <Route exact path={"/admin/groups"} component={Groups} />

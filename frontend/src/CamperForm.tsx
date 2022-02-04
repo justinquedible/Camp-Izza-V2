@@ -13,19 +13,16 @@ export default function CamperForm() {
   const history = useHistory();
   const [showDelForm, setDelForm] = React.useState(false);
   const [isSaving, setIsSaving] = React.useState(false);
-
-  // For making first and last names readonly if its already set
-  const [initFirstName, setInitFirstName] = React.useState("");
-  const [initLastName, setInitLastName] = React.useState("");
+  const [isNameReadOnly, setIsNameReadOnly] = React.useState(false);
 
   const [camperValues, setCamperValues] = React.useState({
     firstName: "",
     lastName: "",
-    gender: "",
+    gender: "male",
     dob: "",
     grade: 0,
     school: "",
-    shirtSize: "",
+    shirtSize: "M",
   });
 
   const [medicalRecordValues, setMedicalRecordValues] = React.useState({
@@ -50,6 +47,7 @@ export default function CamperForm() {
         .get(process.env.REACT_APP_API + "api/campers/getCamper/" + camper_id)
         .then((res) => {
           setCamperValues({ ...res.data, dob: dateTimeToDateInput(res.data.dob) });
+          setIsNameReadOnly(true);
         })
         .then(() => {
           axios
@@ -75,7 +73,7 @@ export default function CamperForm() {
         parent_id: auth.currentUser?.uid,
         ...camperValues,
         credit: 0,
-        numShirts: 0,
+        numShirts: 1,
         paid: 0,
       });
       await axios.post(process.env.REACT_APP_API + "api/camper_medical_records/addCamper_Medical_Record", {
@@ -159,19 +157,35 @@ export default function CamperForm() {
               <Form.Label>
                 <b>* </b>First Name
               </Form.Label>
-              <Form.Control required value={camperValues.firstName} onChange={handleCamperChange("firstName")} />
+              <Form.Control
+                required
+                readOnly={isNameReadOnly}
+                value={camperValues.firstName}
+                onChange={handleCamperChange("firstName")}
+              />
             </Form.Group>
             <Form.Group as={Col} controlId="camperLirstName">
               <Form.Label>
                 <b>* </b>Last Name
               </Form.Label>
-              <Form.Control required value={camperValues.lastName} onChange={handleCamperChange("lastName")} />
+              <Form.Control
+                required
+                readOnly={isNameReadOnly}
+                value={camperValues.lastName}
+                onChange={handleCamperChange("lastName")}
+              />
             </Form.Group>
             <Form.Group as={Col} xs="3" controlId="camperGender">
               <Form.Label>
                 <b>* </b>Gender
               </Form.Label>
-              <Form.Control as="select" custom value={camperValues.gender} onChange={handleCamperChange("gender")}>
+              <Form.Control
+                as="select"
+                custom
+                required
+                value={camperValues.gender}
+                onChange={handleCamperChange("gender")}
+              >
                 <option value="male">Male</option>
                 <option value="female">Female</option>
                 <option value="other">Other</option>
@@ -187,6 +201,7 @@ export default function CamperForm() {
                 className="form-control"
                 type="date"
                 value={camperValues.dob}
+                required
                 onChange={handleCamperChange("dob")}
               />
             </Form.Group>
@@ -197,6 +212,7 @@ export default function CamperForm() {
               <Form.Control
                 as="select"
                 custom
+                required
                 value={camperValues.shirtSize}
                 onChange={handleCamperChange("shirtSize")}
               >
@@ -211,10 +227,16 @@ export default function CamperForm() {
           <Row>
             <Form.Group as={Col} controlId="camperGrade">
               <Form.Label>
-                <b>* </b>Grade Level
+                <b>* </b>Grade Level in Upcoming Fall
               </Form.Label>
-              <Form.Control as="select" custom value={camperValues.grade} onChange={handleCamperChange("grade")}>
-                <option value="0">Kindergarten</option>
+              <Form.Control
+                as="select"
+                custom
+                required
+                value={camperValues.grade}
+                onChange={handleCamperChange("grade")}
+              >
+                <option value={0}>Kindergarten</option>
                 {[1, 2, 3, 4, 5, 6, 7, 8].map((grade) => (
                   <option key={grade} value={grade}>
                     {grade}
@@ -251,6 +273,7 @@ export default function CamperForm() {
                 className="form-control"
                 type="tel"
                 pattern="[0-9]{10}"
+                placeholder="6261234567"
                 required
                 value={medicalRecordValues.doctorPhone}
                 onChange={handleMedicalRecordChange("doctorPhone")}
@@ -360,6 +383,7 @@ export default function CamperForm() {
               <input
                 className="form-control"
                 type="date"
+                required
                 value={medicalRecordValues.tetanusDate}
                 onChange={handleMedicalRecordChange("tetanusDate")}
               />

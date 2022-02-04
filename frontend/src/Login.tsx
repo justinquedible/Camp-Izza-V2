@@ -17,7 +17,7 @@ export default function Login() {
   const routeUser = React.useCallback(
     async (user: User) => {
       axios.get(process.env.REACT_APP_API + "api/users/getUser/" + user.uid).then((res) => {
-        console.log(res.data);
+        // console.log(res.data);
         setIsLoading(false);
         if (res.data.role === "parent") {
           history.replace("/parent");

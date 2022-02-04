@@ -173,6 +173,7 @@ export default function HouseholdForm() {
                 className="form-control"
                 type="tel"
                 pattern="[0-9]{10}"
+                placeholder="6261234567"
                 required
                 value={values.phone}
                 onChange={handleChange("phone")}
@@ -203,6 +204,7 @@ export default function HouseholdForm() {
                 className="form-control"
                 type="tel"
                 pattern="[0-9]{10}"
+                placeholder="6261234567"
                 value={values.guardian2Phone}
                 onChange={handleChange("guardian2Phone")}
               />
@@ -294,6 +296,7 @@ export default function HouseholdForm() {
                 className="form-control"
                 type="tel"
                 pattern="[0-9]{10}"
+                placeholder="6261234567"
                 required
                 value={values.emergency1Phone}
                 onChange={handleChange("emergency1Phone")}
@@ -354,6 +357,7 @@ export default function HouseholdForm() {
                 className="form-control"
                 type="tel"
                 pattern="[0-9]{10}"
+                placeholder="6261234567"
                 required
                 value={values.emergency2Phone}
                 onChange={handleChange("emergency2Phone")}
