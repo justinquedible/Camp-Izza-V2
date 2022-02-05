@@ -117,7 +117,6 @@ def addCounselor():
                    "approved, active) values (%s, %s, %s, %s, %s, %s,%s, %s, %s,%s)",
                    (data["id"], data["email"], data["firstName"], data["lastName"], data["gender"], data["dob"],
                     data["phone"], data["altphone"], data["approved"], data["active"]))
-    # db.commit()
     return jsonify({"status": "success"})
 
 
@@ -128,7 +127,6 @@ def updateCounselors(counselor_id):
                    " altphone=%s,approved=%s, active=%s where id = %s",
                    (data["email"], data["firstName"], data["lastName"], data["gender"], data["dob"],
                     data["phone"], data["altphone"], data["approved"], data["active"], counselor_id))
-    # db.commit()
     return jsonify({"status": "success"})
 
 
@@ -173,7 +171,6 @@ def updateCamper(camper_id):
                    "shirtSize=%s, credit=%s, numShirts=%s,paid=%s where id = %s",
                    (data["firstName"], data["lastName"], data["gender"], data["dob"], data["grade"],
                     data["school"], data["shirtSize"], data["credit"], data["numShirts"], data["paid"], camper_id))
-    # db.commit()
     return jsonify({"status": "success"})
 
 
@@ -332,8 +329,8 @@ def getRegistered_Camper_WeekByCamperID(camper_id):
 @app.route("/registered_camper_weeks/addRegistered_Camper_Week", methods=["POST"])
 def addRegistered_Camper_Week():
     data = request.get_json()
-    cursor.execute("insert into registered_camper_weeks (camper_id, camp_week_id) "
-                   "values (%s, %s)", (data["camper_id"], data["camp_week_id"]))
+    cursor.execute("insert into registered_camper_weeks (camper_id, camp_week_id, group_id) "
+                   "values (%s, %s, %s)", (data["camper_id"], data["camp_week_id"], data["group_id"]))
     return jsonify({"status": "success", "registered_camper_weeks_id": cursor.lastrowid})
 
 
@@ -356,17 +353,17 @@ def getRegistered_Counselor_WeekByCounselorID(counselor_id):
            methods=["PUT"])
 def updateRegistered_Counselor_Weeks(registered_counselor_weeks_id):
     data = request.get_json()
-    cursor.execute("update registered_counselor_weeks set counselor_id=%s, camp_week_id=%s where id = %s ",
-                   (data["counselor_id"], data["camp_week_id"], registered_counselor_weeks_id))
+    cursor.execute("update registered_counselor_weeks set counselor_id=%s, camp_week_id=%s, group_id=%s where id = %s ",
+                   (data["counselor_id"], data["camp_week_id"], data["group_id"], registered_counselor_weeks_id))
     return jsonify({"status": "success"})
 
 
 @app.route("/registered_counselor_weeks/addRegistered_Counselor_Week", methods=["POST"])
 def addRegistered_Counselor_Week():
     data = request.get_json()
-    cursor.execute("insert into registered_counselor_weeks (id, counselor_id, camp_week_id) "
+    cursor.execute("insert into registered_counselor_weeks (counselor_id, camp_week_id, group_id) "
                    "values (%s, %s, %s)",
-                   (data["id"], data["counselor_id"], data["camp_week_id"]))
+                   (data["counselor_id"], data["camp_week_id"], data["group_id"]))
     return jsonify({"status": "success"})
 
 
