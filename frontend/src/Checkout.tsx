@@ -35,10 +35,11 @@ export default function Checkout() {
           setParent(response.data);
           console.log(response.data);
         });
+        await fetchData();
       }
     });
 
-    (async () => {
+    const fetchData = async () => {
       let shirtPrice = 0;
       await axios
         .get(process.env.REACT_APP_API + "api/campers/getCamper/" + sessionStorage.getItem("camper_id"))
@@ -71,7 +72,7 @@ export default function Checkout() {
         }
         setTotal(numShirts * shirtPrice + price);
       });
-    })();
+    };
     return unsubscribe;
   }, [auth, numShirts]);
 
@@ -87,7 +88,7 @@ export default function Checkout() {
   };
 
   const onApprove = async () => {
-    // Update camper credit, numShirts, paid
+    // Update camper numShirts, paid
     await axios.put(process.env.REACT_APP_API + "api/campers/updateCamper/" + camper?.id, {
       ...camper,
       dob: camper?.dob ? dateTimeToDateInput(camper.dob) : "",
@@ -95,6 +96,8 @@ export default function Checkout() {
       numShirts: camper ? camper.numShirts + numShirts : numShirts,
       paid: camper ? camper.paid + total : total,
     });
+
+    // Update parent credit to 0
 
     // Post to registered_camper_weeks and payment_informations, one for each campWeeksSelected
     const currentDateTime =
