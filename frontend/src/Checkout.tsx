@@ -7,19 +7,8 @@ import { useHistory } from "react-router-dom";
 import axios from "axios";
 import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js";
 import { dateTimeToDate, dateTimeToTime, dateTimeToDateInput, dateTimeToMilitaryTime } from "./util/DateTimeUtil";
-import { Camp_Week } from "./models/models";
+import { Camp_Week, Camper, Parent } from "./models/models";
 import { getAuth, User } from "firebase/auth";
-
-interface Camper {
-  id: number;
-  firstName: string;
-  lastName: string;
-  dob: string;
-  shirtSize: string;
-  numShirts: number;
-  paid: number;
-  credit: number;
-}
 
 export default function Checkout() {
   const history = useHistory();
@@ -29,6 +18,7 @@ export default function Checkout() {
   const numShirts = numShirtsStr ? parseInt(numShirtsStr) : 0;
 
   const [user, setUser] = React.useState<User>();
+  const [parent, setParent] = React.useState<Parent>();
   const [camper, setCamper] = React.useState<Camper>();
   const [campWeeksSelected, setCampWeeksSelected] = React.useState<Camp_Week[]>();
   const [shirtPrice, setShirtPrice] = React.useState(0);
@@ -38,9 +28,13 @@ export default function Checkout() {
   // const [orderID, setOrderID] = React.useState();
 
   React.useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged((user) => {
+    const unsubscribe = auth.onAuthStateChanged(async (user) => {
       if (user) {
         setUser(user);
+        await axios.get(process.env.REACT_APP_API + "api/parents/getParent/" + user.uid).then((response) => {
+          setParent(response.data);
+          console.log(response.data);
+        });
       }
     });
 
@@ -123,8 +117,8 @@ export default function Checkout() {
               registered_camper_weeks_id: response.data.registered_camper_weeks_id,
               numShirts: 0,
               totalCost: total,
-              totalPaidUSD: camper ? total - camper?.credit : 0,
-              totalPaidCredit: camper?.credit,
+              totalPaidUSD: parent ? total - parent?.credit : 0,
+              totalPaidCredit: parent?.credit,
               transactionTime: currentDateTime,
             });
           });
@@ -135,8 +129,8 @@ export default function Checkout() {
         user_id: user?.uid,
         numShirts: numShirts,
         totalCost: total,
-        totalPaidUSD: camper ? total - camper?.credit : 0,
-        totalPaidCredit: camper?.credit,
+        totalPaidUSD: parent ? total - parent?.credit : 0,
+        totalPaidCredit: parent?.credit,
         transactionTime: currentDateTime,
       });
     }
@@ -150,7 +144,7 @@ export default function Checkout() {
         purchase_units: [
           {
             amount: {
-              value: camper ? total - camper?.credit : 0,
+              value: parent ? total - parent?.credit : 0,
               currency: "USD",
             },
           },
@@ -259,11 +253,11 @@ export default function Checkout() {
               </tr>
               <tr>
                 <td className="checkout"> Credit</td>
-                <td className="checkout"> ${camper?.credit}</td>
+                <td className="checkout"> ${parent?.credit}</td>
               </tr>
               <tr>
                 <td> Order Due</td>
-                <td> ${camper ? total - camper?.credit : 0}</td>
+                <td> ${parent ? total - parent?.credit : 0}</td>
               </tr>
             </tbody>
           </Table>
@@ -276,7 +270,7 @@ export default function Checkout() {
             <PayPalButtons
               createOrder={createOrder}
               onApprove={onApprove}
-              forceReRender={camper ? total - camper?.credit : 0}
+              forceReRender={parent ? total - parent?.credit : 0}
               style={{ color: "blue", label: "pay", height: 40 }}
             />
           </PayPalScriptProvider>

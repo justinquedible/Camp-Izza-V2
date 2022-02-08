@@ -7,6 +7,7 @@ import { useHistory } from "react-router-dom";
 import { getAuth } from "firebase/auth";
 import axios from "axios";
 import { dateTimeToDateInput } from "./util/DateTimeUtil";
+import { Camper } from "./models/models";
 
 export default function CamperForm() {
   const auth = getAuth();
@@ -16,7 +17,9 @@ export default function CamperForm() {
   const [isNameReadOnly, setIsNameReadOnly] = React.useState(false);
   const camper_id = sessionStorage.getItem("camper_id");
 
-  const [camperValues, setCamperValues] = React.useState({
+  const [camperValues, setCamperValues] = React.useState<Camper>({
+    id: 0,
+    parent_id: "",
     firstName: "",
     lastName: "",
     gender: "male",
@@ -24,6 +27,8 @@ export default function CamperForm() {
     grade: 0,
     school: "",
     shirtSize: "M",
+    numShirts: 1,
+    paid: 0,
   });
 
   const [medicalRecordValues, setMedicalRecordValues] = React.useState({
@@ -70,11 +75,8 @@ export default function CamperForm() {
     setIsSaving(true);
     if (camper_id === "") {
       const res = await axios.post(process.env.REACT_APP_API + "api/campers/addCamper", {
-        parent_id: auth.currentUser?.uid,
         ...camperValues,
-        credit: 0,
-        numShirts: 1,
-        paid: 0,
+        parent_id: auth.currentUser?.uid,
       });
       await axios.post(process.env.REACT_APP_API + "api/camper_medical_records/addCamper_Medical_Record", {
         camper_id: res.data.camper_id,

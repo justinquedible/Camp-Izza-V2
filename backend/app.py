@@ -73,11 +73,11 @@ def addParent():
     data = request.get_json()
     cursor.execute("insert into parents (id, email, firstName, lastName, phone, guardian2FirstName, "
                    "guardian2LastName, guardian2Email, guardian2Phone, addressLine1, addressLine2, city, zipCode, "
-                   "state, country) values (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)",
+                   "state, country, credit) values (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)",
                    (data["id"], data["email"], data["firstName"], data["lastName"], data["phone"],
                     data["guardian2FirstName"], data["guardian2LastName"], data["guardian2Email"],
                     data["guardian2Phone"], data["addressLine1"], data["addressLine2"], data["city"], data["zipCode"],
-                    data["state"], data["country"]))
+                    data["state"], data["country"], data["credit"]))
     return jsonify({"status": "success"})
 
 
@@ -86,10 +86,10 @@ def updateParent(parent_id):
     data = request.get_json()
     cursor.execute("update parents set firstName=%s, lastName=%s, phone=%s, guardian2FirstName=%s, "
                    "guardian2LastName=%s, guardian2Email=%s, guardian2Phone=%s, addressLine1=%s, addressLine2=%s, "
-                   "city=%s, zipCode=%s, state=%s, country=%s where id = %s",
+                   "city=%s, zipCode=%s, state=%s, country=%s, credit=%s where id = %s",
                    (data["firstName"], data["lastName"], data["phone"], data["guardian2FirstName"],
                     data["guardian2LastName"], data["guardian2Email"], data["guardian2Phone"], data["addressLine1"],
-                    data["addressLine2"], data["city"], data["zipCode"], data["state"], data["country"], parent_id))
+                    data["addressLine2"], data["city"], data["zipCode"], data["state"], data["country"], data["credit"], parent_id))
     return jsonify({"status": "success"})
 
 
@@ -158,9 +158,9 @@ def getCamperByParent_id(parent_id):
 def addCamper():
     data = request.get_json()
     cursor.execute("insert into campers (parent_id, firstName, lastName, gender, dob, grade, school, "
-                   "shirtSize, credit, numShirts, paid) values (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)",
+                   "shirtSize, numShirts, paid) values (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)",
                    (data["parent_id"], data["firstName"], data["lastName"], data["gender"], data["dob"],
-                    data["grade"], data["school"], data["shirtSize"], data["credit"], data["numShirts"], data["paid"]))
+                    data["grade"], data["school"], data["shirtSize"], data["numShirts"], data["paid"]))
     return jsonify({"status": "success", "camper_id": cursor.lastrowid})
 
 
@@ -168,9 +168,9 @@ def addCamper():
 def updateCamper(camper_id):
     data = request.get_json()
     cursor.execute("update campers set firstName=%s, lastName=%s, gender=%s, dob=%s,  grade=%s, school=%s, "
-                   "shirtSize=%s, credit=%s, numShirts=%s,paid=%s where id = %s",
+                   "shirtSize=%s, numShirts=%s, paid=%s where id = %s",
                    (data["firstName"], data["lastName"], data["gender"], data["dob"], data["grade"],
-                    data["school"], data["shirtSize"], data["credit"], data["numShirts"], data["paid"], camper_id))
+                    data["school"], data["shirtSize"], data["numShirts"], data["paid"], camper_id))
     return jsonify({"status": "success"})
 
 
@@ -490,7 +490,7 @@ def deleteGroup(group_id):
 
 
 # EMERGENCY CONTACTS
-@app.route("/emergency_contacts/getEmergency_Contact")
+@app.route("/emergency_contacts/getEmergency_Contacts")
 def getEmergency_Contact():
     cursor.execute("select * from emergency_contacts")
     rows = cursor.fetchall()
