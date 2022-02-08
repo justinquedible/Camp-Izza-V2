@@ -4,7 +4,7 @@ import React from "react";
 import { Button, Container, Form, Row, Col } from "react-bootstrap";
 import "./Dashboard.css";
 import { dateTimeToDateTimeInput, dateTimeToDateInput } from "./util/DateTimeUtil";
-import { filterAndSortWeeks } from "./util/FilterAndSortUtil";
+import { filterAndSortWeeksCurrentYear } from "./util/FilterAndSortUtil";
 import { Camp_Week } from "./models/models";
 import axios from "axios";
 
@@ -23,7 +23,7 @@ export default function Sessions() {
           week.end = dateTimeToDateTimeInput(week.end);
           week.earlyCutOff = dateTimeToDateInput(week.earlyCutOff);
         }
-        const sortedWeeks = filterAndSortWeeks(response.data);
+        const sortedWeeks = filterAndSortWeeksCurrentYear(response.data);
         setCampWeeks(sortedWeeks);
         setEarlyCutOff(dateTimeToDateInput(sortedWeeks[0].earlyCutOff));
         setEarlyCost(sortedWeeks[0].earlyCost);

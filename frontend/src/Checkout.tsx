@@ -7,6 +7,7 @@ import { useHistory } from "react-router-dom";
 import axios from "axios";
 import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js";
 import { dateTimeToDate, dateTimeToTime, dateTimeToDateInput, dateTimeToMilitaryTime } from "./util/DateTimeUtil";
+import { sortWeeks } from "./util/FilterAndSortUtil";
 import { Camp_Week, Camper, Parent } from "./models/models";
 import { getAuth, User } from "firebase/auth";
 
@@ -55,7 +56,7 @@ export default function Checkout() {
         });
       await axios.get(process.env.REACT_APP_API + "api/camp_weeks/getCamp_Weeks").then((response) => {
         sessionStorage.getItem("weeksSelected");
-        const weeksSelected = filterAndSortWeeks(response.data);
+        const weeksSelected = filterAndSortWeeksSelected(response.data);
         setCampWeeksSelected(weeksSelected);
         let isEarlyBird = false;
         if (Date.now() < Date.parse(response.data[0].earlyCutOff)) {
@@ -76,15 +77,13 @@ export default function Checkout() {
     return unsubscribe;
   }, [auth, numShirts]);
 
-  const filterAndSortWeeks = (weeks: Camp_Week[]) => {
+  const filterAndSortWeeksSelected = (weeks: Camp_Week[]) => {
     const currentYear = new Date().getFullYear();
     const weeksSelected = sessionStorage.getItem("weeksSelected")?.split(",");
     weeks = weeks.filter(
       (week) => new Date(week.start).getFullYear() === currentYear && weeksSelected?.includes(week.id.toString())
     );
-    return weeks.sort((a, b) => {
-      return new Date(a.start).getTime() - new Date(b.start).getTime();
-    });
+    return sortWeeks(weeks);
   };
 
   const onApprove = async () => {

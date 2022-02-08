@@ -6,7 +6,7 @@ import { Button, Container, Form, Table } from "react-bootstrap";
 import "./HouseholdForm.css";
 import { useHistory } from "react-router-dom";
 import { dateTimeToTime, dateTimeToDate } from "./util/DateTimeUtil";
-import { filterAndSortWeeks } from "./util/FilterAndSortUtil";
+import { filterAndSortWeeksCurrentYear } from "./util/FilterAndSortUtil";
 import { Camp_Week, Camper } from "./models/models";
 import axios from "axios";
 
@@ -34,7 +34,7 @@ export default function CamperScheduling() {
           // console.log(response.data);
         });
       await axios.get(process.env.REACT_APP_API + "api/camp_weeks/getCamp_Weeks").then((response) => {
-        setCampWeeks(filterAndSortWeeks(response.data));
+        setCampWeeks(filterAndSortWeeksCurrentYear(response.data));
         setEarlyCutOffDate(
           new Date(response.data[0].earlyCutOff.substring(0, response.data[0].earlyCutOff.length - 3))
             .toDateString()
