@@ -2,15 +2,10 @@
 
 import * as React from "react";
 import { Card, CardColumns } from "react-bootstrap";
-
-interface camper {
-  id: number;
-  firstName: string;
-  lastName: string;
-}
+import { Camper } from "../models/models";
 
 interface props {
-  campers: camper[];
+  campers: Camper[];
 }
 
 const Campers: React.FC<props> = ({ campers }) => {

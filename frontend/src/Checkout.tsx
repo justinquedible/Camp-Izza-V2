@@ -92,12 +92,15 @@ export default function Checkout() {
     await axios.put(process.env.REACT_APP_API + "api/campers/updateCamper/" + camper?.id, {
       ...camper,
       dob: camper?.dob ? dateTimeToDateInput(camper.dob) : "",
-      credit: 0,
       numShirts: camper ? camper.numShirts + numShirts : numShirts,
       paid: camper ? camper.paid + total : total,
     });
 
     // Update parent credit to 0
+    await axios.put(process.env.REACT_APP_API + "api/parents/updateParent/" + parent?.id, {
+      ...parent,
+      credit: 0,
+    });
 
     // Post to registered_camper_weeks and payment_informations, one for each campWeeksSelected
     const currentDateTime =
@@ -169,6 +172,9 @@ export default function Checkout() {
       <Container className="Checkout-Table">
         <Button variant="primary" className="backButton" onClick={handleBack}>
           Back
+        </Button>
+        <Button variant="primary" className="backButton" onClick={onApprove}>
+          Test
         </Button>
         <br />
         <br />

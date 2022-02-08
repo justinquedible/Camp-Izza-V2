@@ -7,15 +7,8 @@ import "./HouseholdForm.css";
 import { useHistory } from "react-router-dom";
 import { dateTimeToTime, dateTimeToDate } from "./util/DateTimeUtil";
 import { filterAndSortWeeks } from "./util/FilterAndSortUtil";
-import { Camp_Week } from "./models/models";
+import { Camp_Week, Camper } from "./models/models";
 import axios from "axios";
-
-interface Camper {
-  firstName: string;
-  lastName: string;
-  shirtSize: string;
-  numShirts: number;
-}
 
 export default function CamperScheduling() {
   const history = useHistory();

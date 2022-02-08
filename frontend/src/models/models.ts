@@ -96,7 +96,7 @@ export type Counselor = {
 };
 
 export type Emergency_Contact = {
-  id: string;
+  id: number;
   user_id: string;
   firstName: string;
   lastName: string;

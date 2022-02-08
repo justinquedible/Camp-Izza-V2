@@ -7,7 +7,7 @@ import { useHistory } from "react-router-dom";
 import { getAuth } from "firebase/auth";
 import axios from "axios";
 import { dateTimeToDateInput } from "./util/DateTimeUtil";
-import { Camper } from "./models/models";
+import { Camper, Camper_Medical_Record } from "./models/models";
 
 export default function CamperForm() {
   const auth = getAuth();
@@ -31,7 +31,9 @@ export default function CamperForm() {
     paid: 0,
   });
 
-  const [medicalRecordValues, setMedicalRecordValues] = React.useState({
+  const [medicalRecordValues, setMedicalRecordValues] = React.useState<Camper_Medical_Record>({
+    id: 0,
+    camper_id: 0,
     doctorName: "",
     doctorPhone: "",
     insuranceCarrier: "",
@@ -79,8 +81,8 @@ export default function CamperForm() {
         parent_id: auth.currentUser?.uid,
       });
       await axios.post(process.env.REACT_APP_API + "api/camper_medical_records/addCamper_Medical_Record", {
-        camper_id: res.data.camper_id,
         ...medicalRecordValues,
+        camper_id: res.data.camper_id,
       });
     } else {
       await axios.put(process.env.REACT_APP_API + "api/campers/updateCamper/" + camper_id, {
