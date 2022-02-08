@@ -152,7 +152,7 @@ export default function CamperForm() {
         <p>
           <b>*</b> Indicates a mandatory field.
         </p>
-        {camper_id ? <p>Note: Please email info@campizza.com to change camper's name.</p> : null}
+        {camper_id ? <p>Note: Please email info@campizza.com to change camper's <u>name</u> and <u>grade</u>.</p> : null}
 
         <Form onSubmit={handleSubmit}>
           <h5>Camper Info</h5>
