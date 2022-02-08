@@ -89,7 +89,7 @@ export type Counselor = {
   gender: string;
   dob: string;
   phone: string;
-  allPhone: string;
+  altPhone: string;
   group_id: number;
   approved: boolean;
   active: boolean;

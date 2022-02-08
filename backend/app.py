@@ -120,13 +120,13 @@ def addCounselor():
     return jsonify({"status": "success"})
 
 
-@app.route("/counselors/updateCounselors/<counselor_id>", methods=["PUT"])
+@app.route("/counselors/updateCounselor/<counselor_id>", methods=["PUT"])
 def updateCounselors(counselor_id):
     data = request.get_json()
     cursor.execute("update counselors set email=%s, firstName=%s, lastName=%s, gender=%s, dob=%s, phone=%s,"
                    " altphone=%s,approved=%s, active=%s where id = %s",
                    (data["email"], data["firstName"], data["lastName"], data["gender"], data["dob"],
-                    data["phone"], data["altphone"], data["approved"], data["active"], counselor_id))
+                    data["phone"], data["altPhone"], data["approved"], data["active"], counselor_id))
     return jsonify({"status": "success"})
 
 
