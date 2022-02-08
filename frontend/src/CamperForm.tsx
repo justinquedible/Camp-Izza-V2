@@ -14,7 +14,7 @@ export default function CamperForm() {
   const history = useHistory();
   const [showDelForm, setDelForm] = React.useState(false);
   const [isSaving, setIsSaving] = React.useState(false);
-  const [isNameReadOnly, setIsNameReadOnly] = React.useState(false);
+  const [isFieldReadOnly, setIsFieldReadOnly] = React.useState(false);
   const camper_id = sessionStorage.getItem("camper_id");
 
   const [camperValues, setCamperValues] = React.useState<Camper>({
@@ -53,7 +53,7 @@ export default function CamperForm() {
         .get(process.env.REACT_APP_API + "api/campers/getCamper/" + camper_id)
         .then((res) => {
           setCamperValues({ ...res.data, dob: dateTimeToDateInput(res.data.dob) });
-          setIsNameReadOnly(true);
+          setIsFieldReadOnly(true);
         })
         .then(() => {
           axios
@@ -161,7 +161,7 @@ export default function CamperForm() {
               </Form.Label>
               <Form.Control
                 required
-                readOnly={isNameReadOnly}
+                readOnly={isFieldReadOnly}
                 value={camperValues.firstName}
                 onChange={handleCamperChange("firstName")}
               />
@@ -172,7 +172,7 @@ export default function CamperForm() {
               </Form.Label>
               <Form.Control
                 required
-                readOnly={isNameReadOnly}
+                readOnly={isFieldReadOnly}
                 value={camperValues.lastName}
                 onChange={handleCamperChange("lastName")}
               />
@@ -235,6 +235,7 @@ export default function CamperForm() {
                 as="select"
                 custom
                 required
+                disabled={isFieldReadOnly}
                 value={camperValues.grade}
                 onChange={handleCamperChange("grade")}
               >
