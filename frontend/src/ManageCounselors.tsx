@@ -1,46 +1,17 @@
 // Page for admin to view, approve, deny, and activate counselors
 
 import React from 'react';
-import {Button, Container} from "react-bootstrap";
+import {Button, Container, Table} from "react-bootstrap";
 import './Dashboard.css';
 import { useHistory } from "react-router-dom";
 import { Counselor } from './models/models';
 import { dateTimeToDateInput } from './util/DateTimeUtil';
 import axios from "axios";
-// import AuthService from './services/auth-service';
-// import {List} from "rsuite";
-
-// interface Props {
-// }
-
-// interface Roles{
-//     id: number
-//     roleName: string
-// }
-
-
-// interface Counselors {
-//     firstName: string,
-//     lastName: string,
-//     email: string
-//     id: number
-
-// }
-
-
-
-// const defaultCounselors:Counselors[] = [];
-
-// const allCounselors:Counselors[] = [];
-
-// const archviedCounselors:Counselors[] = [];
-
-
 
 
 export default function ManageCounselors() {
     const history = useHistory();
-    let change = false;
+    // let change = false;
     const [counselors, setCounselors] = React.useState<Counselor[]>([]);
     const [pending, setPending] = React.useState<Counselor[]>([]);
     const [active, setActive] = React.useState<Counselor[]>([]);
@@ -57,7 +28,7 @@ export default function ManageCounselors() {
                     // console.log(c);
                 }  
                 setCounselors(response.data);
-                console.log(response.data);
+                // console.log(response.data);
                 const active_counselors = [];
                 const archived_counselors = [];
                 const pending_counselors = [];
@@ -75,11 +46,8 @@ export default function ManageCounselors() {
                 setActive(active_counselors);
                 setArchive(archived_counselors);
                 setPending(pending_counselors);
-                console.log(pending_counselors)
+                // console.log(pending_counselors)
               });
-        // AuthService.getPendingCounselors().then(r => setPending(r.data))
-        // AuthService.getAllCounselors().then(response => setData(response.data))
-        // AuthService.getArchivedCounselors().then(responses => setArchive(responses.data))
     })();
 }, []);
 
@@ -98,10 +66,7 @@ export default function ManageCounselors() {
         }
 
         // change = !change;
-        // AuthService.changeCounselorActive(id).catch()
         window.location.reload();
-        //AuthService.getAllCounselors().then(response => setData(response.data))
-        //AuthService.getArchivedCounselors().then(responses => setArchive(responses.data))
     };
 
    
@@ -115,7 +80,6 @@ export default function ManageCounselors() {
             }
         }
         // change = !change;
-        // AuthService.changeCounselorArchive(id).catch()
         window.location.reload();
     }
 
@@ -128,12 +92,10 @@ export default function ManageCounselors() {
             }
         }
         // change = !change;
-        // AuthService.deleteCounselor(id).catch()
         window.location.reload();
     }
 
     return (
-        <body>
         <Container className="Admin-Buttons">
             <Button variant="primary" className="backButton" onClick={handleGoBack}> Back </Button><br /><br />
             <h3> Manage Counselors </h3>
@@ -143,16 +105,17 @@ export default function ManageCounselors() {
 
             <div className="overflowTable">
 
-                <table className={"manageTable"}>
-
-                    <tr>
-                        <td> Last Name </td>
-                        <td> First Name </td>
-                        <td> Email </td>
-                        <td> Options </td>
-                    </tr>
+                <Table className={"manageTable"}>
+                    <thead>
+                        <tr>
+                            <td> Last Name </td>
+                            <td> First Name </td>
+                            <td> Email </td>
+                            <td> Options </td>
+                        </tr>
+                    </thead>
                     {pending.map(item => (
-
+                    <tbody key={item.id}>
                         <tr>
                             <td> {item.lastName} </td>
                             <td>{item.firstName} </td>
@@ -160,9 +123,10 @@ export default function ManageCounselors() {
                             <td> <Button variant="success" onClick={()=>handleApproveChange(item.id)}>Approve</Button> &nbsp;
                                 <Button variant="danger" onClick={()=>handleDenyChange(item.id)}>Deny</Button> </td>
                         </tr>
+                    </tbody>
                     ))}
 
-                </table>
+                </Table>
             </div>
 
             <br /><br />
@@ -170,16 +134,18 @@ export default function ManageCounselors() {
             <h5> Active Counselors </h5>
 
             <div className="overflowTable">
-                <table className={"manageTable"}>
-                    <tr>
-                        <td> Last Name </td>
-                        <td> First Name </td>
-                        <td> Group </td>
-                        <td> Status </td>
-                        <td> Options </td>
-                    </tr>
+                <Table className={"manageTable"}>
+                    <thead>
+                        <tr>
+                            <td> Last Name </td>
+                            <td> First Name </td>
+                            <td> Group </td>
+                            <td> Status </td>
+                            <td> Options </td>
+                        </tr>
+                    </thead>
                     {active.map(item => (
-
+                    <tbody key={item.id}>
                         <tr>
                             <td> {item.lastName} </td>
                             <td>{item.firstName} </td>
@@ -187,8 +153,9 @@ export default function ManageCounselors() {
                             <td> Active </td>
                             <td> <Button variant="secondary" onClick={()=>handleInactiveChange(item.id)}>Deactivate</Button> </td>
                         </tr>
+                    </tbody>
                     ))}
-                </table>
+                </Table>
             </div>
 
             <br /><br />
@@ -196,7 +163,8 @@ export default function ManageCounselors() {
             <h5> Inactive Counselors </h5>
 
             <div className="overflowTable">
-                <table className={"manageTable"}>
+                <Table className={"manageTable"}>
+                    <thead>
                     <tr>
                         <td> Last Name </td>
                         <td> First Name </td>
@@ -204,8 +172,9 @@ export default function ManageCounselors() {
                         <td> Status </td>
                         <td> Options </td>
                     </tr>
+                    </thead>
                     {archive.map(item => (
-
+                    <tbody key={item.id}>
                         <tr>
                             <td> {item.lastName} </td>
                             <td>{item.firstName} </td>
@@ -213,15 +182,14 @@ export default function ManageCounselors() {
                             <td> Inactive </td>
                             <td> <Button variant="success"  onClick={()=>handleApproveChange(item.id)}> Activate </Button> </td>
                         </tr>
+                    </tbody>
                     ))}
-                </table>
+                </Table>
             </div>
 
             <br /><br />
 
-
         </Container>
-        </body>
     )
 
 }
