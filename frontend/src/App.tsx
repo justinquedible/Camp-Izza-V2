@@ -89,7 +89,9 @@ function App() {
               {/* Admin */}
               <Route exact path={"/admin"} component={Admin} />
               <Route exact path={"/admin/sessions"} component={Sessions} />
-              <Route exact path={"/admin/manageCounselors"} component={ManageCounselors} />
+              <Route exact path={"/admin/managecounselors"} component={ManageCounselors} />
+              {/* Counselor */}
+              <Route exact path={"/counselor"} component={Counselor} />
 
               <Route exact path={"/admin/manageCampers"} component={ManageCampers} />
               <Route exact path={"/admin/groups"} component={Groups} />
@@ -105,7 +107,6 @@ function App() {
               <Route exact path={"/counselor/pending"} component={Pending} />
               <Route exact path={"/CamperInfo"} component={CamperInfo} />
               <Route exact path={"/Profile"} component={Profile} />
-              <Route exact path={"/counselor"} component={Counselor} />
               <Route exact path={"/counselorInfo"} component={CounselorInfo} />
               <Route exact path={"/counselorForm"} component={CounselorForm} />
               <Route exact path={"/counselor/takeAttendance"} component={CounselorAttendance} />
