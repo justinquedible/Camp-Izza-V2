@@ -7,7 +7,7 @@ import { Form, Button } from "react-bootstrap";
 import { getAuth, createUserWithEmailAndPassword, UserCredential } from "firebase/auth";
 import axios from "axios";
 
-export default function SignUp() {
+export default function SignupParent() {
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
   const [passwordConfirm, setPasswordConfirm] = React.useState("");

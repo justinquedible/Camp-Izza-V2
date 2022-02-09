@@ -115,6 +115,7 @@ export default function CamperForm() {
   };
 
   const handleDeleteCamperForm = () => {
+    // TODO: remove weeks the camper was registered for and add credits equivalent to price of registered weeks to parent
     setDelForm(true);
   };
 
@@ -152,7 +153,11 @@ export default function CamperForm() {
         <p>
           <b>*</b> Indicates a mandatory field.
         </p>
-        {camper_id ? <p>Note: Please email info@campizza.com to change camper's <u>name</u> and <u>grade</u>.</p> : null}
+        {camper_id ? (
+          <p>
+            Note: Please email info@campizza.com to change camper's <u>name</u> and <u>grade</u>.
+          </p>
+        ) : null}
 
         <Form onSubmit={handleSubmit}>
           <h5>Camper Info</h5>

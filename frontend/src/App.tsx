@@ -17,18 +17,17 @@ import CamperScheduling from "./CamperScheduling";
 import Checkout from "./Checkout";
 import Admin from "./Admin";
 import Sessions from "./Sessions";
+import ManageCounselors from "./ManageCounselors";
 
 import ManageCampers from "./ManageCampers";
 import Groups from "./Groups";
 import AdminAttendance from "./AdminAttendance";
 import AttendanceReport from "./AttendanceReport";
 import BonusCamper from "./BonusCamper";
-import SignUpCounselor from "./NewSignupCounselor";
+import SignUpCounselor from "./SignupCounselor";
 import Pending from "./Pending";
-import ManageCounselors from "./ManageCounselors";
 import Profile from "./Profile";
 import Roster from "./Roster";
-
 import Counselor from "./Counselor";
 import CounselorAttendance from "./CounselorAttendance";
 import EmergencyForm from "./EmergencyForm";
@@ -90,6 +89,7 @@ function App() {
               {/* Admin */}
               <Route exact path={"/admin"} component={Admin} />
               <Route exact path={"/admin/sessions"} component={Sessions} />
+              <Route exact path={"/admin/manageCounselors"} component={ManageCounselors} />
 
               <Route exact path={"/admin/manageCampers"} component={ManageCampers} />
               <Route exact path={"/admin/groups"} component={Groups} />
@@ -97,16 +97,14 @@ function App() {
               <Route exact path={"/admin/attendance/bonuscamper"} component={BonusCamper} />
               <Route exact path={"/admin/AttendanceReport"} component={AttendanceReport} />
               <Route exact path={"/admin/roster"} component={Roster} />
-              <Route exact path={"/admin/managecounselors"} component={ManageCounselors} />
               <Route exact path={"/admin/AdminCamperForm"} component={AdminCamperForm} />
               <Route exact path={"/admin/emergencyform"} component={EmergencyForm} />
+              {/* Counselor */}
               <Route exact path={"/signupCounselor"} component={SignUpCounselor} />
+
               <Route exact path={"/counselor/pending"} component={Pending} />
-
               <Route exact path={"/CamperInfo"} component={CamperInfo} />
-
               <Route exact path={"/Profile"} component={Profile} />
-
               <Route exact path={"/counselor"} component={Counselor} />
               <Route exact path={"/counselorInfo"} component={CounselorInfo} />
               <Route exact path={"/counselorForm"} component={CounselorForm} />

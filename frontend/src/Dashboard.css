@@ -252,3 +252,13 @@ ol.holidays {
   border: none;
   background-color: #f2f2f2;
 }
+
+.grid-container {
+  display: grid;
+  grid-template-columns: auto auto;
+  grid-gap: 30px;
+}
+
+.grid-item {
+  border: 2px solid #333333;
+}
