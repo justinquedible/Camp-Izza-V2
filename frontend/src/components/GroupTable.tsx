@@ -15,7 +15,9 @@ interface props {
 }
 
 const GroupTable: React.FC<props> = ({ group, counselors, campers, mutable = false }) => {
-  const removeCounselor = () => {};
+  const removeCounselor = (id: number) => {
+    console.log(id);
+  };
 
   return (
     <Row>
@@ -29,7 +31,7 @@ const GroupTable: React.FC<props> = ({ group, counselors, campers, mutable = fal
                 <div key={item.id}>
                   {"  "}
                   {mutable ? (
-                    <Button variant="outline-danger" onClick={removeCounselor}>
+                    <Button variant="outline-danger" onClick={() => removeCounselor(item.id)}>
                       🗑️ {item.firstName} {item.lastName}
                     </Button>
                   ) : (

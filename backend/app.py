@@ -307,7 +307,6 @@ def addCamp_Week():
 @app.route("/camp_weeks/deleteCamp_Weeks/<int:camp_week_id>", methods=["DELETE"])
 def deleteCamp_Week(camp_week_id):
     cursor.execute("delete from camp_weeks where id = %s ", (camp_week_id,))
-
     return jsonify({"status": "success"})
 
 
@@ -336,9 +335,9 @@ def getRegistered_Camper_WeeksWithCampers():
 
 @app.route("/registered_camper_weeks/updateRegistered_Camper_Week/<int:registered_camper_weeks_id>",
            methods=["PUT"])
-def updateRegistered_Counselor_Weeks(registered_camper_weeks_id):
+def updateRegistered_Camper_Weeks(registered_camper_weeks_id):
     data = request.get_json()
-    cursor.execute("update registered_counselor_weeks set camper_id=%s, camp_week_id=%s, group_id=%s where id = %s ",
+    cursor.execute("update registered_camper_weeks set camper_id=%s, camp_week_id=%s, group_id=%s where id = %s ",
                    (data["camper_id"], data["camp_week_id"], data["group_id"], registered_camper_weeks_id))
     return jsonify({"status": "success"})
 
@@ -349,6 +348,12 @@ def addRegistered_Camper_Week():
     cursor.execute("insert into registered_camper_weeks (camper_id, camp_week_id, group_id) "
                    "values (%s, %s, %s)", (data["camper_id"], data["camp_week_id"], data["group_id"]))
     return jsonify({"status": "success", "registered_camper_weeks_id": cursor.lastrowid})
+
+
+@app.route("/registered_camper_weeks/deleteRegistered_Camper_Week/<int:registered_camper_weeks_id>", methods=["DELETE"])
+def deleteRegistered_Camper_Week(registered_camper_weeks_id):
+    cursor.execute("delete from registered_camper_weeks where id = %s ", (registered_camper_weeks_id,))
+    return jsonify({"status": "success"})
 
 
 
