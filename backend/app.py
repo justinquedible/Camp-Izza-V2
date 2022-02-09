@@ -325,6 +325,23 @@ def getRegistered_Camper_WeekByCamperID(camper_id):
     rows = cursor.fetchall()
     return jsonify(rows)
 
+# regsitered_camper_weeks join with campers
+@app.route("/registered_camper_weeks/getRegistered_Camper_WeeksWithCampers")
+def getRegistered_Camper_WeeksWithCampers():
+    cursor.execute("select r.*, c.firstName as firstName, c.lastName as lastName, c.grade as grade, "
+                   "c.gender as gender from registered_camper_weeks r, campers c where r.camper_id = c.id")
+    rows = cursor.fetchall()
+    return jsonify(rows)
+
+
+@app.route("/registered_camper_weeks/updateRegistered_Camper_Week/<int:registered_camper_weeks_id>",
+           methods=["PUT"])
+def updateRegistered_Counselor_Weeks(registered_camper_weeks_id):
+    data = request.get_json()
+    cursor.execute("update registered_counselor_weeks set camper_id=%s, camp_week_id=%s, group_id=%s where id = %s ",
+                   (data["camper_id"], data["camp_week_id"], data["group_id"], registered_camper_weeks_id))
+    return jsonify({"status": "success"})
+
 
 @app.route("/registered_camper_weeks/addRegistered_Camper_Week", methods=["POST"])
 def addRegistered_Camper_Week():
@@ -332,6 +349,7 @@ def addRegistered_Camper_Week():
     cursor.execute("insert into registered_camper_weeks (camper_id, camp_week_id, group_id) "
                    "values (%s, %s, %s)", (data["camper_id"], data["camp_week_id"], data["group_id"]))
     return jsonify({"status": "success", "registered_camper_weeks_id": cursor.lastrowid})
+
 
 
 # REGISTERED COUNSELOR WEEKS
@@ -345,6 +363,14 @@ def getRegistered_Counselor_Weeks():
 @app.route("/registered_couselor_weeks/getRegistered_Counselor_WeekByCounselorID/<counselor_id>")
 def getRegistered_Counselor_WeekByCounselorID(counselor_id):
     cursor.execute("select * from registered_counselor_weeks where counselor_id = %s", (counselor_id,))
+    rows = cursor.fetchall()
+    return jsonify(rows)
+
+# registered_counselor_weeks join with counselor
+@app.route("/registered_counselor_weeks/getRegistered_Counselor_WeeksWithCounselors")
+def getRegistered_Counselor_WeeksWithCounselors():
+    cursor.execute("select r.*, c.firstName as firstName, c.lastName as lastName from registered_counselor_weeks r, "
+                   "counselors c where r.counselor_id = c.id")
     rows = cursor.fetchall()
     return jsonify(rows)
 
@@ -440,10 +466,10 @@ def updateCounselor_Medical_Record(counselor_id):
 def addCounselor_Medical_Record():
     data = request.get_json()
     cursor.execute(
-        "insert into counselor_medical_records (id, counselor_id, doctorName, doctorPhone, insuranceCarrier, "
+        "insert into counselor_medical_records (counselor_id, doctorName, doctorPhone, insuranceCarrier, "
         "policyHolder, illnesses, allergies, immunizations, medications, accommodations) "
-        "values (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)",
-        (data["id"], data["counselor_id"], data["doctorName"], data["doctorPhone"], data["insuranceCarrier"],
+        "values (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)",
+        (data["counselor_id"], data["doctorName"], data["doctorPhone"], data["insuranceCarrier"],
          data["policyHolder"], data["illnesses"], data["allergies"], data["immunizations"],
          data["medications"], data["accommodations"]))
     return jsonify({"status": "success"})

@@ -49,7 +49,7 @@ export default function AdminDashboard() {
           <Col>
             <Button variant="outline-success" className="Admin-Button" href="/#/admin/attendance">
               <img src={attendanceIcon} alt="icon" />
-              Attendance
+              Counselor Attendance
             </Button>
           </Col>
           <Col>

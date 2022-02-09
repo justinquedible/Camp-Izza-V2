@@ -6,6 +6,7 @@ import { Link, useHistory } from "react-router-dom";
 import { Form, Button } from "react-bootstrap";
 import { getAuth, createUserWithEmailAndPassword, UserCredential } from "firebase/auth";
 import axios from "axios";
+import { ajaxTransport } from "jquery";
 
 export default function SignUpCounselor() {
   const [email, setEmail] = React.useState("");
@@ -26,6 +27,40 @@ export default function SignUpCounselor() {
             email: userCredential.user.email,
             role: "counselor",
           });
+          await axios.post(process.env.REACT_APP_API + "api/counselors/addCounselor", {
+            id: userCredential.user.uid,
+            email: userCredential.user.email,
+            firstName: "",
+            lastName: "",
+            gender: "",
+            dob: "",
+            phone: "",
+            altPhone: "",
+            approved: false,
+            active: false,
+          });
+          await axios.post(process.env.REACT_APP_API + "api/counselor_medical_records/addCounselor_Medical_Record", {
+            counselor_id: userCredential.user.uid,
+            doctorName: "",
+            doctorPhone: "",
+            insuranceCarrier: "",
+            policyHolder: "",
+            allergies: "",
+            illnesses: "",
+            immunizations: "",
+            medications: "",
+            accommodations: "",
+          });
+          for (let i = 0; i < 2; i++) {
+            await axios.post(process.env.REACT_APP_API + "api/emergency_contacts/addEmergency_Contact", {
+              user_id: userCredential.user.uid,
+              firstName: "",
+              lastName: "",
+              relation: "",
+              phone: "",
+              authPickUp: true,
+            });
+          }
           history.push("/counselor");
         })
         .catch((error) => {

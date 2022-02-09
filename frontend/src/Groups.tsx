@@ -1,33 +1,56 @@
 import "./Dashboard.css";
 import React from "react";
-import { Container, Button, Col, Form, ToggleButtonGroup, ToggleButton, Table } from "react-bootstrap";
+import { Container, Button, Col, Row, Form, ToggleButtonGroup, ToggleButton, Table } from "react-bootstrap";
 import axios from "axios";
-import { Camp_Week, Group, Registered_Camper_Week } from "./models/models";
+import { Camp_Week, Group, Registered_Camper_Week, Registered_Counselor_Week } from "./models/models";
 import { filterAndSortWeeksCurrentYear } from "./util/FilterAndSortUtil";
+import GroupTable from "./components/GroupTable";
+
+interface Registered_Camper_WeekWithCamper extends Registered_Camper_Week {
+  firstName: string;
+  lastName: string;
+  grade: number;
+  gender: string;
+}
+
+interface Registered_Counselor_WeekWithCounselor extends Registered_Counselor_Week {
+  firstName: string;
+  lastName: string;
+}
 
 export default function Groups() {
   const [weeks, setWeeks] = React.useState<Camp_Week[]>([]);
   const [groups, setGroups] = React.useState<Group[]>([]);
-  const [registeredCamperWeeks, setRegisteredCamperWeeks] = React.useState<Registered_Camper_Week[]>([]);
+  const [registeredCamperWeeksWithCamper, setRegisteredCamperWeeksWithCamper] = React.useState<
+    Registered_Camper_WeekWithCamper[]
+  >([]);
+  const [registeredCounselorWeeksWithCounselor, setRegisteredCounselorWeeksWithCounselor] = React.useState<
+    Registered_Counselor_WeekWithCounselor[]
+  >([]);
   const [selectedWeek, setSelectedWeek] = React.useState<number>();
   const [selectedGroup, setSelectedGroup] = React.useState("all");
 
   React.useEffect(() => {
     (async () => {
-      await axios.get(process.env.REACT_APP_API + "/api/camp_weeks/getCamp_Weeks").then((res) => {
+      await axios.get(process.env.REACT_APP_API + "api/camp_weeks/getCamp_Weeks").then((res) => {
         const weeks = filterAndSortWeeksCurrentYear(res.data);
         setWeeks(weeks);
         setSelectedWeek(weeks[0].id);
       });
-      await axios.get(process.env.REACT_APP_API + "/api/groups/getGroups").then((res) => {
+      await axios.get(process.env.REACT_APP_API + "api/groups/getGroups").then((res) => {
         setGroups(
           res.data.sort((a: Group, b: Group) => a.id.toString().localeCompare(b.id.toString(), "en", { numeric: true }))
         );
       });
       await axios
-        .get(process.env.REACT_APP_API + "/api/registered_camper_weeks/getRegistered_Camper_Weeks")
+        .get(process.env.REACT_APP_API + "api/registered_counselor_weeks/getRegistered_Counselor_WeeksWithCounselors")
         .then((res) => {
-          setRegisteredCamperWeeks(res.data);
+          setRegisteredCounselorWeeksWithCounselor(res.data);
+        });
+      await axios
+        .get(process.env.REACT_APP_API + "api/registered_camper_weeks/getRegistered_Camper_WeeksWithCampers")
+        .then((res) => {
+          setRegisteredCamperWeeksWithCamper(res.data);
         });
     })();
   }, []);
@@ -51,6 +74,7 @@ export default function Groups() {
       <div className="center">
         <Form>
           <Col xs="3">
+            {/* TODO: Add dropdown for term */}
             <Form.Control as="select" onChange={handleWeekChange}>
               {weeks.map((week) => (
                 <option key={week.id} value={week.id}>
@@ -61,59 +85,49 @@ export default function Groups() {
           </Col>
         </Form>
         <ToggleButtonGroup type="radio" name="options" defaultValue={"all"} onChange={handleGroupChange}>
-          <ToggleButton value={"all"} variant="outline-dark">
+          <ToggleButton value={"All"} variant="outline-dark">
             All
           </ToggleButton>
-          <ToggleButton value={"dates"} variant="outline-success">
+          <ToggleButton value={"Dates"} variant="outline-success">
             Dates
           </ToggleButton>
-          <ToggleButton value={"coconuts"} variant="outline-warning">
+          <ToggleButton value={"Coconuts"} variant="outline-warning">
             Coconuts
           </ToggleButton>
-          <ToggleButton value={"trees"} variant="outline-danger">
+          <ToggleButton value={"Trees"} variant="outline-danger">
             Trees
           </ToggleButton>
-          <ToggleButton value={"young leaders"} variant="outline-info">
+          <ToggleButton value={"Young Leaders"} variant="outline-info">
             Young Leaders
           </ToggleButton>
         </ToggleButtonGroup>
 
-        {selectedGroup === "all" && (
-          <div>
+        {["All", "Dates", "Coconuts", "Trees", "Young Leaders"].includes(selectedGroup) && (
+          <Container>
             <br />
-            <h4> 👥 All Groups 👥</h4>
+            {selectedGroup === "All" ? <h4>👥 All Groups 👥</h4> : <h4>✏️ Edit Group: {selectedGroup}</h4>}
             <br />
-            <div className="grid-container">
-              {groups.map((group) => (
-                <div key={group.id} className="grid-item">
-                  <h5>{group.name}</h5>
-                  <h6>Counselors: Justin</h6>
-                  <Table striped bordered>
-                    <thead>
-                      <tr>
-                        <th>Name</th>
-                        <th>Grade</th>
-                        <th>Gender</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr>
-                        {/* TODO: Make function that loops through registeredCamperWeeks and adds it each table */}
-                        {registeredCamperWeeks.map((item) =>
-                          item.group_id === group.id && item.camp_week_id === selectedWeek ? (
-                            <td key={item.camper_id}>{item.camper_id}</td>
-                          ) : null
-                        )}
-                        <td>3</td>
-                        <td>M</td>
-                      </tr>
-                    </tbody>
-                  </Table>
-                </div>
-              ))}
+            <div className={selectedGroup === "All" ? "grid-container" : ""}>
+              {groups
+                .filter((group) => (selectedGroup === "All" ? true : group.name.includes(selectedGroup)))
+                .map((group) => (
+                  <div key={group.id}>
+                    <GroupTable
+                      group={group}
+                      counselors={registeredCounselorWeeksWithCounselor.filter(
+                        (item) => item.group_id === group.id && item.camp_week_id === selectedWeek
+                      )}
+                      campers={registeredCamperWeeksWithCamper.filter(
+                        (item) => item.group_id === group.id && item.camp_week_id === selectedWeek
+                      )}
+                      mutable={selectedGroup !== "All"}
+                    />
+                  </div>
+                ))}
             </div>
-          </div>
+          </Container>
         )}
+
         {/* <div className={"buttonToggle"}>
         {showAll ? <All /> : null}
         {showDates ? <Dates /> : null}

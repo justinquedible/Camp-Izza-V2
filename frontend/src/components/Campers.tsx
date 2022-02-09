@@ -9,9 +9,9 @@ interface props {
 }
 
 const Campers: React.FC<props> = ({ campers }) => {
-  function handleCamperClick(id: number) {
+  const handleCamperClick = (id: number) => {
     sessionStorage.setItem("camper_id", id.toString());
-  }
+  };
 
   return (
     <CardColumns>
