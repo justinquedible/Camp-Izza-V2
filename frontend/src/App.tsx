@@ -92,6 +92,8 @@ function App() {
               <Route exact path={"/admin"} component={Admin} />
               <Route exact path={"/admin/sessions"} component={Sessions} />
               <Route exact path={"/admin/managecounselors"} component={ManageCounselors} />
+              {/* Counselor */}
+              <Route exact path={"/counselor"} component={Counselor} />
 
 
               <Route exact path={"/admin/manageCampers"} component={ManageCampers} />
@@ -108,8 +110,6 @@ function App() {
               <Route exact path={"/CamperInfo"} component={CamperInfo} />
 
               <Route exact path={"/Profile"} component={Profile} />
-
-              <Route exact path={"/counselor"} component={Counselor} />
               <Route exact path={"/counselorInfo"} component={CounselorInfo} />
               <Route exact path={"/counselorForm"} component={CounselorForm} />
               <Route exact path={"/counselor/takeAttendance"} component={CounselorAttendance} />
