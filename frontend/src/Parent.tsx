@@ -45,11 +45,11 @@ export default function ParentDashboard() {
         <br />
         <br />
         <br />
-        <h3> Parent Dashboard </h3>
+        <h3> Parent / Guardian Dashboard </h3>
         <div className="row">
           <div className="col text-center">
             <br />
-            My Campers
+            <p>My Campers</p>
             <br />
             <br />
             {/* {console.log(campers)} */}

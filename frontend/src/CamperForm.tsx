@@ -9,13 +9,13 @@ import axios from "axios";
 import { dateTimeToDateInput } from "./util/DateTimeUtil";
 import { Camper, Camper_Medical_Record, Registered_Camper_Week } from "./models/models";
 
-
 export default function CamperForm() {
   const auth = getAuth();
   const history = useHistory();
   const [showDelForm, setDelForm] = React.useState(false);
   const [isSaving, setIsSaving] = React.useState(false);
-  const [isFieldReadOnly, setIsFieldReadOnly] = React.useState(false);
+  const [isFieldReadOnly, setIsFieldReadOnly] = React.useState(true);
+  const [userRole, setUserRole] = React.useState("");
   const camper_id = sessionStorage.getItem("camper_id");
 
   const [camperValues, setCamperValues] = React.useState<Camper>({
@@ -50,16 +50,30 @@ export default function CamperForm() {
   });
 
   React.useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged(async (user) => {
+      if (user) {
+        await fetchCamperData();
+        await axios.get(process.env.REACT_APP_API + "api/users/getUser/" + user.uid).then((res) => {
+          if (res.data.role === "admin") {
+            setIsFieldReadOnly(false);
+          }
+          setUserRole(res.data.role);
+        });
+      }
+    });
+    return unsubscribe;
+  }, [auth]);
+
+  const fetchCamperData = async () => {
     const camper_id = sessionStorage.getItem("camper_id");
     if (camper_id) {
-      axios
+      await axios
         .get(process.env.REACT_APP_API + "api/campers/getCamper/" + camper_id)
         .then((res) => {
           setCamperValues({ ...res.data, dob: dateTimeToDateInput(res.data.dob) });
-          setIsFieldReadOnly(true);
         })
-        .then(() => {
-          axios
+        .then(async () => {
+          await axios
             .get(
               process.env.REACT_APP_API + "api/camper_medical_records/getCamper_Medical_RecordByCamperID/" + camper_id
             )
@@ -70,8 +84,10 @@ export default function CamperForm() {
               });
             });
         });
+    } else {
+      setIsFieldReadOnly(false);
     }
-  }, []);
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -98,7 +114,11 @@ export default function CamperForm() {
     }
     setIsSaving(false);
     sessionStorage.removeItem("camper_id");
-    history.push("/parent");
+    if (userRole === "admin") {
+      history.push("/admin/manageCampers");
+    } else {
+      history.push("/parent");
+    }
   };
 
   const handleCamperChange = (name: string) => (e: { target: { value: any } }) => {
@@ -110,26 +130,31 @@ export default function CamperForm() {
   };
 
   const handleDeleteCamper = async (e: { preventDefault: () => void }) => {
-    let  registeredWeeks: Registered_Camper_Week[] = [];
+    let registeredWeeks: Registered_Camper_Week[] = [];
     let cost = 0;
-    await axios.get(process.env.REACT_APP_API + "api/registered_camper_weeks/getRegistered_Camper_WeekByCamperID/" + sessionStorage.getItem("camper_id"))
-    .then(async (res) => {
-      registeredWeeks = res.data;
-      await axios.get(process.env.REACT_APP_API + "api/camp_weeks/getCamp_Week/" + res.data[0].camp_week_id)
-      .then((res) => {
-        // console.log(res.data);
-        cost = res.data.regularCost;
-      })
-    })
+    await axios
+      .get(
+        process.env.REACT_APP_API +
+          "api/registered_camper_weeks/getRegistered_Camper_WeekByCamperID/" +
+          sessionStorage.getItem("camper_id")
+      )
+      .then(async (res) => {
+        registeredWeeks = res.data;
+        await axios
+          .get(process.env.REACT_APP_API + "api/camp_weeks/getCamp_Week/" + res.data[0].camp_week_id)
+          .then((res) => {
+            // console.log(res.data);
+            cost = res.data.regularCost;
+          });
+      });
     // console.log(registeredWeeks);
     // console.log(cost);
-    await axios.get(process.env.REACT_APP_API + "api/parents/getParent/" + camperValues.parent_id)
-    .then(async (res) => {
+    await axios.get(process.env.REACT_APP_API + "api/parents/getParent/" + camperValues.parent_id).then(async (res) => {
       await axios.put(process.env.REACT_APP_API + "api/parents/updateParent/" + camperValues.parent_id, {
         ...res.data,
-        credit : cost * registeredWeeks.length,
+        credit: cost * registeredWeeks.length,
       });
-    })
+    });
     await axios.delete(process.env.REACT_APP_API + "api/campers/deleteCamper/" + sessionStorage.getItem("camper_id"));
     sessionStorage.removeItem("camper_id");
     history.push("/parent");

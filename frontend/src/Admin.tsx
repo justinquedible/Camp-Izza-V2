@@ -39,7 +39,7 @@ export default function AdminDashboard() {
             </Button>
           </Col>
           <Col>
-            <Button variant="outline-success" className="Admin-Button" href="/#/admin/managecounselors">
+            <Button variant="outline-success" className="Admin-Button" href="/#/admin/manageCounselors">
               <img src={counselorsIcon} alt="icon" />
               Counselors
             </Button>

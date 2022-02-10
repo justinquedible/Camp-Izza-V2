@@ -18,7 +18,7 @@ export default function Checkout() {
   let numShirtsStr = sessionStorage.getItem("numShirts");
   const numShirts = numShirtsStr ? parseInt(numShirtsStr) : 0;
 
-  const [user, setUser] = React.useState<User>();
+  const [userRole, setUserRole] = React.useState<string>();
   const [parent, setParent] = React.useState<Parent>();
   const [camper, setCamper] = React.useState<Camper>();
   const [campWeeksSelected, setCampWeeksSelected] = React.useState<Camp_Week[]>();
@@ -31,11 +31,14 @@ export default function Checkout() {
   React.useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged(async (user) => {
       if (user) {
-        setUser(user);
-        await axios.get(process.env.REACT_APP_API + "api/parents/getParent/" + user.uid).then((response) => {
-          setParent(response.data);
-          console.log(response.data);
-        });
+        //     // setUser(user);
+        //     await axios.get(process.env.REACT_APP_API + "api/users/getUser/" + user.uid).then((res) => {
+        //       setUserRole(res.data.role);
+        //     });
+        //     // await axios.get(process.env.REACT_APP_API + "api/parents/getParent/" + user.uid).then((response) => {
+        //     //   setParent(response.data);
+        //     //   console.log(response.data);
+        //     // });
         await fetchData();
       }
     });
@@ -46,6 +49,12 @@ export default function Checkout() {
         .get(process.env.REACT_APP_API + "api/campers/getCamper/" + sessionStorage.getItem("camper_id"))
         .then(async (response) => {
           setCamper(response.data);
+          await axios
+            .get(process.env.REACT_APP_API + "api/parents/getParent/" + response.data.parent_id)
+            .then((response) => {
+              setParent(response.data);
+              console.log(response.data);
+            });
           await axios
             .get(process.env.REACT_APP_API + "api/shirts/getShirtByShirtNameAndSize/generic/" + response.data.shirtSize)
             .then((response) => {
@@ -118,7 +127,7 @@ export default function Checkout() {
           .then(async (response) => {
             console.log(response);
             await axios.post(process.env.REACT_APP_API + "api/payment_informations/addPayment_Information", {
-              user_id: user?.uid,
+              user_id: parent?.id,
               registered_camper_weeks_id: response.data.registered_camper_weeks_id,
               numShirts: 0,
               totalCost: total,
@@ -131,7 +140,7 @@ export default function Checkout() {
     }
     if (numShirts > 0) {
       await axios.post(process.env.REACT_APP_API + "api/payment_informations/addPayment_Information", {
-        user_id: user?.uid,
+        user_id: parent?.id,
         numShirts: numShirts,
         totalCost: total,
         totalPaidUSD: parent ? total - parent?.credit : 0,

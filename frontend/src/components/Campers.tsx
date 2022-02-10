@@ -17,7 +17,7 @@ const Campers: React.FC<props> = ({ campers, type = "parent" }) => {
   return (
     <CardColumns>
       {campers.map((camper) => (
-        <Card key={camper.id} border="success" style={{ width: "90%" }}>
+        <Card key={camper.id} border="success">
           <Card.Body>
             <Card.Title>
               {camper.firstName} {camper.lastName}
@@ -33,11 +33,10 @@ const Campers: React.FC<props> = ({ campers, type = "parent" }) => {
                 </Card.Link>
               </div>
             ) : (
-              <Row style={{ marginLeft: "20%" }}>
-                <Card.Link onClick={() => handleCamperClick(camper.id)} href="/#/parent/camperForm">
-                  ℹ️
+              <Row style={{ display: "flex", justifyContent: "center" }}>
+                <Card.Link onClick={() => handleCamperClick(camper.id)} href="/#/admin/camperForm">
+                  👤
                 </Card.Link>
-                <br />
                 <Card.Link onClick={() => handleCamperClick(camper.id)} href="/#/parent/camperScheduling">
                   📖
                 </Card.Link>

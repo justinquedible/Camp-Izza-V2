@@ -1,7 +1,6 @@
 // Contains the url path for each file
 
-import React, { Component } from "react";
-import logo from "./logo.svg";
+import React from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./Footer.css";
 import { HashRouter, Route, Switch } from "react-router-dom";
@@ -89,20 +88,20 @@ function App() {
               {/* Admin */}
               <Route exact path={"/admin"} component={Admin} />
               <Route exact path={"/admin/sessions"} component={Sessions} />
-              <Route exact path={"/admin/managecounselors"} component={ManageCounselors} />
+              <Route exact path={"/admin/groups"} component={Groups} />
+              <Route exact path={"/admin/manageCounselors"} component={ManageCounselors} />
+              <Route exact path={"/admin/manageCampers"} component={ManageCampers} />
+              <Route exact path={"/admin/camperForm"} component={CamperForm} />
               {/* Counselor */}
+              <Route exact path={"/signupCounselor"} component={SignUpCounselor} />
               <Route exact path={"/counselor"} component={Counselor} />
 
-              <Route exact path={"/admin/manageCampers"} component={ManageCampers} />
-              <Route exact path={"/admin/groups"} component={Groups} />
               <Route exact path={"/admin/attendance"} component={AdminAttendance} />
               <Route exact path={"/admin/attendance/bonuscamper"} component={BonusCamper} />
               <Route exact path={"/admin/AttendanceReport"} component={AttendanceReport} />
               <Route exact path={"/admin/roster"} component={Roster} />
               <Route exact path={"/admin/AdminCamperForm"} component={AdminCamperForm} />
               <Route exact path={"/admin/emergencyform"} component={EmergencyForm} />
-              {/* Counselor */}
-              <Route exact path={"/signupCounselor"} component={SignUpCounselor} />
 
               <Route exact path={"/counselor/pending"} component={Pending} />
               <Route exact path={"/CamperInfo"} component={CamperInfo} />
