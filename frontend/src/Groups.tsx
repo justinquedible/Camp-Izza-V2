@@ -186,14 +186,6 @@ export default function Groups() {
       <div className="center">
         <Form className="center" style={{ marginLeft: "40%", marginRight: "40%" }}>
           <Col xs="auto">
-            {/* TODO: Ask Omar if he needs a dropdown for term */}
-            {/* <Form.Control as="select" onChange={handleWeekChange} style={{ textAlign: "center" }}>
-              {weeks.map((week) => (
-                <option key={week.id} value={week.id}>
-                  {week.name}
-                </option>
-              ))}
-            </Form.Control> */}
             <Form.Control as="select" onChange={handleWeekChange} style={{ textAlign: "center" }}>
               {weeks.map((week) => (
                 <option key={week.id} value={week.id}>

@@ -264,8 +264,12 @@ export default function Checkout() {
                 <td className="checkout"> ${parent?.credit}</td>
               </tr>
               <tr>
-                <td> Order Due</td>
-                <td> ${parent ? total - parent?.credit : 0}</td>
+                <td>
+                  <strong>Order Due</strong>
+                </td>
+                <td>
+                  <strong>${parent ? total - parent?.credit : 0}</strong>
+                </td>
               </tr>
             </tbody>
           </Table>

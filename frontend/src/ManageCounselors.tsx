@@ -10,7 +10,6 @@ import axios from "axios";
 
 export default function ManageCounselors() {
   const history = useHistory();
-  // let change = false;
   const [counselors, setCounselors] = React.useState<Counselor[]>([]);
   const [pending, setPending] = React.useState<Counselor[]>([]);
   const [active, setActive] = React.useState<Counselor[]>([]);
@@ -62,7 +61,6 @@ export default function ManageCounselors() {
       }
     }
 
-    // change = !change;
     window.location.reload();
   };
 
@@ -77,7 +75,7 @@ export default function ManageCounselors() {
         });
       }
     }
-    // change = !change;
+
     window.location.reload();
   };
 
@@ -92,15 +90,14 @@ export default function ManageCounselors() {
         });
       }
     }
-    // change = !change;
+
     window.location.reload();
   };
 
   return (
     <Container className="Admin-Buttons">
       <Button variant="primary" className="backButton" onClick={handleGoBack}>
-        {" "}
-        Back{" "}
+        Back
       </Button>
       <br />
       <br />
@@ -128,14 +125,13 @@ export default function ManageCounselors() {
                 <td>{item.firstName} </td>
                 <td> {item.email} </td>
                 <td>
-                  {" "}
                   <Button variant="success" onClick={() => handleApproveChange(item.id)}>
                     Approve
-                  </Button>{" "}
+                  </Button>
                   &nbsp;
                   <Button variant="danger" onClick={() => handleDenyChange(item.id)}>
                     Deny
-                  </Button>{" "}
+                  </Button>
                 </td>
               </tr>
             </tbody>
@@ -167,10 +163,9 @@ export default function ManageCounselors() {
                 <td> {item.email} </td>
                 <td> Active </td>
                 <td>
-                  {" "}
                   <Button variant="secondary" onClick={() => handleInactiveChange(item.id)}>
                     Deactivate
-                  </Button>{" "}
+                  </Button>
                 </td>
               </tr>
             </tbody>
@@ -202,11 +197,9 @@ export default function ManageCounselors() {
                 <td> {item.email} </td>
                 <td> Inactive </td>
                 <td>
-                  {" "}
                   <Button variant="success" onClick={() => handleApproveChange(item.id)}>
-                    {" "}
-                    Activate{" "}
-                  </Button>{" "}
+                    Activate
+                  </Button>
                 </td>
               </tr>
             </tbody>

@@ -74,9 +74,9 @@ export default function CamperScheduling() {
   };
 
   // const handleUnregister = (weekId: number) => (e: { target: { value: any } }) => {
-  //   // delete registered camper week 
+  //   // delete registered camper week
   //   await axios.get(process.env.REACT.APP.API + "/registered_camper_weeks/deleteRegistered_Camper_WeekWithCamperIdAndCampWeekId/" + weekId + "/" + sessionStorage.getItem("camper_id"))
-  //   // give credit to parent 
+  //   // give credit to parent
   // };
 
   const handleBack = () => {
@@ -108,12 +108,15 @@ export default function CamperScheduling() {
         </p>
         <br />
         <p>
-          Camp Prices (Early Bird by {earlyCutOffDate}): <u>${campWeeks ? campWeeks[0].earlyCost : ""}/week</u>
+          Camp Prices (Early Bird) (Register by {earlyCutOffDate}):{" "}
+          <u>${campWeeks ? campWeeks[0].earlyCost : ""}/week</u>
         </p>
         <br />
         <p>
           Camp Prices (Regular): <u>${campWeeks ? campWeeks[0].regularCost : ""}/week</u>
         </p>
+        <br />
+        <p>* Holiday weeks are less than regular weeks. (Discounted price will show on checkout page)</p>
         <br />
         <br />
         <Form>
@@ -134,7 +137,8 @@ export default function CamperScheduling() {
                     <td>{dateTimeToDate(item.start)}</td>
                     <td>{dateTimeToDate(item.end)}</td>
                     {weeksRegistered.includes(item.id) ? (
-                      <td>Registered {" "} 
+                      <td>
+                        Registered{" "}
                         {/* <Button variant="danger" style={{marginLeft: 50}} onClick={() => handleUnregister(item.id)}>
                           Unregister 
                         </Button> */}

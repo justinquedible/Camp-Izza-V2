@@ -12,8 +12,6 @@ export default function Sessions() {
   const [isSaving, setIsSaving] = React.useState(false);
   const [campWeeks, setCampWeeks] = React.useState<Camp_Week[]>([]);
   const [earlyCutOff, setEarlyCutOff] = React.useState("");
-  const [earlyCost, setEarlyCost] = React.useState(0);
-  const [regularCost, setRegularCost] = React.useState(0);
 
   React.useEffect(() => {
     (async () => {
@@ -26,9 +24,6 @@ export default function Sessions() {
         const sortedWeeks = filterAndSortWeeksCurrentYear(response.data);
         setCampWeeks(sortedWeeks);
         setEarlyCutOff(dateTimeToDateInput(sortedWeeks[0].earlyCutOff));
-        setEarlyCost(sortedWeeks[0].earlyCost);
-        setRegularCost(sortedWeeks[0].regularCost);
-        // console.log(sortedWeeks);
       });
     })();
   }, []);
@@ -45,12 +40,14 @@ export default function Sessions() {
     }
   };
 
-  const handlePriceChange = (field: string) => (e: { target: { value: any } }) => {
+  const handlePriceChange = (index: number, field: string) => (e: { target: { value: any } }) => {
     if (e.target.value !== "") {
       if (field === "earlyCost") {
-        setEarlyCost(parseInt(e.target.value));
+        campWeeks[index].earlyCost = parseInt(e.target.value);
+        setCampWeeks([...campWeeks]);
       } else if (field === "regularCost") {
-        setRegularCost(parseInt(e.target.value));
+        campWeeks[index].regularCost = parseInt(e.target.value);
+        setCampWeeks([...campWeeks]);
       }
     }
   };
@@ -62,8 +59,6 @@ export default function Sessions() {
       await axios.put(process.env.REACT_APP_API + "/api/camp_weeks/updateCamp_Weeks/" + week.id, {
         ...week,
         earlyCutOff: earlyCutOff,
-        earlyCost: earlyCost,
-        regularCost: regularCost,
       });
     }
     setIsSaving(false);
@@ -105,6 +100,29 @@ export default function Sessions() {
                   />
                 </Form.Group>
               </Row>
+              <Row>
+                <Form.Group as={Col}>
+                  <Form.Label>Weekly Price (Early Bird)</Form.Label>
+                  <Form.Control
+                    type="number"
+                    placeholder="0.00"
+                    value={week.earlyCost}
+                    required
+                    onChange={handlePriceChange(index, "earlyCost")}
+                  />
+                </Form.Group>
+                <Form.Group as={Col}>
+                  <Form.Label>Weekly Price (Regular)</Form.Label>
+                  <Form.Control
+                    type="number"
+                    placeholder="0.00"
+                    value={week.regularCost}
+                    required
+                    onChange={handlePriceChange(index, "regularCost")}
+                  />
+                </Form.Group>
+              </Row>
+              <hr />
             </div>
           ))}
           <Form.Group>
@@ -117,31 +135,8 @@ export default function Sessions() {
               onChange={(e) => setEarlyCutOff(e.target.value)}
             />
           </Form.Group>
+          {/* TODO: Add option to add and delete weeks */}
 
-          <br />
-          <h5>Weekly Pricing</h5>
-          <Row>
-            <Form.Group as={Col}>
-              <Form.Label>Weekly Price (Early Bird)</Form.Label>
-              <Form.Control
-                type="number"
-                placeholder="0.00"
-                value={earlyCost}
-                required
-                onChange={handlePriceChange("earlyCost")}
-              />
-            </Form.Group>
-            <Form.Group as={Col}>
-              <Form.Label>Weekly Price (Regular)</Form.Label>
-              <Form.Control
-                type="number"
-                placeholder="0.00"
-                value={regularCost}
-                required
-                onChange={handlePriceChange("regularCost")}
-              />
-            </Form.Group>
-          </Row>
           <br />
           <div className="center">
             <Button variant="success" className="buttonTxt" type="submit" disabled={isSaving} onClick={handleSubmit}>
