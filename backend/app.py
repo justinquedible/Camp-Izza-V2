@@ -356,6 +356,13 @@ def deleteRegistered_Camper_Week(registered_camper_weeks_id):
     return jsonify({"status": "success"})
 
 
+@app.route("/registered_camper_weeks/deleteRegistered_Camper_WeekWithCamperIdAndCampWeekId/<int:camp_week_id>/"
+           "<int:camper_id>", methods=["DELETE"])
+def deleteRegistered_Camper_WeekWithCamperIdAndCampWeekId(camp_week_id, camper_id):
+    cursor.execute("delete from registered_camper_weeks where camp_week_id = %s and camper_id = %s ", (camp_week_id,
+                                                                                                       camper_id))
+    return jsonify({"status": "success"})
+
 
 # REGISTERED COUNSELOR WEEKS
 @app.route("/registered_couselor_weeks/getRegistered_Counselor_Weeks")

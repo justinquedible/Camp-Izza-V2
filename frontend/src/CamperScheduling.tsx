@@ -73,6 +73,12 @@ export default function CamperScheduling() {
     }
   };
 
+  // const handleUnregister = (weekId: number) => (e: { target: { value: any } }) => {
+  //   // delete registered camper week 
+  //   await axios.get(process.env.REACT.APP.API + "/registered_camper_weeks/deleteRegistered_Camper_WeekWithCamperIdAndCampWeekId/" + weekId + "/" + sessionStorage.getItem("camper_id"))
+  //   // give credit to parent 
+  // };
+
   const handleBack = () => {
     sessionStorage.removeItem("camper_id");
     sessionStorage.removeItem("weeksSelected");
@@ -128,7 +134,11 @@ export default function CamperScheduling() {
                     <td>{dateTimeToDate(item.start)}</td>
                     <td>{dateTimeToDate(item.end)}</td>
                     {weeksRegistered.includes(item.id) ? (
-                      <td>Registered</td>
+                      <td>Registered {" "} 
+                        {/* <Button variant="danger" style={{marginLeft: 50}} onClick={() => handleUnregister(item.id)}>
+                          Unregister 
+                        </Button> */}
+                      </td>
                     ) : (
                       <td>
                         <select onChange={handleChange(item.id)} defaultValue={"not-reg"}>

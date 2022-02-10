@@ -7,7 +7,8 @@ import { useHistory } from "react-router-dom";
 import { getAuth } from "firebase/auth";
 import axios from "axios";
 import { dateTimeToDateInput } from "./util/DateTimeUtil";
-import { Camper, Camper_Medical_Record } from "./models/models";
+import { Camper, Camper_Medical_Record, Registered_Camper_Week } from "./models/models";
+
 
 export default function CamperForm() {
   const auth = getAuth();
@@ -109,13 +110,32 @@ export default function CamperForm() {
   };
 
   const handleDeleteCamper = async (e: { preventDefault: () => void }) => {
+    let  registeredWeeks: Registered_Camper_Week[] = [];
+    let cost = 0;
+    await axios.get(process.env.REACT_APP_API + "api/registered_camper_weeks/getRegistered_Camper_WeekByCamperID/" + sessionStorage.getItem("camper_id"))
+    .then(async (res) => {
+      registeredWeeks = res.data;
+      await axios.get(process.env.REACT_APP_API + "api/camp_weeks/getCamp_Week/" + res.data[0].camp_week_id)
+      .then((res) => {
+        // console.log(res.data);
+        cost = res.data.regularCost;
+      })
+    })
+    // console.log(registeredWeeks);
+    // console.log(cost);
+    await axios.get(process.env.REACT_APP_API + "api/parents/getParent/" + camperValues.parent_id)
+    .then(async (res) => {
+      await axios.put(process.env.REACT_APP_API + "api/parents/updateParent/" + camperValues.parent_id, {
+        ...res.data,
+        credit : cost * registeredWeeks.length,
+      });
+    })
     await axios.delete(process.env.REACT_APP_API + "api/campers/deleteCamper/" + sessionStorage.getItem("camper_id"));
     sessionStorage.removeItem("camper_id");
     history.push("/parent");
   };
 
   const handleDeleteCamperForm = () => {
-    // TODO: remove weeks the camper was registered for and add credits equivalent to price of registered weeks to parent
     setDelForm(true);
   };
 
