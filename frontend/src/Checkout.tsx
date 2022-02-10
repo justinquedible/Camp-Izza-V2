@@ -173,7 +173,7 @@ export default function Checkout() {
           Back
         </Button>
         <Button variant="primary" className="backButton" onClick={onApprove}>
-          Test
+          Test Checkout (Until we fix paypal payment)
         </Button>
         <br />
         <br />

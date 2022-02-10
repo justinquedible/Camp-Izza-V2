@@ -108,6 +108,12 @@ export type Emergency_Contact = {
 export type Group = {
   id: number;
   name: string;
+};
+
+export type Group_Limit = {
+  id: number;
+  group_id: number;
+  camp_week_id: number;
   camperLimit: number;
 };
 
@@ -167,3 +173,17 @@ export type User = {
   email: string;
   role: string;
 };
+
+// Exta types
+
+export interface Registered_Camper_WeekWithCamper extends Registered_Camper_Week {
+  firstName: string;
+  lastName: string;
+  grade: number;
+  gender: string;
+}
+
+export interface Registered_Counselor_WeekWithCounselor extends Registered_Counselor_Week {
+  firstName: string;
+  lastName: string;
+}

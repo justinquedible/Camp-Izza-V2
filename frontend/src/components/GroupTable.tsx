@@ -3,23 +3,28 @@
 import "../Dashboard.css";
 import * as React from "react";
 import { Table, Row, Col, Button } from "react-bootstrap";
-import { Group } from "../models/models";
-import axios from "axios";
+import { Group, Registered_Counselor_WeekWithCounselor, Registered_Camper_WeekWithCamper } from "../models/models";
 
 // NOTE: id values of counselors and campers are the id of their respective registered_counselor_week and
 // registered_camper_week
 interface props {
   group: Group;
-  counselors: { id: number; firstName: string; lastName: string }[];
-  campers: { id: number; firstName: string; lastName: string; grade: number; gender: string }[];
+  counselors: Registered_Counselor_WeekWithCounselor[];
+  campers: Registered_Camper_WeekWithCamper[];
   mutable?: boolean;
   onRemoveCounselorClick: (id: number) => void;
+  onRemoveCamperClick: (item: Registered_Camper_WeekWithCamper) => void;
 }
 
-const GroupTable: React.FC<props> = ({ group, counselors, campers, mutable = false, onRemoveCounselorClick }) => {
+const GroupTable: React.FC<props> = ({
+  group,
+  counselors,
+  campers,
+  mutable = false,
+  onRemoveCounselorClick,
+  onRemoveCamperClick,
+}) => {
   return (
-    // <Row>
-    // <Col>
     <div className="grid-item">
       <h5>{group.name}</h5>
       <h6>
@@ -53,7 +58,12 @@ const GroupTable: React.FC<props> = ({ group, counselors, campers, mutable = fal
           {campers.map((item) => (
             <tr key={item.id}>
               <td>
-                {mutable && <Button variant="outline-danger">🗑️</Button>} {item.firstName} {item.lastName}
+                {mutable && (
+                  <Button variant="outline-danger" onClick={() => onRemoveCamperClick(item)}>
+                    🗑️
+                  </Button>
+                )}{" "}
+                {item.firstName} {item.lastName}
               </td>
               <td>{item.grade !== 0 ? item.grade : "K"}</td>
               <td>{item.gender}</td>
@@ -62,19 +72,6 @@ const GroupTable: React.FC<props> = ({ group, counselors, campers, mutable = fal
         </tbody>
       </Table>
     </div>
-    // {/* </Col> */}
-    // {/* {mutable && (
-    // <Col xs="auto">
-    //   <br />
-    //   <br />
-    //   <br />
-    //   <Button variant="outline-primary"> + Assign Counselor </Button>
-    //   <br />
-    //   <br />
-    //   <Button variant="primary"> + Assign Camper </Button>
-    // </Col>
-    // )} */}
-    // {/* </Row> */}
   );
 };
 

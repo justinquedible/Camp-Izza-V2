@@ -2,22 +2,15 @@ import "./Dashboard.css";
 import React from "react";
 import { Container, Button, Col, Row, Form, ToggleButtonGroup, ToggleButton, Modal, ListGroup } from "react-bootstrap";
 import axios from "axios";
-import { Camp_Week, Group, Registered_Camper_Week, Registered_Counselor_Week, Counselor } from "./models/models";
+import {
+  Camp_Week,
+  Group,
+  Counselor,
+  Registered_Camper_WeekWithCamper,
+  Registered_Counselor_WeekWithCounselor,
+} from "./models/models";
 import { filterAndSortWeeksCurrentYear } from "./util/FilterAndSortUtil";
 import GroupTable from "./components/GroupTable";
-
-interface Registered_Camper_WeekWithCamper extends Registered_Camper_Week {
-  firstName: string;
-  lastName: string;
-  grade: number;
-  gender: string;
-}
-
-interface Registered_Counselor_WeekWithCounselor extends Registered_Counselor_Week {
-  counselor_id: string;
-  firstName: string;
-  lastName: string;
-}
 
 export default function Groups() {
   const [weeks, setWeeks] = React.useState<Camp_Week[]>([]);
@@ -32,6 +25,7 @@ export default function Groups() {
   const [selectedGroup, setSelectedGroup] = React.useState("All");
   const [selectedGroupId, setSelectedGroupId] = React.useState<number>(0);
   const [showCounselorPopup, setShowCounselorPopup] = React.useState(false);
+  const [showCamperPopup, setShowCamperPopup] = React.useState(false);
   const [counselors, setCounselors] = React.useState<Counselor[]>([]);
 
   React.useEffect(() => {
@@ -47,11 +41,7 @@ export default function Groups() {
         );
       });
       await fetchRegisteredCounselorWeeksWithCounselors();
-      await axios
-        .get(process.env.REACT_APP_API + "api/registered_camper_weeks/getRegistered_Camper_WeeksWithCampers")
-        .then((res) => {
-          setRegisteredCamperWeeksWithCamper(res.data);
-        });
+      await fetchRegisteredCamperWeeksWithCampers();
       await axios.get(process.env.REACT_APP_API + "api/counselors/getCounselors").then((res) => {
         setCounselors(res.data);
       });
@@ -63,6 +53,14 @@ export default function Groups() {
       .get(process.env.REACT_APP_API + "api/registered_counselor_weeks/getRegistered_Counselor_WeeksWithCounselors")
       .then((res) => {
         setRegisteredCounselorWeeksWithCounselor(res.data);
+      });
+  };
+
+  const fetchRegisteredCamperWeeksWithCampers = async () => {
+    await axios
+      .get(process.env.REACT_APP_API + "api/registered_camper_weeks/getRegistered_Camper_WeeksWithCampers")
+      .then((res) => {
+        setRegisteredCamperWeeksWithCamper(res.data);
       });
   };
 
@@ -79,7 +77,7 @@ export default function Groups() {
     setSelectedGroupId(groupId);
   };
 
-  const removeCounselor = async (id: number) => {
+  const removeCounselorFromGroup = async (id: number) => {
     await axios.delete(
       process.env.REACT_APP_API + "api/registered_counselor_weeks/deleteRegistered_Counselor_Week/" + id
     );
@@ -104,20 +102,71 @@ export default function Groups() {
     return counselors.filter((counselor) => !counselorsRegisteredForSelectedWeek.includes(counselor.id));
   };
 
+  const onClickShowCamperPopup = (groupId: number) => {
+    setShowCamperPopup(true);
+    setSelectedGroupId(groupId);
+  };
+
+  const removeCamperFromGroup = async (item: Registered_Camper_WeekWithCamper) => {
+    await axios.put(process.env.REACT_APP_API + "api/registered_camper_weeks/updateRegistered_Camper_Week/" + item.id, {
+      camper_id: item.camper_id,
+      camp_week_id: item.camp_week_id,
+      group_id: null,
+    });
+    await fetchRegisteredCamperWeeksWithCampers();
+  };
+
+  const filteredCampers = () => {
+    // loop through registeredCamperWeeksWithCamper, filter campers to exclude those that are assigned to any group for the selected week
+    return registeredCamperWeeksWithCamper.filter(
+      (item) => item.camp_week_id === selectedWeek && item.group_id === null
+    );
+  };
+
+  const assignCamper = async (item: Registered_Camper_WeekWithCamper) => {
+    await axios.put(process.env.REACT_APP_API + "api/registered_camper_weeks/updateRegistered_Camper_Week/" + item.id, {
+      camper_id: item.camper_id,
+      camp_week_id: item.camp_week_id,
+      group_id: selectedGroupId,
+    });
+    await fetchRegisteredCamperWeeksWithCampers();
+    setShowCamperPopup(false);
+  };
+
   const CounselorPopup = () => (
+    <Modal scrollable show={showCounselorPopup} onHide={() => setShowCounselorPopup(false)}>
+      <Modal.Header closeButton>
+        <Modal.Title>Unassigned Counselors</Modal.Title>
+      </Modal.Header>
+      <Modal.Body style={{ height: "300px" }}>
+        <ListGroup>
+          {filteredCounselors().map((counselor) => (
+            <ListGroup.Item key={counselor.id}>
+              <Button variant="success" size={"sm"} onClick={() => assignCounselor(counselor.id)}>
+                Assign
+              </Button>{" "}
+              {counselor.firstName} {counselor.lastName}
+            </ListGroup.Item>
+          ))}
+        </ListGroup>
+      </Modal.Body>
+    </Modal>
+  );
+
+  const CamperPopup = () => (
     <div>
-      <Modal scrollable show={showCounselorPopup} onHide={() => setShowCounselorPopup(false)}>
+      <Modal scrollable show={showCamperPopup} onHide={() => setShowCamperPopup(false)}>
         <Modal.Header closeButton>
-          <Modal.Title>Unassigned Counselors</Modal.Title>
+          <Modal.Title>Unassigned Campers</Modal.Title>
         </Modal.Header>
         <Modal.Body style={{ height: "300px" }}>
           <ListGroup>
-            {filteredCounselors().map((counselor) => (
-              <ListGroup.Item key={counselor.id}>
-                <Button variant="success" size={"sm"} onClick={() => assignCounselor(counselor.id)}>
+            {filteredCampers().map((item) => (
+              <ListGroup.Item key={item.id}>
+                <Button variant="success" size={"sm"} onClick={() => assignCamper(item)}>
                   Assign
                 </Button>{" "}
-                {counselor.firstName} {counselor.lastName}
+                {item.firstName} {item.lastName} {`(Grade ${item.grade !== 0 ? item.grade : "K"}, ${item.gender})`}
               </ListGroup.Item>
             ))}
           </ListGroup>
@@ -135,10 +184,17 @@ export default function Groups() {
       <br />
       <h3> Groups </h3>
       <div className="center">
-        <Form>
-          <Col xs="3">
-            {/* TODO: Add dropdown for term */}
-            <Form.Control as="select" onChange={handleWeekChange}>
+        <Form className="center" style={{ marginLeft: "40%", marginRight: "40%" }}>
+          <Col xs="auto">
+            {/* TODO: Ask Omar if he needs a dropdown for term */}
+            {/* <Form.Control as="select" onChange={handleWeekChange} style={{ textAlign: "center" }}>
+              {weeks.map((week) => (
+                <option key={week.id} value={week.id}>
+                  {week.name}
+                </option>
+              ))}
+            </Form.Control> */}
+            <Form.Control as="select" onChange={handleWeekChange} style={{ textAlign: "center" }}>
               {weeks.map((week) => (
                 <option key={week.id} value={week.id}>
                   {week.name}
@@ -147,7 +203,8 @@ export default function Groups() {
             </Form.Control>
           </Col>
         </Form>
-        <ToggleButtonGroup type="radio" name="options" defaultValue={"All"} onChange={handleGroupChange}>
+
+        <ToggleButtonGroup type="radio" name="options" onChange={handleGroupChange}>
           <ToggleButton value={"All"} variant="outline-dark">
             All
           </ToggleButton>
@@ -165,61 +222,54 @@ export default function Groups() {
           </ToggleButton>
         </ToggleButtonGroup>
 
-        {["All", "Dates", "Coconuts", "Trees", "Young Leaders"].includes(selectedGroup) && (
-          <Container>
-            <br />
-            {selectedGroup === "All" ? <h4>👥 All Groups 👥</h4> : <h4>✏️ Edit Group: {selectedGroup}</h4>}
-            <br />
-            <div className={selectedGroup === "All" ? "grid-container" : ""}>
-              {groups
-                .filter((group) => (selectedGroup === "All" ? true : group.name.includes(selectedGroup)))
-                .map((group) => (
-                  <div key={group.id}>
-                    <Row>
-                      <Col>
-                        <GroupTable
-                          group={group}
-                          counselors={registeredCounselorWeeksWithCounselor.filter(
-                            (item) => item.group_id === group.id && item.camp_week_id === selectedWeek
-                          )}
-                          campers={registeredCamperWeeksWithCamper.filter(
-                            (item) => item.group_id === group.id && item.camp_week_id === selectedWeek
-                          )}
-                          mutable={selectedGroup !== "All"}
-                          onRemoveCounselorClick={removeCounselor}
-                        />
+        <Container>
+          <br />
+          {selectedGroup === "All" ? <h4>👥 All Groups 👥</h4> : <h4>✏️ Edit Group: {selectedGroup}</h4>}
+          <br />
+          <div className={selectedGroup === "All" ? "grid-container" : ""}>
+            {groups
+              .filter((group) => (selectedGroup === "All" ? true : group.name.includes(selectedGroup)))
+              .map((group) => (
+                <div key={group.id}>
+                  <Row>
+                    <Col>
+                      {/* TODO: Add input to set group limits for each group of each week */}
+                      <GroupTable
+                        group={group}
+                        counselors={registeredCounselorWeeksWithCounselor.filter(
+                          (item) => item.group_id === group.id && item.camp_week_id === selectedWeek
+                        )}
+                        campers={registeredCamperWeeksWithCamper.filter(
+                          (item) => item.group_id === group.id && item.camp_week_id === selectedWeek
+                        )}
+                        mutable={selectedGroup !== "All"}
+                        onRemoveCounselorClick={removeCounselorFromGroup}
+                        onRemoveCamperClick={removeCamperFromGroup}
+                      />
+                    </Col>
+                    {selectedGroup !== "All" && (
+                      <Col xs="auto">
+                        <br />
+                        <br />
+                        <br />
+                        <Button variant="outline-primary" onClick={() => onClickShowCounselorPopup(group.id)}>
+                          + Assign Counselor
+                        </Button>
+                        <br />
+                        <br />
+                        <Button variant="primary" onClick={() => onClickShowCamperPopup(group.id)}>
+                          + Assign Camper
+                        </Button>
                       </Col>
-                      {selectedGroup !== "All" && (
-                        <Col xs="auto">
-                          <br />
-                          <br />
-                          <br />
-                          <Button variant="outline-primary" onClick={() => onClickShowCounselorPopup(group.id)}>
-                            + Assign Counselor
-                          </Button>
-                          <br />
-                          <br />
-                          <Button variant="primary"> + Assign Camper </Button>
-                        </Col>
-                      )}
-                    </Row>
-                  </div>
-                ))}
-            </div>
-          </Container>
-        )}
+                    )}
+                  </Row>
+                </div>
+              ))}
+          </div>
+        </Container>
 
         {showCounselorPopup && <CounselorPopup />}
-
-        {/* <div className={"buttonToggle"}>
-        {showAll ? <All /> : null}
-        {showDates ? <Dates /> : null}
-        {showCoconuts ? <Coconuts /> : null}
-        {showTrees ? <Trees /> : null}
-        {showLeaders ? <Leaders /> : null}
-        {showPopup ? <Popup /> : null}
-        {showCounselorPopup ? <CounselorPopup /> : null}
-      </div> */}
+        {showCamperPopup && <CamperPopup />}
       </div>
     </Container>
   );

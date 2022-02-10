@@ -381,8 +381,8 @@ def getRegistered_Counselor_WeekByCounselorID(counselor_id):
 # registered_counselor_weeks join with counselor
 @app.route("/registered_counselor_weeks/getRegistered_Counselor_WeeksWithCounselors")
 def getRegistered_Counselor_WeeksWithCounselors():
-    cursor.execute("select r.*, c.id as counselor_id, c.firstName as firstName, c.lastName as lastName from "
-                   "registered_counselor_weeks r, counselors c where r.counselor_id = c.id")
+    cursor.execute("select r.*, c.firstName as firstName, c.lastName as lastName from registered_counselor_weeks r, "
+                   "counselors c where r.counselor_id = c.id")
     rows = cursor.fetchall()
     return jsonify(rows)
 
@@ -466,7 +466,7 @@ def getAllCounselor_Medical_Records():
 @app.route("/counselor_medical_records/getCounselor_Medical_RecordByCounselorID/<counselor_id>")
 def getCounselor_Medical_RecordByCounselorID(counselor_id):
     cursor.execute("select * from counselor_medical_records where counselor_id = %s", (counselor_id,))
-    rows = cursor.fetchall()
+    rows = cursor.fetchone()
     return jsonify(rows)
 
 
@@ -508,24 +508,23 @@ def getGroups():
 @app.route("/groups/getGroup/<int:group_id>")
 def getGroup(group_id):
     cursor.execute("select * from `groups` where id = %s", (group_id,))
-    rows = cursor.fetchall()
+    rows = cursor.fetchone()
     return jsonify(rows)
 
 
 @app.route("/groups/updateGroup/<int:group_id>", methods=["PUT"])
 def updateGroup(group_id):
     data = request.get_json()
-    cursor.execute("update `groups` set name=%s, camperLimit=%s where id = %s ",
-                   (data["name"], data["camperLimit"], group_id))
+    cursor.execute("update `groups` set name=%s, where id = %s ",
+                   (data["name"], group_id))
     return jsonify({"status": "success"})
 
 
 @app.route("/groups/addGroup", methods=["POST"])
 def addGroup():
     data = request.get_json()
-    cursor.execute("insert into `groups` (id, name, camperLimit) "
-                   "values (%s, %s, %s)",
-                   (data["id"], data["name"], data["camperLimit"]))
+    cursor.execute("insert into `groups` (name,) values (%s,)",
+                   (data["name"]))
     return jsonify({"status": "success"})
 
 
@@ -533,6 +532,46 @@ def addGroup():
 def deleteGroup(group_id):
     cursor.execute("delete from `groups` where id = %s ", (group_id,))
     return jsonify({"status": "success"})
+
+
+
+# CAMP GROUP LIMITS
+@app.route("/group_limits/getGroup_Limits")
+def getGroupLimits():
+    cursor.execute("select * from group_limits")
+    rows = cursor.fetchall()
+    return jsonify(rows)
+
+
+@app.route("/group_limits/getGroup_Limit/<int:id>")
+def getGroup_Limit(id):
+    cursor.execute("select * from group_limits where id = %s", (id,))
+    rows = cursor.fetchone()
+    return jsonify(rows)
+
+
+@app.route("/group_limits/updateGroup_Limit/<int:id>", methods=["PUT"])
+def updateGroup_Limit(id):
+    data = request.get_json()
+    cursor.execute("update group_limits set group_id = %s, camp_week_id = %s, camperLimit=%s where id = %s ",
+                   (data["group_id"], data["camp_week_id"], data["camperLimit"], id))
+    return jsonify({"status": "success"})
+
+
+@app.route("/group_limits/addGroup_Limit", methods=["POST"])
+def addGroup_Limit():
+    data = request.get_json()
+    cursor.execute("insert into group_limits (group_id, camp_week_id, camperLimit) "
+                   "values (%s, %s, %s)",
+                   (data["group_id"], data["camp_week_id"], data["camperLimit"]))
+    return jsonify({"status": "success"})
+
+
+@app.route("/group_limits/deleteGroup_Limit/<int:id>", methods=["DELETE"])
+def deleteGroup_Limit(id):
+    cursor.execute("delete from group_limits where id = %s ", (id,))
+    return jsonify({"status": "success"})
+
 
 
 # EMERGENCY CONTACTS
