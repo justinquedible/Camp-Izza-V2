@@ -381,8 +381,8 @@ def getRegistered_Counselor_WeekByCounselorID(counselor_id):
 # registered_counselor_weeks join with counselor
 @app.route("/registered_counselor_weeks/getRegistered_Counselor_WeeksWithCounselors")
 def getRegistered_Counselor_WeeksWithCounselors():
-    cursor.execute("select r.*, c.firstName as firstName, c.lastName as lastName from registered_counselor_weeks r, "
-                   "counselors c where r.counselor_id = c.id")
+    cursor.execute("select r.*, c.id as counselor_id, c.firstName as firstName, c.lastName as lastName from "
+                   "registered_counselor_weeks r, counselors c where r.counselor_id = c.id")
     rows = cursor.fetchall()
     return jsonify(rows)
 
@@ -403,6 +403,14 @@ def addRegistered_Counselor_Week():
                    "values (%s, %s, %s)",
                    (data["counselor_id"], data["camp_week_id"], data["group_id"]))
     return jsonify({"status": "success"})
+
+
+@app.route("/registered_counselor_weeks/deleteRegistered_Counselor_Week/<int:registered_counselor_weeks_id>",
+           methods=["DELETE"])
+def deleteRegistered_Counselor_Week(registered_counselor_weeks_id):
+    cursor.execute("delete from registered_counselor_weeks where id = %s ", (registered_counselor_weeks_id,))
+    return jsonify({"status": "success"})
+
 
 
 # CAMPERS' MEDICAL RECORDS
