@@ -169,6 +169,16 @@ export default function Checkout() {
       });
   };
 
+  const handleNegativeTotal = () => {
+    if (parent){
+      if (parent?.credit > total) {
+        // setTotal = 0; 
+        
+      }
+    }
+    
+  };
+
   const handleBack = () => {
     history.goBack();
   };

@@ -42,6 +42,7 @@ export default function SignupParent() {
             zipCode: "",
             state: "CA",
             country: "USA",
+            credit: 0,
           });
           for (let i = 0; i < 2; i++) {
             await axios.post(process.env.REACT_APP_API + "api/emergency_contacts/addEmergency_Contact", {

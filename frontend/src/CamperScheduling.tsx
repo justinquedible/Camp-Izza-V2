@@ -73,11 +73,20 @@ export default function CamperScheduling() {
     }
   };
 
-  // const handleUnregister = (weekId: number) => (e: { target: { value: any } }) => {
-  //   // delete registered camper week
-  //   await axios.get(process.env.REACT.APP.API + "/registered_camper_weeks/deleteRegistered_Camper_WeekWithCamperIdAndCampWeekId/" + weekId + "/" + sessionStorage.getItem("camper_id"))
-  //   // give credit to parent
-  // };
+  const handleUnregister = async (weekId: number, cost:number) => {
+    // give parent credit for unregister week
+    await axios.get(process.env.REACT_APP_API + "api/parents/getParent/" + camper?.parent_id).then(async (res) => {
+      await axios.put(process.env.REACT_APP_API + "api/parents/updateParent/" + camper?.parent_id, {
+        ...res.data,
+        credit: cost,
+      });
+    });
+
+    // delete registered camper week
+    await axios.delete(process.env.REACT_APP_API + "api/registered_camper_weeks/deleteRegistered_Camper_WeekWithCamperIdAndCampWeekId/"
+     + weekId + "/" + sessionStorage.getItem("camper_id"))
+    window.location.reload();
+  };
 
   const handleBack = () => {
     sessionStorage.removeItem("camper_id");
@@ -139,9 +148,9 @@ export default function CamperScheduling() {
                     {weeksRegistered.includes(item.id) ? (
                       <td>
                         Registered{" "}
-                        {/* <Button variant="danger" style={{marginLeft: 50}} onClick={() => handleUnregister(item.id)}>
+                        <Button variant="danger" style={{marginLeft: 50}} onClick={() => handleUnregister(item.id, item.regularCost)}>
                           Unregister 
-                        </Button> */}
+                        </Button>
                       </td>
                     ) : (
                       <td>
