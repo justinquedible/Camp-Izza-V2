@@ -132,6 +132,9 @@ export default function CamperForm() {
   const handleDeleteCamper = async (e: { preventDefault: () => void }) => {
     let registeredWeeks: Registered_Camper_Week[] = [];
     let cost = 0;
+    // First check to see if the camper has any registered weeks, if so, don't allow them to delete
+    // TODO: Add a warning to the user that they can't delete the camper
+    // FIXME: This will give credit to the parent if the camper is registered weeks that passed already
     await axios
       .get(
         process.env.REACT_APP_API +

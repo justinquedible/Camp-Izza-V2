@@ -11,8 +11,10 @@ import {
 } from "./models/models";
 import { filterAndSortWeeksCurrentYear } from "./util/FilterAndSortUtil";
 import GroupTable from "./components/GroupTable";
+import { useHistory } from "react-router-dom";
 
 export default function Groups() {
+  const history = useHistory();
   const [weeks, setWeeks] = React.useState<Camp_Week[]>([]);
   const [groups, setGroups] = React.useState<Group[]>([]);
   const [registeredCamperWeeksWithCamper, setRegisteredCamperWeeksWithCamper] = React.useState<
@@ -133,6 +135,10 @@ export default function Groups() {
     setShowCamperPopup(false);
   };
 
+  const handleBack = () => {
+    history.goBack();
+  };
+
   const CounselorPopup = () => (
     <Modal scrollable show={showCounselorPopup} onHide={() => setShowCounselorPopup(false)}>
       <Modal.Header closeButton>
@@ -177,7 +183,7 @@ export default function Groups() {
 
   return (
     <Container className="Admin-Buttons">
-      <Button variant="primary" className="backButton" href="/#/admin">
+      <Button variant="primary" className="backButton" onClick={handleBack}>
         Back
       </Button>
       <br />

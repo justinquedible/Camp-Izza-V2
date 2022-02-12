@@ -2,10 +2,9 @@
 
 import * as React from "react";
 import { Card, CardColumns, Row } from "react-bootstrap";
-import { Camper } from "../models/models";
 
 interface props {
-  campers: Camper[];
+  campers: { id: number; firstName: string; lastName: string }[];
   type?: string;
 }
 
@@ -14,10 +13,14 @@ const Campers: React.FC<props> = ({ campers, type = "parent" }) => {
     sessionStorage.setItem("camper_id", id.toString());
   };
 
+  const handleCamperClickEmergencyForm = (id: number) => {
+    sessionStorage.setItem("camper_id", [id.toString()].join(","));
+  };
+
   return (
-    <CardColumns>
+    <div style={{ display: "grid", gridTemplateColumns: `repeat(${type === "parent" ? "3" : "4"}, minmax(0, 1fr))` }}>
       {campers.map((camper) => (
-        <Card key={camper.id} border="success">
+        <Card key={camper.id} border="success" style={{ width: "auto", margin: "15px" }}>
           <Card.Body>
             <Card.Title>
               {camper.firstName} {camper.lastName}
@@ -37,13 +40,13 @@ const Campers: React.FC<props> = ({ campers, type = "parent" }) => {
                 <Card.Link onClick={() => handleCamperClick(camper.id)} href="/#/admin/camperForm">
                   👤
                 </Card.Link>
-                <Card.Link onClick={() => handleCamperClick(camper.id)} href="/#/parent/camperScheduling">
+                <Card.Link onClick={() => handleCamperClick(camper.id)} href="/#/admin/camperScheduling">
                   📖
                 </Card.Link>
                 <Card.Link onClick={() => handleCamperClick(camper.id)} href="/#/parent/camperScheduling">
                   📆
                 </Card.Link>
-                <Card.Link onClick={() => handleCamperClick(camper.id)} href="/#/parent/camperScheduling">
+                <Card.Link onClick={() => handleCamperClickEmergencyForm(camper.id)} href="/#/admin/emergencyForm">
                   📝
                 </Card.Link>
               </Row>
@@ -51,7 +54,7 @@ const Campers: React.FC<props> = ({ campers, type = "parent" }) => {
           </Card.Body>
         </Card>
       ))}
-    </CardColumns>
+    </div>
   );
 };
 

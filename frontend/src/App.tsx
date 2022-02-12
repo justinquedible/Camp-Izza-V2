@@ -14,12 +14,14 @@ import HouseholdForm from "./HouseholdForm";
 import CamperForm from "./CamperForm";
 import CamperScheduling from "./CamperScheduling";
 import Checkout from "./Checkout";
+import CompletedTransaction from "./CompletedTransaction";
 import Admin from "./Admin";
 import Sessions from "./Sessions";
 import ManageCounselors from "./ManageCounselors";
-
 import ManageCampers from "./ManageCampers";
 import Groups from "./Groups";
+import EmergencyForm from "./EmergencyForm";
+
 import AdminAttendance from "./AdminAttendance";
 import AttendanceReport from "./AttendanceReport";
 import BonusCamper from "./BonusCamper";
@@ -29,12 +31,10 @@ import Profile from "./Profile";
 import Roster from "./Roster";
 import Counselor from "./Counselor";
 import CounselorAttendance from "./CounselorAttendance";
-import EmergencyForm from "./EmergencyForm";
 import NavBarInstance from "./NavBar";
 import FooterInstance from "./Footer";
 import AdminProtected from "./AdminProtected";
 import AdminCamperForm from "./AdminCamperForm";
-import CompletedTransaction from "./CompletedTransaction";
 import CamperInfo from "./CamperInfo";
 import CounselorInfo from "./CounselorInfo";
 import CounselorForm from "./CounselorForm";
@@ -92,6 +92,8 @@ function App() {
               <Route exact path={"/admin/manageCounselors"} component={ManageCounselors} />
               <Route exact path={"/admin/manageCampers"} component={ManageCampers} />
               <Route exact path={"/admin/camperForm"} component={CamperForm} />
+              <Route exact path={"/admin/camperScheduling"} component={CamperScheduling} />
+              <Route exact path={"/admin/emergencyForm"} component={EmergencyForm} />
               {/* Counselor */}
               <Route exact path={"/signupCounselor"} component={SignUpCounselor} />
               <Route exact path={"/counselor"} component={Counselor} />
@@ -101,8 +103,6 @@ function App() {
               <Route exact path={"/admin/AttendanceReport"} component={AttendanceReport} />
               <Route exact path={"/admin/roster"} component={Roster} />
               <Route exact path={"/admin/AdminCamperForm"} component={AdminCamperForm} />
-              <Route exact path={"/admin/emergencyform"} component={EmergencyForm} />
-
               <Route exact path={"/counselor/pending"} component={Pending} />
               <Route exact path={"/CamperInfo"} component={CamperInfo} />
               <Route exact path={"/Profile"} component={Profile} />

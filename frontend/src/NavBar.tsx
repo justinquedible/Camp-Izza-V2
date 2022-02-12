@@ -3,7 +3,7 @@ import "./NavBar.css";
 import React from "react";
 import { getAuth, User } from "firebase/auth";
 import { Navbar, Nav, NavDropdown } from "react-bootstrap";
-import logo from "./Original_Logo.png";
+import logo from "./assets/logo.png";
 
 const navBarStyle = { color: "black" };
 
@@ -32,7 +32,7 @@ export default function NavBar() {
   return (
     <Navbar bg="light" expand="lg">
       <Navbar.Brand href="#home">
-        <img src={logo} alt={"Camp Izza Logo"} />
+        <img src={logo} alt={"Camp Izza Logo"} height="75" />
       </Navbar.Brand>
       <Navbar.Toggle aria-controls="basic-navbar-nav" />
       <Navbar.Collapse id="basic-navbar-nav">

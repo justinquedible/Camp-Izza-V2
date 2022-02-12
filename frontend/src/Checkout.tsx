@@ -64,7 +64,6 @@ export default function Checkout() {
           // console.log(response.data);
         });
       await axios.get(process.env.REACT_APP_API + "api/camp_weeks/getCamp_Weeks").then((response) => {
-        sessionStorage.getItem("weeksSelected");
         const weeksSelected = filterAndSortWeeksSelected(response.data);
         setCampWeeksSelected(weeksSelected);
         let isEarlyBird = false;

@@ -6,9 +6,11 @@ import "./Dashboard.css";
 import { dateTimeToDateTimeInput, dateTimeToDateInput } from "./util/DateTimeUtil";
 import { filterAndSortWeeksCurrentYear } from "./util/FilterAndSortUtil";
 import { Camp_Week } from "./models/models";
+import { useHistory } from "react-router-dom";
 import axios from "axios";
 
 export default function Sessions() {
+  const history = useHistory();
   const [isSaving, setIsSaving] = React.useState(false);
   const [campWeeks, setCampWeeks] = React.useState<Camp_Week[]>([]);
   const [earlyCutOff, setEarlyCutOff] = React.useState("");
@@ -64,9 +66,13 @@ export default function Sessions() {
     setIsSaving(false);
   };
 
+  const handleBack = async () => {
+    history.goBack();
+  };
+
   return (
     <Container className="Admin-Buttons">
-      <Button variant="primary" className="backButton" href="/#/admin">
+      <Button variant="primary" className="backButton" onClick={handleBack}>
         Back
       </Button>
       <br />
