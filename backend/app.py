@@ -580,54 +580,6 @@ def deleteGroup(group_id):
     return jsonify({"status": "success"})
 
 
-
-# CAMP GROUP LIMITS
-@app.route("/group_limits/getGroup_Limits")
-def getGroupLimits():
-    cursor.execute("select * from group_limits")
-    rows = cursor.fetchall()
-    return jsonify(rows)
-
-
-@app.route("/group_limits/getGroup_Limit/<int:id>")
-def getGroup_Limit(id):
-    cursor.execute("select * from group_limits where id = %s", (id,))
-    rows = cursor.fetchone()
-    return jsonify(rows)
-
-
-@app.route("/group_limits/updateGroup_Limit/<int:id>", methods=["PUT"])
-def updateGroup_Limit(id):
-    data = request.get_json()
-    cursor.execute("update group_limits set group_id = %s, camp_week_id = %s, camperLimit=%s where id = %s ",
-                   (data["group_id"], data["camp_week_id"], data["camperLimit"], id))
-    return jsonify({"status": "success"})
-
-
-@app.route("/group_limits/addGroup_Limit", methods=["POST"])
-def addGroup_Limit():
-    data = request.get_json()
-    cursor.execute("insert into group_limits (group_id, camp_week_id, camperLimit) "
-                   "values (%s, %s, %s)",
-                   (data["group_id"], data["camp_week_id"], data["camperLimit"]))
-    return jsonify({"status": "success"})
-
-
-@app.route("/group_limits/deleteGroup_Limit/<int:id>", methods=["DELETE"])
-def deleteGroup_Limit(id):
-    cursor.execute("delete from group_limits where id = %s ", (id,))
-    return jsonify({"status": "success"})
-
-
-@app.route("/groups/group_limits/join/getJoinGroupsAndGroupLimits")
-def getJoinGroupsAndGroupLimits():
-    # cursor.execute("select r.*, c.firstName as firstName, c.lastName as lastName, c.grade as grade, "
-    #                "c.gender as gender from registered_camper_weeks r, campers c where r.camper_id = c.id")
-    cursor.execute("select * from `groups` g, group_limits l where l.group_id = g.id")
-    rows = cursor.fetchall()
-    return jsonify(rows)
-
-
 # EMERGENCY CONTACTS
 @app.route("/emergency_contacts/getEmergency_Contacts")
 def getEmergency_Contact():
