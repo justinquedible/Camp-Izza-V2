@@ -122,7 +122,7 @@ export default function Checkout() {
           .post(process.env.REACT_APP_API + "api/registered_camper_weeks/addRegistered_Camper_Week", {
             camper_id: camper?.id,
             camp_week_id: week.id,
-            group_id: camper ? findGroupId(camper?.grade) : "",
+            group_id: null,
           })
           .then(async (response) => {
             console.log(response);
