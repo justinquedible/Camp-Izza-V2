@@ -170,14 +170,6 @@ export default function Checkout() {
       });
   };
 
-  const handleNegativeTotal = () => {
-    if (parent) {
-      if (parent?.credit > total) {
-        // setTotal = 0;
-      }
-    }
-  };
-
   const findGroupId = async (grade: number | undefined) => {
     // Loop through the weeks the camper has registered in
     // Find group ids of group type they should be in
