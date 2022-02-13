@@ -25,6 +25,7 @@ export default function Checkout() {
   const [shirtPrice, setShirtPrice] = React.useState(0);
   const [total, setTotal] = React.useState(0);
   const [isEarlyBird, setIsEarlyBird] = React.useState(false);
+  const noTotal = false;
 
   // const [orderID, setOrderID] = React.useState();
 
@@ -103,10 +104,10 @@ export default function Checkout() {
       paid: camper ? camper.paid + total : total,
     });
 
-    // Update parent credit to 0
+    // Update parent credit
     await axios.put(process.env.REACT_APP_API + "api/parents/updateParent/" + parent?.id, {
       ...parent,
-      credit: 0,
+      credit: parent ? (total - parent?.credit > 0 ? 0 : parent?.credit - total) : 0,
     });
 
     // Post to registered_camper_weeks and payment_informations, one for each campWeeksSelected
@@ -121,7 +122,7 @@ export default function Checkout() {
           .post(process.env.REACT_APP_API + "api/registered_camper_weeks/addRegistered_Camper_Week", {
             camper_id: camper?.id,
             camp_week_id: week.id,
-            group_id: 9,
+            group_id: camper ? findGroupId(camper?.grade) : "",
           })
           .then(async (response) => {
             console.log(response);
@@ -177,6 +178,53 @@ export default function Checkout() {
     }
   };
 
+  const findGroupId = async (grade: number | undefined) => {
+    // Loop through the weeks the camper has registered in
+    // Find group ids of group type they should be in
+    // Find group limits using the group ids and camp week id
+    // - If first group is not full and second group is empty, then put them in first group for that week.
+    // - If first and second group are not full, then put them in the group with less campers for that week.
+    // - If first group is full and second group is not full, then put them in the second group for that week.
+    // - If the first and second group is full, then put them in the waitlist for that week
+
+    let id = 0;
+    if (grade) {
+      await axios.get(process.env.REACT_APP_API + "api/count/campersInGroups").then((response) => {
+        for (let r of response.data) {
+          // console.log(r.name);
+
+          if (grade == 0 || grade == 1) {
+            // dates
+            if (r.name.startsWith("Dates") && r.num != null && r.num < r.camperLimit) {
+              console.log("hi in the dates");
+              id = r.id;
+            }
+          } else if (grade == 2 || grade == 3) {
+            // coconuts
+            if (r.name.startsWith("Coconuts") && r.num != null && r.num < r.camperLimit) {
+              console.log("hi in coconuts");
+              id = r.id;
+            }
+          } else if (grade == 4 || grade == 5 || grade == 6) {
+            //trees
+            if (r.name.startsWith("Trees") && r.num != null && r.num < r.camperLimit) {
+              console.log("hi in trees");
+              id = r.id;
+            }
+          } else if (grade == 7 || grade == 8) {
+            // young leaders
+            if (r.name.startsWith("Young") && r.num != null && r.num < r.camperLimit) {
+              console.log("hi in young leaders");
+              id = r.id;
+            }
+          }
+        }
+      });
+    }
+    console.log(id);
+    return id;
+  };
+
   const handleBack = () => {
     history.goBack();
   };
@@ -190,6 +238,9 @@ export default function Checkout() {
         </Button>
         <Button variant="primary" className="backButton" onClick={onApprove}>
           Test Checkout (Until we fix paypal payment)
+        </Button>
+        <Button variant="outline-primary" className="backButton" onClick={() => findGroupId(camper?.grade)}>
+          grade
         </Button>
         <br />
         <br />
@@ -284,24 +335,32 @@ export default function Checkout() {
                   <strong>Order Due</strong>
                 </td>
                 <td>
-                  <strong>${parent ? total - parent?.credit : 0}</strong>
+                  <strong>${parent ? (total - parent?.credit < 0 ? 0 : total - parent?.credit) : 0}</strong>
                 </td>
               </tr>
             </tbody>
           </Table>
-
-          <PayPalScriptProvider
-            options={{
-              "client-id": "AZC9nSofXqQT186_jNkgK-srfaV83p8HL2TbrL2_BqAZow_9UE5rwB3LIlySSXb1wEeef0ocCIxFP1bZ",
-            }}
-          >
-            <PayPalButtons
-              createOrder={createOrder}
-              onApprove={onApprove}
-              forceReRender={parent ? total - parent?.credit : 0}
-              style={{ color: "blue", label: "pay", height: 40 }}
-            />
-          </PayPalScriptProvider>
+          {(parent ? (total - parent?.credit < 0 ? 0 : total - parent?.credit) : 0) ? (
+            <PayPalScriptProvider
+              options={{
+                "client-id": "AZC9nSofXqQT186_jNkgK-srfaV83p8HL2TbrL2_BqAZow_9UE5rwB3LIlySSXb1wEeef0ocCIxFP1bZ",
+              }}
+            >
+              <PayPalButtons
+                createOrder={createOrder}
+                onApprove={onApprove}
+                forceReRender={parent ? total - parent?.credit : 0}
+                style={{ color: "blue", label: "pay", height: 40 }}
+              />
+            </PayPalScriptProvider>
+          ) : (
+            <div>
+              <Button variant="success" className="Admin-Button" onClick={onApprove}>
+                Register
+              </Button>
+              <p style={{ marginLeft: 80 }}> *No Payment Required*</p>
+            </div>
+          )}
         </div>
       </Container>
     </div>
