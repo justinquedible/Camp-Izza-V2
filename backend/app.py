@@ -582,6 +582,14 @@ def deleteGroup_Limit(id):
     return jsonify({"status": "success"})
 
 
+@app.route("/groups/group_limits/join/getJoinGroupsAndGroupLimits")
+def getJoinGroupsAndGroupLimits():
+    # cursor.execute("select r.*, c.firstName as firstName, c.lastName as lastName, c.grade as grade, "
+    #                "c.gender as gender from registered_camper_weeks r, campers c where r.camper_id = c.id")
+    cursor.execute("select * from `groups` g, group_limits l where l.group_id = g.id")
+    rows = cursor.fetchall()
+    return jsonify(rows)
+
 
 # EMERGENCY CONTACTS
 @app.route("/emergency_contacts/getEmergency_Contacts")
@@ -693,6 +701,20 @@ def deleteShirt(shirt_id):
     cursor.execute("delete from shirts where id = %s ", (shirt_id,))
 
     return jsonify({"status": "success"})
+
+
+@app.route("/count/campersInGroups")
+def getCountOfCampersInGroups():
+    cursor.execute("select `groups`.id, `groups`.name, t2.num, t2.camperLimit "
+                   "from `groups` "
+                   "left join (select t1.id, t1.name, t1.camperLimit, COUNT(*) num "
+                              "from registered_camper_weeks r, (select g.id, g.name, gl.camperLimit "
+                                                                "from `groups` g "
+                                                                "join group_limits gl on g.id = gl.id) t1 "
+                              "where r.group_id = t1.id group by r.group_id) t2 "
+                   "on `groups`.id = t2.id")
+    row = cursor.fetchall()
+    return jsonify(row)
 
 
 if __name__ == "__main__":
