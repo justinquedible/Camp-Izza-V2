@@ -14,8 +14,18 @@ export default function NavBar() {
   React.useEffect(() => {
     // TODO: if user is not logged in, redirect to login page
     const unsubscribe = auth.onAuthStateChanged((user) => {
-      setUser(user);
+      if (user) {
+        setUser(user);
+      } else {
+        // while (true) {
+        //   if (window.location.pathname !== "/login") {
+        //     window.location.href = "/login";
+        //     setTimeout()
+        //   }
+        // }
+      }
     });
+    console.log("hi");
     return unsubscribe;
   }, [auth]);
 

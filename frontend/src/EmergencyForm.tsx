@@ -2,7 +2,7 @@
 
 import React from "react";
 import "./Dashboard.css";
-import { Container, Button } from "react-bootstrap";
+import { Container, Button, Spinner } from "react-bootstrap";
 import { useHistory } from "react-router-dom";
 import axios from "axios";
 import logo from "./assets/logo.png";
@@ -24,70 +24,112 @@ interface RegisteredCamperWeeksWithCampWeek {
   registered_camp_week_id: number | null;
 }
 
+interface EmergencyFormData {
+  camper: Camper;
+  parent: Parent;
+  emergency_contact1: Emergency_Contact;
+  emergency_contact2: Emergency_Contact;
+  medical_record: Camper_Medical_Record;
+  registered_camper_weeks: RegisteredCamperWeeksWithCampWeek[];
+}
+
 export default function EmergencyForm() {
   const history = useHistory();
-  const [camper, setCamper] = React.useState<Camper>();
-  const [parent, setParent] = React.useState<Parent>();
-  const [emergencyContacts, setEmergencyContacts] = React.useState<Emergency_Contact[]>();
-  const [camperMedicalRecord, setCamperMedicalRecord] = React.useState<Camper_Medical_Record>();
-  const [registeredCamperWeek, setRegisteredCamperWeek] = React.useState<Registered_Camper_Week>();
-  const [campWeek, setCampWeek] = React.useState<Camp_Week>();
-  const [registeredCamperWeeksWithCampWeeks, setRegisteredCamperWeeksWithCampWeeks] =
-    React.useState<RegisteredCamperWeeksWithCampWeek[]>();
+  const [isLoading, setIsLoading] = React.useState(true);
+  const [data, setData] = React.useState<EmergencyFormData[]>([]);
 
   React.useEffect(() => {
-    const camperId = sessionStorage.getItem("camper_id")?.split(",")[0];
+    const camperIds = sessionStorage.getItem("camper_id")?.split(",");
+    const dataArray: any[] = [];
     (async () => {
-      await axios.get(`${process.env.REACT_APP_API}/api/campers/getCamper/${camperId}`).then(async (res) => {
-        setCamper(res.data);
-        console.log(res.data);
-        await axios.get(`${process.env.REACT_APP_API}/api/parents/getParent/${res.data.parent_id}`).then((res) => {
-          setParent(res.data);
-          console.log(res.data);
-        });
-        await axios
-          .get(
-            `${process.env.REACT_APP_API}/api/emergency_contacts/getEmergency_ContactsByUserID/${res.data.parent_id}`
-          )
-          .then((res) => {
-            setEmergencyContacts(res.data);
+      if (camperIds) {
+        setIsLoading(true);
+        for (let i = 0; i < camperIds.length; i++) {
+          let data: any = {
+            camper: {},
+            parent: {},
+            emergency_contact1: {},
+            emergency_contact2: {},
+            medical_record: {},
+            registered_camper_weeks: [],
+          };
+
+          await axios.get(`${process.env.REACT_APP_API}/api/campers/getCamper/${camperIds[i]}`).then(async (res) => {
+            data.camper = res.data;
             console.log(res.data);
+            await axios.get(`${process.env.REACT_APP_API}/api/parents/getParent/${res.data.parent_id}`).then((res) => {
+              // setParent(res.data);
+              data.parent = res.data;
+              console.log(res.data);
+            });
+            await axios
+              .get(
+                `${process.env.REACT_APP_API}/api/emergency_contacts/getEmergency_ContactsByUserID/${res.data.parent_id}`
+              )
+              .then((res) => {
+                // setEmergencyContacts(res.data);
+                data.emergency_contact1 = res.data[0];
+                data.emergency_contact2 = res.data[1];
+                console.log(res.data);
+              });
           });
-      });
-      await axios
-        .get(`${process.env.REACT_APP_API}/api/camper_medical_records/getCamper_Medical_RecordByCamperID/${camperId}`)
-        .then((res) => {
-          setCamperMedicalRecord(res.data);
-          console.log(res.data);
-        });
-      // await axios
-      //   .get(`${process.env.REACT_APP_API}/api/registered_camper_weeks/getRegistered_Camper_WeekByCamperID/${camperId}`)
-      //   .then((res) => {
-      //     setRegisteredCamperWeek(res.data);
-      //     console.log(res.data);
-      //   });
-      // await axios.get(`${process.env.REACT_APP_API}/api/camp_weeks/getCamp_WeeksCurrentYear`).then((res) => {
-      //   setCampWeek(res.data);
-      //   console.log(res.data);
-      // });
-      await axios
-        .get(
-          `${process.env.REACT_APP_API}/api/registered_camper_weeks/getRegistered_Camper_WeeksWithCamp_WeeksByCamperID/${camperId}`
-        )
-        .then((res) => {
-          setRegisteredCamperWeeksWithCampWeeks(res.data);
-          console.log(res.data);
-        });
+          await axios
+            .get(
+              `${process.env.REACT_APP_API}/api/camper_medical_records/getCamper_Medical_RecordByCamperID/${camperIds[i]}`
+            )
+            .then((res) => {
+              // setCamperMedicalRecord(res.data);
+              data.medical_record = res.data;
+              console.log(res.data);
+            });
+          // await axios
+          //   .get(`${process.env.REACT_APP_API}/api/registered_camper_weeks/getRegistered_Camper_WeekByCamperID/${camperId}`)
+          //   .then((res) => {
+          //     setRegisteredCamperWeek(res.data);
+          //     console.log(res.data);
+          //   });
+          // await axios.get(`${process.env.REACT_APP_API}/api/camp_weeks/getCamp_WeeksCurrentYear`).then((res) => {
+          //   setCampWeek(res.data);
+          //   console.log(res.data);
+          // });
+          await axios
+            .get(
+              `${process.env.REACT_APP_API}/api/registered_camper_weeks/getRegistered_Camper_WeeksWithCamp_WeeksByCamperID/${camperIds[i]}`
+            )
+            .then((res) => {
+              // setRegisteredCamperWeeksWithCampWeeks(res.data);
+              data.registered_camper_weeks = res.data;
+              console.log(res.data);
+            });
+          dataArray.push(data);
+        }
+        setData(dataArray);
+      }
+      setIsLoading(false);
     })();
   }, []);
 
+  const handleBack = () => {
+    history.goBack();
+  };
+
   return (
-    <Container>
-      {/* {campers.map((camper) => ( */}
-      <div
-        style={{ marginRight: "75px", paddingTop: "150px" }}
-        dangerouslySetInnerHTML={{
-          __html: `<html>
+    <Container className="Admin-Buttons">
+      <div style={{ pageBreakAfter: "always" }}>
+        <Button onClick={handleBack}>Back</Button>
+        <Spinner
+          style={{ marginLeft: "50%", display: isLoading ? "block" : "none" }}
+          animation="border"
+          variant="primary"
+        />
+      </div>
+      {data.map((data) => (
+        <div
+          key={data.camper.id}
+          style={{ marginRight: "75px", paddingTop: "50px", pageBreakAfter: "always" }}
+          // style={{ position: "absolute", pageBreakAfter: "always" }}
+          dangerouslySetInnerHTML={{
+            __html: `<html>
   <head>
     <meta content="text/html; charset=UTF-8" http-equiv="content-type" />
     <style type="text/css">
@@ -861,6 +903,7 @@ export default function EmergencyForm() {
     <p class="c20 c41">
       <span class="c15"> </span>
     </p>
+    <p><span style="overflow: hidden; display: inline-block; margin: 0.00px 0.00px; border: 0.00px solid #000000; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px); width: 73.50px; height: 55.76px;"><img alt="Camp-Izza-Logo" src=${logo} style="width: 73.50px; height: 55.76px; margin-left: 0.00px; margin-top: 0.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);" title=""></span></p>
     <p class="c7 c38">
       <span class="c48"
         >&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
@@ -911,12 +954,12 @@ export default function EmergencyForm() {
         <tr class="c47">
           <td class="c26" colspan="13" rowspan="1">
             <p class="c7">
-              <span class="c11"> Camper&rsquo;s Name: &nbsp; ${camper?.firstName} ${camper?.lastName} </span>
+              <span class="c11"> Camper&rsquo;s Name: &nbsp; ${data.camper?.firstName} ${data.camper?.lastName} </span>
             </p>
           </td>
           <td class="c40" colspan="4" rowspan="1">
             <p class="c7">
-              <span class="c24 c11"> Grade in Fall: </span>
+              <span class="c24 c11"> Grade in Fall: ${data.camper?.grade}</span>
             </p>
             <p class="c5">
               <span class="c24 c11"> </span>
@@ -924,24 +967,24 @@ export default function EmergencyForm() {
           </td>
           <td class="c25" colspan="9" rowspan="1">
             <p class="c7">
-              <span class="c11"> Current School: </span>
+              <span class="c11"> Current School: ${data.camper?.school} </span>
             </p>
           </td>
         </tr>
         <tr class="c43">
           <td class="c26" colspan="13" rowspan="1">
             <p class="c7">
-              <span class="c11"> Address: &nbsp; </span>
+              <span class="c11"> Address: &nbsp; ${data.parent?.addressLine1}</span>
             </p>
           </td>
           <td class="c3" colspan="6" rowspan="1">
             <p class="c7">
-              <span class="c11"> Birth date: </span>
+              <span class="c11"> Birth date: ${data.camper?.dob}</span>
             </p>
           </td>
           <td class="c33" colspan="2" rowspan="1">
             <p class="c7">
-              <span class="c24 c11"> Age: </span>
+              <span class="c24 c11"> Age: ${"TODO: put age here"} </span>
             </p>
             <p class="c5">
               <span class="c11 c24"> </span>
@@ -949,55 +992,55 @@ export default function EmergencyForm() {
           </td>
           <td class="c54" colspan="5" rowspan="1">
             <p class="c7">
-              <span class="c11"> Gender: </span>
+              <span class="c11"> Gender: ${data.camper?.gender}</span>
             </p>
           </td>
         </tr>
         <tr class="c51">
           <td class="c26" colspan="13" rowspan="1">
             <p class="c7">
-              <span class="c11"> Parent 1: </span>
+              <span class="c11"> Parent 1: ${data.parent?.firstName} ${data.parent?.lastName}</span>
             </p>
           </td>
           <td class="c3" colspan="6" rowspan="1">
             <p class="c7">
-              <span class="c11"> Phone no: </span>
+              <span class="c11"> Phone no: ${data.parent?.phone}</span>
             </p>
           </td>
           <td class="c14" colspan="7" rowspan="1">
             <p class="c7">
-              <span class="c11"> Phone no: </span>
+              <span class="c11"> Phone no: ${data.parent?.guardian2Phone}</span>
             </p>
           </td>
         </tr>
         <tr class="c31">
           <td class="c26" colspan="13" rowspan="1">
             <p class="c7">
-              <span class="c11"> Parent 2: </span>
+              <span class="c11"> Parent 2: ${data.parent?.guardian2FirstName} ${data.parent?.guardian2LastName}</span>
             </p>
           </td>
           <td class="c3" colspan="6" rowspan="1">
             <p class="c7">
-              <span class="c11"> Phone no: </span>
+              <span class="c11"> Phone no: ${data.emergency_contact1?.phone}</span>
             </p>
           </td>
           <td class="c14" colspan="7" rowspan="1">
             <p class="c7">
-              <span class="c11"> Phone no: </span>
+              <span class="c11"> Phone no: ${data.emergency_contact2?.phone}</span>
             </p>
           </td>
         </tr>
         <tr class="c31">
           <td class="c30" colspan="26" rowspan="1">
             <p class="c7">
-              <span class="c11"> Email 1: </span>
+              <span class="c11"> Email 1: ${data.parent?.email} /span>
             </p>
           </td>
         </tr>
         <tr class="c53">
           <td class="c30" colspan="26" rowspan="1">
             <p class="c7">
-              <span class="c11"> Email 2: </span>
+              <span class="c11"> Email 2: ${data.parent?.guardian2Email} </span>
             </p>
           </td>
         </tr>
@@ -1350,9 +1393,9 @@ export default function EmergencyForm() {
   </body>
 </html>
 `,
-        }}
-      />
-      {/* )} */}
+          }}
+        />
+      ))}
     </Container>
   );
 }

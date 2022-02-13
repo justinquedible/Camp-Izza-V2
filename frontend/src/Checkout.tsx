@@ -53,7 +53,7 @@ export default function Checkout() {
             .get(process.env.REACT_APP_API + "api/parents/getParent/" + response.data.parent_id)
             .then((response) => {
               setParent(response.data);
-              console.log(response.data);
+              // console.log(response.data);
             });
           await axios
             .get(process.env.REACT_APP_API + "api/shirts/getShirtByShirtNameAndSize/generic/" + response.data.shirtSize)
@@ -170,13 +170,11 @@ export default function Checkout() {
   };
 
   const handleNegativeTotal = () => {
-    if (parent){
+    if (parent) {
       if (parent?.credit > total) {
-        // setTotal = 0; 
-        
+        // setTotal = 0;
       }
     }
-    
   };
 
   const handleBack = () => {
@@ -294,7 +292,7 @@ export default function Checkout() {
 
           <PayPalScriptProvider
             options={{
-              "client-id": "AXAAL08JOUWnKxbfv1qpK2f_UEfhbNPh7ahJrnpsCBKpHlQUJI_5NePpekQ6DryGsXkw33N6f6R09VLL",
+              "client-id": "AZC9nSofXqQT186_jNkgK-srfaV83p8HL2TbrL2_BqAZow_9UE5rwB3LIlySSXb1wEeef0ocCIxFP1bZ",
             }}
           >
             <PayPalButtons

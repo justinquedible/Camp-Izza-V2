@@ -1,5 +1,5 @@
 import React from "react";
-import { Container, Button, Form, Row, Col } from "react-bootstrap";
+import { Container, Button, Form, Row, Col, Spinner } from "react-bootstrap";
 import Campers from "./components/Campers";
 import { useHistory } from "react-router-dom";
 import axios from "axios";
@@ -14,10 +14,12 @@ export default function ManageCampers() {
   const history = useHistory();
   const [query, setQuery] = React.useState("registeredCurrentYear");
   const [campers, setCampers] = React.useState<CamperTruncated[]>([]);
+  const [isLoading, setIsLoading] = React.useState(true);
   const sortRef = React.useRef<any>(null);
 
   React.useEffect(() => {
     (async () => {
+      setIsLoading(true);
       if (query === "registeredCurrentYear") {
         await axios.get(process.env.REACT_APP_API + "api/campers/getCampersRegisteredCurrentYear").then((response) => {
           setCampers(response.data);
@@ -32,6 +34,7 @@ export default function ManageCampers() {
         });
       }
       handleSortOptionChange({ target: { value: sortRef.current.value } });
+      setIsLoading(false);
     })();
   }, [query]);
 
@@ -104,7 +107,7 @@ export default function ManageCampers() {
         </Row>
         <br />
         <div className="col text-center">
-          <Campers campers={campers} type="admin" />
+          {isLoading ? <Spinner animation="border" variant="primary" /> : <Campers campers={campers} type="admin" />}
         </div>
       </Container>
     </div>
