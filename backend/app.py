@@ -629,6 +629,14 @@ def getPayment_InformationByUser_id(user_id):
     return jsonify(row)
 
 
+@app.route("/payment_informations/getPayment_Information/<user_id>/<registered_camper_weeks_id>")
+def getPayment_InformationByUser_id(user_id, registered_camper_weeks_id):
+    cursor.execute("select * from payment_informations where user_id = %s and registered_camper_weeks_id = %s",
+                   (user_id, registered_camper_weeks_id))
+    row = cursor.fetchone()
+    return jsonify(row)
+
+
 # TODO: cannot add payment yet check everything once you get the add to work
 @app.route("/payment_informations/addPayment_Information", methods=["POST"])
 def addPayment_informations():
