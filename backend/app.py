@@ -561,16 +561,16 @@ def getGroup(group_id):
 @app.route("/groups/updateGroup/<int:group_id>", methods=["PUT"])
 def updateGroup(group_id):
     data = request.get_json()
-    cursor.execute("update `groups` set name=%s, where id = %s ",
-                   (data["name"], group_id))
+    cursor.execute("update `groups` set name=%s, camp_week_id=%s, camperLimit=%s, where id = %s ",
+                   (data["name"], data["camp_week_id"], data["camperLimit"], group_id))
     return jsonify({"status": "success"})
 
 
 @app.route("/groups/addGroup", methods=["POST"])
 def addGroup():
     data = request.get_json()
-    cursor.execute("insert into `groups` (name,) values (%s,)",
-                   (data["name"]))
+    cursor.execute("insert into `groups` (name, camper_week_id, camperLimit) values (%s, %s,%s)",
+                   (data["name"], data["camper_week_id"], data["camperLimit"]))
     return jsonify({"status": "success"})
 
 
