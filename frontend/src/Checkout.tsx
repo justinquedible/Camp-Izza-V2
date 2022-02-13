@@ -122,8 +122,7 @@ export default function Checkout() {
           .post(process.env.REACT_APP_API + "api/registered_camper_weeks/addRegistered_Camper_Week", {
             camper_id: camper?.id,
             camp_week_id: week.id,
-            // group_id: camper ? findGroupId(camper?.grade) : "",
-            group_id: 9,
+            group_id: null,
           })
           .then(async (response) => {
             console.log(response);
@@ -169,14 +168,6 @@ export default function Checkout() {
         // setOrderID(orderID);
         return orderID;
       });
-  };
-
-  const handleNegativeTotal = () => {
-    if (parent) {
-      if (parent?.credit > total) {
-        // setTotal = 0;
-      }
-    }
   };
 
   const findGroupId = async (grade: number | undefined) => {

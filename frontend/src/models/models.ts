@@ -108,11 +108,6 @@ export type Emergency_Contact = {
 export type Group = {
   id: number;
   name: string;
-};
-
-export type Group_Limit = {
-  id: number;
-  group_id: number;
   camp_week_id: number;
   camperLimit: number;
 };
