@@ -19,13 +19,6 @@ def hello():
     return "Hello World!"
 
 
-# @app.route("/api/users/getUsers")
-# def api():
-#     cursor.execute("select * from users")
-#     rows = cursor.fetchall()
-#     return jsonify(rows)
-
-
 # USERS
 # All users
 @app.route("/users/getUsers")
@@ -154,6 +147,32 @@ def getCamperByParent_id(parent_id):
     return jsonify(row)
 
 
+@app.route("/campers/getCampersRegisteredCurrentYear")
+def getCampersRegisteredCurrentYear():
+    cursor.execute("select distinct c.id, c.firstName, c.lastName from registered_camper_weeks r, campers c, "
+                   "camp_weeks cw where r.camper_id = c.id and r.camp_week_id = cw.id and YEAR(cw.start) = YEAR("
+                   "CURDATE())")
+    row = cursor.fetchall()
+    return jsonify(row)
+
+
+@app.route("/campers/getCampersRegisteredAllYears")
+def getCampersRegisteredAllYears():
+    cursor.execute("select distinct c.id, c.firstName, c.lastName from registered_camper_weeks r, campers c where "
+                   "r.camper_id = c.id")
+    row = cursor.fetchall()
+    return jsonify(row)
+
+
+@app.route("/campers/getCampersUnregistered")
+def getCampersUnregistered():
+    cursor.execute("select t1.id, t1.firstName, t1.lastName from (select distinct c.id, c.firstName, c.lastName from "
+                   "campers c) t1 left join (select distinct c.id, c.firstName, c.lastName from "
+                   "registered_camper_weeks r, campers c where r.camper_id = c.id) t2 on t1.id = t2.id where t2.id is null;")
+    row = cursor.fetchall()
+    return jsonify(row)
+
+
 @app.route("/campers/addCamper", methods=["POST"])
 def addCamper():
     data = request.get_json()
@@ -276,6 +295,13 @@ def getCamp_Weeks():
     return jsonify(rows)
 
 
+@app.route("/camp_weeks/getCamp_WeeksCurrentYear")
+def getCamp_WeeksCurrentYear():
+    cursor.execute("select * from camp_weeks where YEAR(start) = YEAR(CURDATE())")
+    rows = cursor.fetchall()
+    return jsonify(rows)
+
+
 # A camp week
 @app.route("/camp_weeks/getCamp_Week/<int:camp_weeks_id>")
 def getCamp_Week(camp_weeks_id):
@@ -329,6 +355,17 @@ def getRegistered_Camper_WeekByCamperID(camper_id):
 def getRegistered_Camper_WeeksWithCampers():
     cursor.execute("select r.*, c.firstName as firstName, c.lastName as lastName, c.grade as grade, "
                    "c.gender as gender from registered_camper_weeks r, campers c where r.camper_id = c.id")
+    rows = cursor.fetchall()
+    return jsonify(rows)
+
+
+# regsitered_camper_weeks join with camp_weeks
+@app.route("/registered_camper_weeks/getRegistered_Camper_WeeksWithCamp_WeeksByCamperID/<camper_id>")
+def getRegistered_Camper_WeeksWithCamp_Weeks(camper_id):
+    cursor.execute("select t2.id as camp_week_id, name, start, end, t1.id as registered_camp_week_id from (select * "
+                   "from camp_weeks where YEAR(start) = YEAR(CURDATE())) t2 left join (select c.id as id from "
+                   "camp_weeks c, registered_camper_weeks r where c.id = r.camp_week_id and r.camper_id = %s and "
+                   "YEAR(start) = YEAR(CURDATE())) t1 on t1.id = t2.id", (camper_id,))
     rows = cursor.fetchall()
     return jsonify(rows)
 

@@ -57,6 +57,7 @@ const GroupTable: React.FC<props> = ({
         <tbody>
           {campers.map((item) => (
             <tr key={item.id}>
+              {/* Show numbers for campers */}
               <td>
                 {mutable && (
                   <Button variant="outline-danger" onClick={() => onRemoveCamperClick(item)}>

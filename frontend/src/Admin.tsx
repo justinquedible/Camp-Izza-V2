@@ -3,12 +3,12 @@
 import React from "react";
 import { Button, Container, Row, Col } from "react-bootstrap";
 import "./Dashboard.css";
-import campersIcon from "./AdminIcons/campers-icon.png";
-import groupsIcon from "./AdminIcons/groups-icon.png";
-import sessionsIcon from "./AdminIcons/sessions-icon.png";
-import counselorsIcon from "./AdminIcons/counselors-icon.png";
-import attendanceIcon from "./AdminIcons/attendance-icon.png";
-import rosterIcon from "./AdminIcons/roster-icon.png";
+import campersIcon from "./assets/campers-icon.png";
+import groupsIcon from "./assets/groups-icon.png";
+import sessionsIcon from "./assets/sessions-icon.png";
+import counselorsIcon from "./assets/counselors-icon.png";
+import attendanceIcon from "./assets/attendance-icon.png";
+import rosterIcon from "./assets/roster-icon.png";
 
 export default function AdminDashboard() {
   return (
