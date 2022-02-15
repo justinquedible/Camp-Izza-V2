@@ -8,24 +8,27 @@ import logo from "./assets/logo.png";
 const navBarStyle = { color: "black" };
 
 export default function NavBar() {
-  const [user, setUser] = React.useState<User | null>(null);
   const auth = getAuth();
+  const [user, setUser] = React.useState<User | null>(null);
 
   React.useEffect(() => {
     // TODO: if user is not logged in, redirect to login page
+    const redirectToLogin = () => {
+      // console.log("function running");
+      const pathName = window.location.href.split("/#/")[1];
+      if (!screensWithoutLogin.includes(pathName)) {
+        window.location.href = "/#/login";
+      }
+    };
+    const interval = setInterval(redirectToLogin, 500);
+    const screensWithoutLogin = ["", "login", "signupParent", "signupCounselor", "resetPassword", "resetConfirmation"];
     const unsubscribe = auth.onAuthStateChanged((user) => {
       if (user) {
+        clearInterval(interval);
         setUser(user);
-      } else {
-        // while (true) {
-        //   if (window.location.pathname !== "/login") {
-        //     window.location.href = "/login";
-        //     setTimeout()
-        //   }
-        // }
       }
     });
-    console.log("hi");
+
     return unsubscribe;
   }, [auth]);
 
@@ -36,6 +39,7 @@ export default function NavBar() {
   const handleSignOut = () => {
     window.location.href = "/#/login";
     auth.signOut();
+    window.location.reload();
     console.log("signed out");
   };
 

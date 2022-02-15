@@ -59,6 +59,14 @@ export default function AdminDashboard() {
             </Button>
           </Col>
         </Row>
+        <Row className="Admin-Buttons-rows">
+          <Col>
+            <Button variant="outline-success" className="Admin-Button" href="/#/admin/manageParents">
+              <img src={groupsIcon} alt="icon" />
+              Parents
+            </Button>
+          </Col>
+        </Row>
       </Container>
     </div>
   );

@@ -21,7 +21,7 @@ export function dateTimeToDateInput(dateTime: string) {
 }
 
 export function dateTimeToDate(dateTime: string) {
-  return new Date(dateTime).toDateString();
+  return dateTime.substring(0, 16);
 }
 
 export function dateTimeToDateTimeInput(dateTime: string) {

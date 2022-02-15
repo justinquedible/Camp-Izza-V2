@@ -131,7 +131,7 @@ export default function Checkout() {
               registered_camper_weeks_id: response.data.registered_camper_weeks_id,
               numShirts: 0,
               totalCost: total,
-              totalPaidUSD: parent ? total - parent?.credit : 0,
+              totalPaidUSD: parent ? (total - parent?.credit < 0 ? 0 : total - parent?.credit) : 0,
               totalPaidCredit: parent?.credit,
               transactionTime: currentDateTime,
             });
@@ -143,7 +143,7 @@ export default function Checkout() {
         user_id: parent?.id,
         numShirts: numShirts,
         totalCost: total,
-        totalPaidUSD: parent ? total - parent?.credit : 0,
+        totalPaidUSD: parent ? (total - parent?.credit < 0 ? 0 : total - parent?.credit) : 0,
         totalPaidCredit: parent?.credit,
         transactionTime: currentDateTime,
       });

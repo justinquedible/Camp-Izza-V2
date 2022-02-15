@@ -1,7 +1,7 @@
 // Component used in Parent.tsx to display a list of campers of a parent
 
 import * as React from "react";
-import { Card, CardColumns, Row } from "react-bootstrap";
+import { Card, Row } from "react-bootstrap";
 
 interface props {
   campers: { id: number; firstName: string; lastName: string }[];

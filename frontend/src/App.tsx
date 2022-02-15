@@ -21,6 +21,7 @@ import ManageCounselors from "./ManageCounselors";
 import ManageCampers from "./ManageCampers";
 import Groups from "./Groups";
 import EmergencyForm from "./EmergencyForm";
+import ManageParents from "./ManageParents";
 
 import AdminAttendance from "./AdminAttendance";
 import AttendanceReport from "./AttendanceReport";
@@ -31,14 +32,15 @@ import Profile from "./Profile";
 import Roster from "./Roster";
 import Counselor from "./Counselor";
 import CounselorAttendance from "./CounselorAttendance";
-import NavBarInstance from "./NavBar";
-import FooterInstance from "./Footer";
 import AdminProtected from "./AdminProtected";
 import AdminCamperForm from "./AdminCamperForm";
 import CamperInfo from "./CamperInfo";
 import CounselorInfo from "./CounselorInfo";
 import CounselorForm from "./CounselorForm";
 import AttendanceOfCounselor from "./AttendanceOfCounselor";
+
+import NavBarInstance from "./NavBar";
+import FooterInstance from "./Footer";
 
 // Firebase SDK's initialization
 import { initializeApp } from "firebase/app";
@@ -72,7 +74,6 @@ function App() {
             <Switch>
               {/* Login and Registration */}
               <Route exact path={"/"} component={Login} />
-              <Route exact path={"/home"} component={Login} />
               <Route exact path={"/login"} component={Login} />
               <Route exact path={"/signupParent"} component={SignupParent} />
               <Route exact path={"/resetPassword"} component={ResetPassword} />
@@ -94,6 +95,7 @@ function App() {
               <Route exact path={"/admin/camperForm"} component={CamperForm} />
               <Route exact path={"/admin/camperScheduling"} component={CamperScheduling} />
               <Route exact path={"/admin/emergencyForm"} component={EmergencyForm} />
+              <Route exact path={"/admin/manageParents"} component={ManageParents} />
               {/* Counselor */}
               <Route exact path={"/signupCounselor"} component={SignUpCounselor} />
               <Route exact path={"/counselor"} component={Counselor} />

@@ -7,16 +7,19 @@ import "./HouseholdForm.css";
 import { useHistory } from "react-router-dom";
 import { dateTimeToTime, dateTimeToDate } from "./util/DateTimeUtil";
 import { filterAndSortWeeksCurrentYear } from "./util/FilterAndSortUtil";
-import { Camp_Week, Camper } from "./models/models";
+import { Camp_Week, Camper, Registered_Camper_Week } from "./models/models";
+import { getAuth } from "firebase/auth";
 import axios from "axios";
 
 export default function CamperScheduling() {
   const history = useHistory();
+  const auth = getAuth();
   const [camper, setCamper] = React.useState<Camper>();
   const [campWeeks, setCampWeeks] = React.useState<Camp_Week[]>();
   const [numShirts, setNumShirts] = React.useState(0);
   const [shirtPrice, setShirtPrice] = React.useState(0);
   const [weeksRegistered, setWeeksRegistered] = React.useState<number[]>([]);
+  const [registeredCamperWeeks, setRegisteredCamperWeeks] = React.useState<Registered_Camper_Week[]>([]);
   const [weeksSelected, setWeeksSelected] = React.useState<number[]>([]);
   const [earlyCutOffDate, setEarlyCutOffDate] = React.useState("");
 
@@ -49,6 +52,8 @@ export default function CamperScheduling() {
             sessionStorage.getItem("camper_id")
         )
         .then((response) => {
+          setRegisteredCamperWeeks(response.data);
+          // console.log(response.data);
           setWeeksRegistered(response.data.map((week: { camp_week_id: number }) => week.camp_week_id));
         });
     })();
@@ -73,23 +78,40 @@ export default function CamperScheduling() {
     }
   };
 
-  const handleUnregister = async (weekId: number, cost: number) => {
+  const handleUnregister = async (week: Camp_Week) => {
     // give parent credit for unregister week
+    let refundCreditAmt = 0;
+    // find when parent paid from payment informations table using user id and registered camp week id
+    for (let registeredCamperWeek of registeredCamperWeeks) {
+      if (registeredCamperWeek.camp_week_id === week.id) {
+        const res = await axios.get(
+          `${process.env.REACT_APP_API}/api/payment_informations/getPayment_InformationByUserIDAndRegisteredCamperWeekID/${camper?.parent_id}/${registeredCamperWeek.id}`
+        );
+        // Only refunds credit of the week has not started
+        if (new Date() < new Date(week.start)) {
+          if (new Date(res.data.transactionTime) < new Date(earlyCutOffDate)) {
+            // console.log("before cutoff");
+            refundCreditAmt = week.earlyCost;
+          } else {
+            refundCreditAmt = week.regularCost;
+            // console.log("after cutoff");
+          }
+        }
+      }
+    }
+    // Update parent's credit
     await axios.get(process.env.REACT_APP_API + "api/parents/getParent/" + camper?.parent_id).then(async (res) => {
       await axios.put(process.env.REACT_APP_API + "api/parents/updateParent/" + camper?.parent_id, {
         ...res.data,
-        credit: res.data.credit + cost,
-        // TODO: determine if the cost should be the regular or early cost when refunding credit
+        credit: res.data.credit + refundCreditAmt,
       });
     });
 
     // delete registered camper week
     await axios.delete(
-      process.env.REACT_APP_API +
-        "api/registered_camper_weeks/deleteRegistered_Camper_WeekWithCamperIdAndCampWeekId/" +
-        weekId +
-        "/" +
-        sessionStorage.getItem("camper_id")
+      `${process.env.REACT_APP_API}/api/registered_camper_weeks/deleteRegistered_Camper_WeekWithCamperIdAndCampWeekId/${
+        week.id
+      }/${sessionStorage.getItem("camper_id")}`
     );
     window.location.reload();
   };
@@ -131,7 +153,9 @@ export default function CamperScheduling() {
           Camp Prices (Regular): <u>${campWeeks ? campWeeks[0].regularCost : ""}/week</u>
         </p>
         <br />
-        <p>* Holiday weeks are less than regular weeks. (Discounted price will show on checkout page)</p>
+        <p>* Holiday weeks are less than regular weeks. (Discounted price will show on checkout page).</p>
+        <br />
+        <p>** Unregistering from a camp week will refund you credit equal to the price of that week.</p>
         <br />
         <br />
         <Form>
@@ -154,11 +178,7 @@ export default function CamperScheduling() {
                     {weeksRegistered.includes(item.id) ? (
                       <td>
                         Registered{" "}
-                        <Button
-                          variant="danger"
-                          style={{ marginLeft: 50 }}
-                          onClick={() => handleUnregister(item.id, item.regularCost)}
-                        >
+                        <Button variant="danger" style={{ marginLeft: 50 }} onClick={() => handleUnregister(item)}>
                           Unregister
                         </Button>
                       </td>

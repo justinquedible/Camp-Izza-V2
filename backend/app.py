@@ -164,6 +164,16 @@ def getCampersRegisteredAllYears():
     return jsonify(row)
 
 
+@app.route("/campers/getCampersRegisteredAllYearsSortByRegistrationDate")
+def getCampersRegisteredAllYearsSortByRegistrationDate():
+    cursor.execute("select distinct id, firstName, lastName from (select distinct c.id as id, firstName, lastName, "
+                   "transactionTime from (select registered_camper_weeks_id, transactionTime from "
+                   "payment_informations) as p, registered_camper_weeks as r, campers as c where "
+                   "p.registered_camper_weeks_id = r.id and r.camper_id = c.id order by p.transactionTime desc) as t")
+    row = cursor.fetchall()
+    return jsonify(row)
+
+
 @app.route("/campers/getCampersUnregistered")
 def getCampersUnregistered():
     cursor.execute("select t1.id, t1.firstName, t1.lastName from (select distinct c.id, c.firstName, c.lastName from "

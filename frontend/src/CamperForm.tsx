@@ -7,7 +7,7 @@ import { useHistory } from "react-router-dom";
 import { getAuth } from "firebase/auth";
 import axios from "axios";
 import { dateTimeToDateInput } from "./util/DateTimeUtil";
-import { Camper, Camper_Medical_Record, Registered_Camper_Week } from "./models/models";
+import { Camper, Camper_Medical_Record, Registered_Camper_WeekWithCamper, Parent } from "./models/models";
 
 export default function CamperForm() {
   const auth = getAuth();
@@ -16,6 +16,9 @@ export default function CamperForm() {
   const [isSaving, setIsSaving] = React.useState(false);
   const [isFieldReadOnly, setIsFieldReadOnly] = React.useState(true);
   const [userRole, setUserRole] = React.useState("");
+  const [registeredWeeks, setRegisteredWeeks] = React.useState<Registered_Camper_WeekWithCamper[]>([]);
+  const [credit, setCredit] = React.useState(0);
+  const [parent, setParent] = React.useState<Parent>();
   const camper_id = sessionStorage.getItem("camper_id");
 
   const [camperValues, setCamperValues] = React.useState<Camper>({
@@ -69,8 +72,12 @@ export default function CamperForm() {
     if (camper_id) {
       await axios
         .get(process.env.REACT_APP_API + "api/campers/getCamper/" + camper_id)
-        .then((res) => {
+        .then(async (res) => {
           setCamperValues({ ...res.data, dob: dateTimeToDateInput(res.data.dob) });
+          await axios.get(process.env.REACT_APP_API + "api/parents/getParent/" + res.data.parent_id).then((res) => {
+            setParent(res.data);
+            setCredit(res.data.credit);
+          });
         })
         .then(async () => {
           await axios
@@ -83,6 +90,17 @@ export default function CamperForm() {
                 tetanusDate: dateTimeToDateInput(res.data.tetanusDate),
               });
             });
+        });
+      await axios
+        .get(
+          process.env.REACT_APP_API +
+            "api/registered_camper_weeks/getRegistered_Camper_WeeksWithCamp_WeeksByCamperID/" +
+            camper_id
+        )
+        .then((res) => {
+          setRegisteredWeeks(
+            res.data.filter((week: any) => week.registered_camp_week_id !== null && new Date() < new Date(week.start))
+          );
         });
     } else {
       setIsFieldReadOnly(false);
@@ -112,6 +130,12 @@ export default function CamperForm() {
         }
       );
     }
+    if (parent) {
+      await axios.put(process.env.REACT_APP_API + "api/parents/updateParent/" + parent.id, {
+        ...parent,
+        credit: credit,
+      });
+    }
     setIsSaving(false);
     sessionStorage.removeItem("camper_id");
     if (userRole === "admin") {
@@ -130,41 +154,18 @@ export default function CamperForm() {
   };
 
   const handleDeleteCamper = async (e: { preventDefault: () => void }) => {
-    let registeredWeeks: Registered_Camper_Week[] = [];
-    let cost = 0;
-    // First check to see if the camper has any registered weeks, if so, don't allow them to delete
-    // TODO: Add a warning to the user that they can't delete the camper
-    // FIXME: This will give credit to the parent if the camper is registered weeks that passed already
-    await axios
-      .get(
-        process.env.REACT_APP_API +
-          "api/registered_camper_weeks/getRegistered_Camper_WeekByCamperID/" +
-          sessionStorage.getItem("camper_id")
-      )
-      .then(async (res) => {
-        registeredWeeks = res.data;
-        await axios
-          .get(process.env.REACT_APP_API + "api/camp_weeks/getCamp_Week/" + res.data[0].camp_week_id)
-          .then((res) => {
-            // console.log(res.data);
-            cost = res.data.regularCost;
-          });
-      });
-    // console.log(registeredWeeks);
-    // console.log(cost);
-    await axios.get(process.env.REACT_APP_API + "api/parents/getParent/" + camperValues.parent_id).then(async (res) => {
-      await axios.put(process.env.REACT_APP_API + "api/parents/updateParent/" + camperValues.parent_id, {
-        ...res.data,
-        credit: cost * registeredWeeks.length,
-      });
-    });
     await axios.delete(process.env.REACT_APP_API + "api/campers/deleteCamper/" + sessionStorage.getItem("camper_id"));
     sessionStorage.removeItem("camper_id");
     history.push("/parent");
   };
 
   const handleDeleteCamperForm = () => {
-    setDelForm(true);
+    // Check to see if the camper has any registered weeks, if so, don't allow them to delete
+    if (registeredWeeks.length !== 0) {
+      alert("You can't delete a camper that is currently registered for a week. Please unregister them first.");
+    } else {
+      setDelForm(true);
+    }
   };
 
   const handleCancelDeleteCamperForm = () => {
@@ -460,6 +461,22 @@ export default function CamperForm() {
               />
             </Form.Group>
           </Row>
+
+          {userRole === "admin" && (
+            <div>
+              <br />
+              <h5>Parent's Credit</h5>
+              <Form.Group as={Col} xs={4}>
+                <Form.Label>Credit</Form.Label>
+                <Form.Control
+                  type="number"
+                  value={credit}
+                  required
+                  onChange={(e) => setCredit(parseInt(e.target.value))}
+                />
+              </Form.Group>
+            </div>
+          )}
 
           <div className="center">
             <Button type="submit" variant="success" className="buttonTxt" disabled={isSaving}>

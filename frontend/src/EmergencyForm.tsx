@@ -7,6 +7,7 @@ import { useHistory } from "react-router-dom";
 import axios from "axios";
 import logo from "./assets/logo.png";
 import divider from "./assets/divider.png";
+import { dateTimeToDateInput, dateTimeToDate } from "./util/DateTimeUtil";
 import {
   Camper,
   Parent,
@@ -56,50 +57,33 @@ export default function EmergencyForm() {
 
           await axios.get(`${process.env.REACT_APP_API}/api/campers/getCamper/${camperIds[i]}`).then(async (res) => {
             data.camper = res.data;
-            console.log(res.data);
             await axios.get(`${process.env.REACT_APP_API}/api/parents/getParent/${res.data.parent_id}`).then((res) => {
-              // setParent(res.data);
               data.parent = res.data;
-              console.log(res.data);
             });
             await axios
               .get(
                 `${process.env.REACT_APP_API}/api/emergency_contacts/getEmergency_ContactsByUserID/${res.data.parent_id}`
               )
               .then((res) => {
-                // setEmergencyContacts(res.data);
                 data.emergency_contact1 = res.data[0];
                 data.emergency_contact2 = res.data[1];
-                console.log(res.data);
               });
           });
+
           await axios
             .get(
               `${process.env.REACT_APP_API}/api/camper_medical_records/getCamper_Medical_RecordByCamperID/${camperIds[i]}`
             )
             .then((res) => {
-              // setCamperMedicalRecord(res.data);
               data.medical_record = res.data;
-              console.log(res.data);
             });
-          // await axios
-          //   .get(`${process.env.REACT_APP_API}/api/registered_camper_weeks/getRegistered_Camper_WeekByCamperID/${camperId}`)
-          //   .then((res) => {
-          //     setRegisteredCamperWeek(res.data);
-          //     console.log(res.data);
-          //   });
-          // await axios.get(`${process.env.REACT_APP_API}/api/camp_weeks/getCamp_WeeksCurrentYear`).then((res) => {
-          //   setCampWeek(res.data);
-          //   console.log(res.data);
-          // });
+
           await axios
             .get(
               `${process.env.REACT_APP_API}/api/registered_camper_weeks/getRegistered_Camper_WeeksWithCamp_WeeksByCamperID/${camperIds[i]}`
             )
             .then((res) => {
-              // setRegisteredCamperWeeksWithCampWeeks(res.data);
               data.registered_camper_weeks = res.data;
-              console.log(res.data);
             });
           dataArray.push(data);
         }
@@ -111,6 +95,12 @@ export default function EmergencyForm() {
 
   const handleBack = () => {
     history.goBack();
+  };
+
+  const calculateAge = (birthday: string) => {
+    var ageDifMs = Date.now() - new Date(birthday).getTime();
+    var ageDate = new Date(ageDifMs); // miliseconds from epoch
+    return Math.abs(ageDate.getUTCFullYear() - 1970);
   };
 
   return (
@@ -959,7 +949,7 @@ export default function EmergencyForm() {
           </td>
           <td class="c40" colspan="4" rowspan="1">
             <p class="c7">
-              <span class="c24 c11"> Grade in Fall: ${data.camper?.grade}</span>
+              <span class="c24 c11"> Grade in Fall: ${data.camper?.grade === 0 ? "K" : data.camper?.grade}</span>
             </p>
             <p class="c5">
               <span class="c24 c11"> </span>
@@ -979,12 +969,12 @@ export default function EmergencyForm() {
           </td>
           <td class="c3" colspan="6" rowspan="1">
             <p class="c7">
-              <span class="c11"> Birth date: ${data.camper?.dob}</span>
+              <span class="c11"> Birth date: ${dateTimeToDateInput(data.camper?.dob)}</span>
             </p>
           </td>
           <td class="c33" colspan="2" rowspan="1">
             <p class="c7">
-              <span class="c24 c11"> Age: ${"TODO: put age here"} </span>
+              <span class="c24 c11"> Age: ${calculateAge(data.camper?.dob)} </span>
             </p>
             <p class="c5">
               <span class="c11 c24"> </span>
@@ -1033,7 +1023,7 @@ export default function EmergencyForm() {
         <tr class="c31">
           <td class="c30" colspan="26" rowspan="1">
             <p class="c7">
-              <span class="c11"> Email 1: ${data.parent?.email} /span>
+              <span class="c11"> Email 1: ${data.parent?.email} </span>
             </p>
           </td>
         </tr>
@@ -1092,34 +1082,38 @@ export default function EmergencyForm() {
         <tr class="c31">
           <td class="c32" colspan="9" rowspan="1">
             <p class="c7">
-              <span class="c11"> Contact 1: </span>
+              <span class="c11"> Contact 1: ${data.emergency_contact1?.firstName} ${
+              data.emergency_contact1?.lastName
+            }</span>
             </p>
           </td>
           <td class="c10" colspan="8" rowspan="1">
             <p class="c7">
-              <span class="c11"> Phone no: </span>
+              <span class="c11"> Phone no: ${data.emergency_contact1?.phone}</span>
             </p>
           </td>
           <td class="c25" colspan="9" rowspan="1">
             <p class="c7">
-              <span class="c11"> Relationship: </span>
+              <span class="c11"> Relationship: ${data.emergency_contact1?.relation}</span>
             </p>
           </td>
         </tr>
         <tr class="c9">
           <td class="c32" colspan="9" rowspan="1">
             <p class="c7">
-              <span class="c11"> Contact 2: </span>
+              <span class="c11"> Contact 2: ${data.emergency_contact2?.firstName} ${
+              data.emergency_contact2?.lastName
+            }</span>
             </p>
           </td>
           <td class="c10" colspan="8" rowspan="1">
             <p class="c7">
-              <span class="c11"> Phone no: </span>
+              <span class="c11"> Phone no: ${data.emergency_contact2?.phone}</span>
             </p>
           </td>
           <td class="c25" colspan="9" rowspan="1">
             <p class="c7">
-              <span class="c11"> Relationship: </span>
+              <span class="c11"> Relationship: ${data.emergency_contact2?.relation}</span>
             </p>
           </td>
         </tr>
@@ -1179,29 +1173,29 @@ export default function EmergencyForm() {
         <tr class="c31">
           <td class="c23" colspan="12" rowspan="1">
             <p class="c7">
-              <span class="c11"> Doctor Name: </span>
+              <span class="c11"> Doctor Name: ${data.medical_record?.doctorName}</span>
             </p>
           </td>
           <td class="c55" colspan="6" rowspan="1">
             <p class="c7">
-              <span class="c11"> Doctor phone no: </span>
+              <span class="c11"> Doctor phone no: ${data.medical_record?.doctorPhone}</span>
             </p>
           </td>
           <td class="c36" colspan="8" rowspan="1">
             <p class="c7">
-              <span class="c11"> Insurance Carrier: </span>
+              <span class="c11"> Insurance Carrier: ${data.medical_record?.insuranceCarrier}</span>
             </p>
           </td>
         </tr>
         <tr class="c31">
           <td class="c23" colspan="12" rowspan="1">
             <p class="c7">
-              <span class="c11"> Chronic Conditions or Illness: </span>
+              <span class="c11"> Chronic Conditions or Illness: ${data.medical_record?.illnesses}</span>
             </p>
           </td>
           <td class="c49" colspan="14" rowspan="1">
             <p class="c7">
-              <span class="c11"> Policyholder Name: </span>
+              <span class="c11"> Policyholder Name: ${data.medical_record?.policyHolder}</span>
             </p>
           </td>
         </tr>
@@ -1213,12 +1207,12 @@ export default function EmergencyForm() {
           </td>
           <td class="c10" colspan="8" rowspan="1">
             <p class="c7">
-              <span class="c11"> If yes, specify: </span>
+              <span class="c11"> If yes, specify: ${data.medical_record?.medications}</span>
             </p>
           </td>
           <td class="c25" colspan="9" rowspan="1">
             <p class="c7">
-              <span class="c24 c11"> Allergies or Dietary Restrictions: </span>
+              <span class="c24 c11"> Allergies or Dietary Restrictions: ${data.medical_record?.allergies}</span>
             </p>
             <p class="c5">
               <span class="c24 c11"> </span>
@@ -1233,19 +1227,21 @@ export default function EmergencyForm() {
           </td>
           <td class="c10" colspan="8" rowspan="1">
             <p class="c7">
-              <span class="c11"> If yes, specify: </span>
+              <span class="c11"> If yes, specify: ${data.medical_record?.restrictedActivities}</span>
             </p>
           </td>
           <td class="c25" colspan="9" rowspan="1">
             <p class="c7">
-              <span class="c11"> Has your child received all current immunizations? &nbsp; &nbsp; </span>
+              <span class="c11"> Has your child received all current immunizations? &nbsp; &nbsp; ${
+                data.medical_record?.immunizations
+              }</span>
             </p>
           </td>
         </tr>
         <tr class="c9">
           <td class="c32" colspan="9" rowspan="1">
             <p class="c7">
-              <span class="c24 c11"> Recent medical treatments? </span>
+              <span class="c24 c11"> Recent medical treatments?</span>
             </p>
             <p class="c5">
               <span class="c24 c11"> </span>
@@ -1253,12 +1249,14 @@ export default function EmergencyForm() {
           </td>
           <td class="c10" colspan="8" rowspan="1">
             <p class="c7">
-              <span class="c11"> If yes, specify: </span>
+              <span class="c11"> If yes, specify: ${data.medical_record?.medicalTreatments}</span>
             </p>
           </td>
           <td class="c25" colspan="9" rowspan="1">
             <p class="c7">
-              <span class="c11"> Date of last tetanus shot: </span>
+              <span class="c11"> Date of last tetanus shot: ${dateTimeToDateInput(
+                data.medical_record?.tetanusDate
+              )}</span>
             </p>
           </td>
         </tr>
@@ -1298,53 +1296,54 @@ export default function EmergencyForm() {
     <table class="c27">
       <tbody>
         <tr class="c1">
-          <td class="c28" colspan="6" rowspan="1">
+          ${data?.registered_camper_weeks
+            .slice(0, 4)
+            .map(
+              (week) =>
+                `<td class="c28" colspan="6" rowspan="1">
             <p class="c20">
-              <span class="c24 c11"> &lt;&lt;Week1&gt;&gt; </span>
+              <span class="c24 c11">${week.name}: ${
+                  week.registered_camp_week_id ? "Registered" : "Not Registered"
+                }</span>
             </p>
-          </td>
-          <td class="c29" colspan="5" rowspan="1">
-            <p class="c20">
-              <span class="c24 c11"> &lt;&lt;Week2&gt;&gt; </span>
-            </p>
-          </td>
-          <td class="c46" colspan="5" rowspan="1">
-            <p class="c20">
-              <span class="c24 c11"> &lt;&lt;Week3&gt;&gt; </span>
-            </p>
-          </td>
-          <td class="c52" colspan="5" rowspan="1">
-            <p class="c20">
-              <span class="c24 c11"> &lt;&lt;Week4&gt;&gt; </span>
-            </p>
-          </td>
+          </td>`
+            )
+            .join("")}
         </tr>
         <tr class="c9">
-          <td class="c28" colspan="6" rowspan="1">
+          ${data?.registered_camper_weeks
+            .slice(4, 8)
+            .map(
+              (week) =>
+                `<td class="c28" colspan="6" rowspan="1">
             <p class="c20">
-              <span class="c24 c11"> &lt;&lt;Week5&gt;&gt; </span>
+              <span class="c24 c11">${week.name}: ${
+                  week.registered_camp_week_id ? "Registered" : "Not Registered"
+                }</span>
             </p>
-          </td>
-          <td class="c29" colspan="5" rowspan="1">
+          </td>`
+            )
+            .join("")}
+        </tr>
+        <tr class="c9">
+          ${data?.registered_camper_weeks
+            .slice(8, 12)
+            .map(
+              (week) =>
+                `<td class="c28" colspan="6" rowspan="1">
             <p class="c20">
-              <span class="c24 c11"> &lt;&lt;Week6&gt;&gt; </span>
+              <span class="c24 c11">${week.name}: ${
+                  week.registered_camp_week_id ? "Registered" : "Not Registered"
+                }</span>
             </p>
-          </td>
-          <td class="c46" colspan="5" rowspan="1">
-            <p class="c20">
-              <span class="c24 c11"> &lt;&lt;Week7&gt;&gt; </span>
-            </p>
-          </td>
-          <td class="c52" colspan="5" rowspan="1">
-            <p class="c20">
-              <span class="c24 c11"> &lt;&lt;Week8&gt;&gt; </span>
-            </p>
-          </td>
+          </td>`
+            )
+            .join("")}
         </tr>
         <tr class="c31">
           <td class="c21" colspan="21" rowspan="1">
             <p class="c7">
-              <span class="c11"> Comments: </span>
+              <span class="c11"> Comments: ${data.medical_record?.comments}</span>
             </p>
           </td>
         </tr>
