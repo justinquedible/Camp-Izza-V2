@@ -32,7 +32,6 @@ export default function Groups() {
   const [counselors, setCounselors] = React.useState<Counselor[]>([]);
 
   React.useEffect(() => {
-    // FIXME: Changing the groups table to include group limits for each group of each week made this page not work anymore
     (async () => {
       await axios.get(process.env.REACT_APP_API + "api/camp_weeks/getCamp_Weeks").then((res) => {
         const weeks = filterAndSortWeeksCurrentYear(res.data);

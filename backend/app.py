@@ -369,7 +369,7 @@ def getRegistered_Camper_WeekByCampWeekId(camp_week_id):
 
 
 @app.route("/registered_camper_weeks/getRegistered_Camper_WeekByGroupId/<group_id>")
-def getRegistered_Camper_WeekByCampWeekId(group_id):
+def getRegistered_Camper_WeekByGroupId(group_id):
     cursor.execute("select * from registered_camper_weeks where group_id = %s", (group_id,))
     rows = cursor.fetchall()
     return jsonify(rows)
@@ -419,7 +419,7 @@ def deleteRegistered_Camper_Week(registered_camper_weeks_id):
 
 
 @app.route("/registered_camper_weeks/deleteRegistered_Camper_WeekByCampWeek/<int:camp_week_id>", methods=["DELETE"])
-def deleteRegistered_Camper_Week(camp_week_id):
+def deleteRegistered_Camper_WeekByCampWeek(camp_week_id):
     cursor.execute("delete from registered_camper_weeks where camp_week_id = %s ", (camp_week_id,))
     return jsonify({"status": "success"})
 
@@ -582,6 +582,14 @@ def getGroups():
     return jsonify(rows)
 
 
+@app.route("/groups/getGroupsWithCampWeeks")
+def getGroupsWithCampWeeks():
+    cursor.execute("select `groups`.id as id, `groups`.name as name, camperLimit, camp_week_id, camp_weeks.name as "
+                   "camp_week_name from `groups`, camp_weeks where `groups`.camp_week_id = camp_weeks.id")
+    rows = cursor.fetchall()
+    return jsonify(rows)
+
+
 # A group
 @app.route("/groups/getGroup/<int:group_id>")
 def getGroup(group_id):
@@ -593,7 +601,7 @@ def getGroup(group_id):
 @app.route("/groups/updateGroup/<int:group_id>", methods=["PUT"])
 def updateGroup(group_id):
     data = request.get_json()
-    cursor.execute("update `groups` set name=%s, camp_week_id=%s, camperLimit=%s, where id = %s ",
+    cursor.execute("update `groups` set name=%s, camp_week_id=%s, camperLimit=%s where id = %s ",
                    (data["name"], data["camp_week_id"], data["camperLimit"], group_id))
     return jsonify({"status": "success"})
 
@@ -601,8 +609,8 @@ def updateGroup(group_id):
 @app.route("/groups/addGroup", methods=["POST"])
 def addGroup():
     data = request.get_json()
-    cursor.execute("insert into `groups` (name, camper_week_id, camperLimit) values (%s, %s,%s)",
-                   (data["name"], data["camper_week_id"], data["camperLimit"]))
+    cursor.execute("insert into `groups` (name, camp_week_id, camperLimit) values (%s, %s,%s)",
+                   (data["name"], data["camp_week_id"], data["camperLimit"]))
     return jsonify({"status": "success"})
 
 

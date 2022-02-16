@@ -182,3 +182,8 @@ export interface Registered_Counselor_WeekWithCounselor extends Registered_Couns
   firstName: string;
   lastName: string;
 }
+
+export interface GroupWithCamp_Week extends Group {
+  camp_week_id: number;
+  camp_week_name: string;
+}

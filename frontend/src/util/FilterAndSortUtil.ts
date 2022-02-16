@@ -1,4 +1,4 @@
-import { Camp_Week, Group } from "../models/models";
+import { Camp_Week, Group, GroupWithCamp_Week } from "../models/models";
 
 export function filterAndSortWeeksCurrentYear(weeks: Camp_Week[]) {
   return sortWeeks(filterWeeksCurrentYear(weeks));
@@ -27,4 +27,9 @@ export function sortGroups(groups: Group[]) {
       });
   }
   return sortedGroups.concat(groups.filter((group) => group.name.startsWith("Waitlist")));
+}
+
+export function sortGroupsWithCampWeeks(groups: GroupWithCamp_Week[]) {
+  const sortedGroups = sortGroups(groups) as GroupWithCamp_Week[];
+  return sortedGroups.sort((a, b) => a.camp_week_name.localeCompare(b.camp_week_name));
 }

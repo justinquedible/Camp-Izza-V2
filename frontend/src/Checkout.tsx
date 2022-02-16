@@ -220,12 +220,12 @@ export default function Checkout() {
         <Button variant="primary" className="backButton" onClick={handleBack}>
           Back
         </Button>
-        <Button variant="primary" className="backButton" onClick={onApprove}>
+        {/* <Button variant="primary" className="backButton" onClick={onApprove}>
           Test Checkout (Until we fix paypal payment)
         </Button>
         <Button variant="outline-primary" className="backButton" onClick={() => findGroupId(camper?.grade)}>
           grade
-        </Button>
+        </Button> */}
         <br />
         <br />
         <h3> Checkout </h3>

@@ -47,13 +47,13 @@ export default function AdminDashboard() {
         </Row>
         <Row className="Admin-Buttons-rows">
           <Col>
-            <Button variant="outline-success" className="Admin-Button" href="/#/admin/attendance">
+            <Button disabled variant="outline-success" className="Admin-Button" href="/#/admin/attendance">
               <img src={attendanceIcon} alt="icon" />
               Counselor Attendance
             </Button>
           </Col>
           <Col>
-            <Button variant="outline-success" className="Admin-Button" href="/#/admin/roster">
+            <Button disabled variant="outline-success" className="Admin-Button" href="/#/admin/roster">
               <img src={rosterIcon} alt="icon" />
               Roster
             </Button>
