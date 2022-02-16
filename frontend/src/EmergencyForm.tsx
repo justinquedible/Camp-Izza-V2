@@ -83,7 +83,8 @@ export default function EmergencyForm() {
               `${process.env.REACT_APP_API}/api/registered_camper_weeks/getRegistered_Camper_WeeksWithCamp_WeeksByCamperID/${camperIds[i]}`
             )
             .then((res) => {
-              data.registered_camper_weeks = res.data;
+              const regCampWeeks: RegisteredCamperWeeksWithCampWeek[] = res.data;
+              data.registered_camper_weeks = regCampWeeks.sort((a, b) => a.name.localeCompare(b.name));
             });
           dataArray.push(data);
         }
@@ -117,7 +118,6 @@ export default function EmergencyForm() {
         <div
           key={data.camper.id}
           style={{ marginRight: "75px", paddingTop: "50px", pageBreakAfter: "always" }}
-          // style={{ position: "absolute", pageBreakAfter: "always" }}
           dangerouslySetInnerHTML={{
             __html: `<html>
   <head>

@@ -9,7 +9,7 @@ import {
   Registered_Camper_WeekWithCamper,
   Registered_Counselor_WeekWithCounselor,
 } from "./models/models";
-import { filterAndSortWeeksCurrentYear } from "./util/FilterAndSortUtil";
+import { filterAndSortWeeksCurrentYear, sortGroups } from "./util/FilterAndSortUtil";
 import GroupTable from "./components/GroupTable";
 import { useHistory } from "react-router-dom";
 
@@ -23,6 +23,7 @@ export default function Groups() {
   const [registeredCounselorWeeksWithCounselor, setRegisteredCounselorWeeksWithCounselor] = React.useState<
     Registered_Counselor_WeekWithCounselor[]
   >([]);
+  // const [selectedTerm, setSelectedTerm] = React.useState("");
   const [selectedWeek, setSelectedWeek] = React.useState<number>();
   const [selectedGroup, setSelectedGroup] = React.useState("All");
   const [selectedGroupId, setSelectedGroupId] = React.useState<number>(0);
@@ -39,9 +40,7 @@ export default function Groups() {
         setSelectedWeek(weeks[0].id);
       });
       await axios.get(process.env.REACT_APP_API + "api/groups/getGroups").then((res) => {
-        setGroups(
-          res.data.sort((a: Group, b: Group) => a.id.toString().localeCompare(b.id.toString(), "en", { numeric: true }))
-        );
+        setGroups(sortGroups(res.data));
       });
       await fetchRegisteredCounselorWeeksWithCounselors();
       await fetchRegisteredCamperWeeksWithCampers();
@@ -75,6 +74,8 @@ export default function Groups() {
     setSelectedWeek(parseInt(e.target.value));
   };
 
+  // Counselor Popup Functions
+
   const onClickShowCounselorPopup = (groupId: number) => {
     setShowCounselorPopup(true);
     setSelectedGroupId(groupId);
@@ -104,6 +105,8 @@ export default function Groups() {
       .map((item) => item.counselor_id);
     return counselors.filter((counselor) => !counselorsRegisteredForSelectedWeek.includes(counselor.id));
   };
+
+  // Camper Popup Functions
 
   const onClickShowCamperPopup = (groupId: number) => {
     setShowCamperPopup(true);
@@ -161,25 +164,23 @@ export default function Groups() {
   );
 
   const CamperPopup = () => (
-    <div>
-      <Modal scrollable show={showCamperPopup} onHide={() => setShowCamperPopup(false)}>
-        <Modal.Header closeButton>
-          <Modal.Title>Unassigned Campers</Modal.Title>
-        </Modal.Header>
-        <Modal.Body style={{ height: "300px" }}>
-          <ListGroup>
-            {filteredCampers().map((item) => (
-              <ListGroup.Item key={item.id}>
-                <Button variant="success" size={"sm"} onClick={() => assignCamper(item)}>
-                  Assign
-                </Button>{" "}
-                {item.firstName} {item.lastName} {`(Grade ${item.grade !== 0 ? item.grade : "K"}, ${item.gender})`}
-              </ListGroup.Item>
-            ))}
-          </ListGroup>
-        </Modal.Body>
-      </Modal>
-    </div>
+    <Modal scrollable show={showCamperPopup} onHide={() => setShowCamperPopup(false)}>
+      <Modal.Header closeButton>
+        <Modal.Title>Unassigned Campers</Modal.Title>
+      </Modal.Header>
+      <Modal.Body style={{ height: "300px" }}>
+        <ListGroup>
+          {filteredCampers().map((item) => (
+            <ListGroup.Item key={item.id}>
+              <Button variant="success" size={"sm"} onClick={() => assignCamper(item)}>
+                Assign
+              </Button>{" "}
+              {item.firstName} {item.lastName} {`(Grade ${item.grade !== 0 ? item.grade : "K"}, ${item.gender})`}
+            </ListGroup.Item>
+          ))}
+        </ListGroup>
+      </Modal.Body>
+    </Modal>
   );
 
   return (
@@ -192,7 +193,17 @@ export default function Groups() {
       <h3> Groups </h3>
       <div className="center">
         <Form className="center" style={{ marginLeft: "40%", marginRight: "40%" }}>
-          <Col xs="auto">
+          {/* Commented out code for a select option of terms for possible use in other screens */}
+          {/* <Form.Group as={Col}>
+            <Form.Control as="select" onChange={(e) => setSelectedTerm(e.target.value)} style={{ textAlign: "center" }}>
+              {Array.from(new Set(weeks.map((week) => week.term))).map((term) => (
+                <option key={term} value={term}>
+                  {term}
+                </option>
+              ))}
+            </Form.Control>
+          </Form.Group> */}
+          <Form.Group as={Col}>
             <Form.Control as="select" onChange={handleWeekChange} style={{ textAlign: "center" }}>
               {weeks.map((week) => (
                 <option key={week.id} value={week.id}>
@@ -200,7 +211,7 @@ export default function Groups() {
                 </option>
               ))}
             </Form.Control>
-          </Col>
+          </Form.Group>
         </Form>
 
         <ToggleButtonGroup type="radio" name="options" onChange={handleGroupChange}>
@@ -227,6 +238,7 @@ export default function Groups() {
           <br />
           <div className={selectedGroup === "All" ? "grid-container" : ""}>
             {groups
+              .filter((group) => group.camp_week_id === selectedWeek)
               .filter((group) => (selectedGroup === "All" ? true : group.name.includes(selectedGroup)))
               .map((group) => (
                 <div key={group.id}>

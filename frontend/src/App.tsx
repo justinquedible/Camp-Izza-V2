@@ -45,7 +45,7 @@ import FooterInstance from "./Footer";
 // Firebase SDK's initialization
 import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
-// TODO: Add SDKs for Firebase products that you want to use
+// Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
 // This web app's Firebase configuration

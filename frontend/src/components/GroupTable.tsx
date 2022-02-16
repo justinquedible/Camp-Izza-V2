@@ -26,13 +26,15 @@ const GroupTable: React.FC<props> = ({
 }) => {
   return (
     <div className="grid-item">
-      <h5>{group.name}</h5>
+      <h5>
+        {group.name} (Limit: {group.camperLimit})
+      </h5>
       <h6>
         <Row className="counselor-row">
           <p className="counselor-title">Counselors:</p>
           {counselors.map((item) => (
             <div key={item.id}>
-              {"  "}
+              {" "}
               {mutable ? (
                 <Button variant="outline-danger" onClick={() => onRemoveCounselorClick(item.id)}>
                   🗑️ {item.firstName} {item.lastName}
@@ -55,16 +57,15 @@ const GroupTable: React.FC<props> = ({
           </tr>
         </thead>
         <tbody>
-          {campers.map((item) => (
+          {campers.map((item, index) => (
             <tr key={item.id}>
-              {/* Show numbers for campers */}
               <td>
                 {mutable && (
                   <Button variant="outline-danger" onClick={() => onRemoveCamperClick(item)}>
                     🗑️
                   </Button>
                 )}{" "}
-                {item.firstName} {item.lastName}
+                {index + 1}. {item.firstName} {item.lastName}
               </td>
               <td>{item.grade !== 0 ? item.grade : "K"}</td>
               <td>{item.gender}</td>

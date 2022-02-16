@@ -12,7 +12,7 @@ export default function NavBar() {
   const [user, setUser] = React.useState<User | null>(null);
 
   React.useEffect(() => {
-    // TODO: if user is not logged in, redirect to login page
+    const screensWithoutLogin = ["", "login", "signupParent", "signupCounselor", "resetPassword", "resetConfirmation"];
     const redirectToLogin = () => {
       // console.log("function running");
       const pathName = window.location.href.split("/#/")[1];
@@ -20,8 +20,7 @@ export default function NavBar() {
         window.location.href = "/#/login";
       }
     };
-    const interval = setInterval(redirectToLogin, 500);
-    const screensWithoutLogin = ["", "login", "signupParent", "signupCounselor", "resetPassword", "resetConfirmation"];
+    const interval = setInterval(redirectToLogin, 1000);
     const unsubscribe = auth.onAuthStateChanged((user) => {
       if (user) {
         clearInterval(interval);
