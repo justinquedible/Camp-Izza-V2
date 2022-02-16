@@ -9,7 +9,7 @@ import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js";
 import { dateTimeToDate, dateTimeToTime, dateTimeToDateInput, dateTimeToMilitaryTime } from "./util/DateTimeUtil";
 import { sortWeeks } from "./util/FilterAndSortUtil";
 import { Camp_Week, Camper, Parent } from "./models/models";
-import { getAuth, User } from "firebase/auth";
+import { getAuth } from "firebase/auth";
 
 export default function Checkout() {
   const history = useHistory();
@@ -18,28 +18,18 @@ export default function Checkout() {
   let numShirtsStr = sessionStorage.getItem("numShirts");
   const numShirts = numShirtsStr ? parseInt(numShirtsStr) : 0;
 
-  const [userRole, setUserRole] = React.useState<string>();
   const [parent, setParent] = React.useState<Parent>();
   const [camper, setCamper] = React.useState<Camper>();
   const [campWeeksSelected, setCampWeeksSelected] = React.useState<Camp_Week[]>();
   const [shirtPrice, setShirtPrice] = React.useState(0);
   const [total, setTotal] = React.useState(0);
   const [isEarlyBird, setIsEarlyBird] = React.useState(false);
-  const noTotal = false;
 
   // const [orderID, setOrderID] = React.useState();
 
   React.useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged(async (user) => {
       if (user) {
-        //     // setUser(user);
-        //     await axios.get(process.env.REACT_APP_API + "api/users/getUser/" + user.uid).then((res) => {
-        //       setUserRole(res.data.role);
-        //     });
-        //     // await axios.get(process.env.REACT_APP_API + "api/parents/getParent/" + user.uid).then((response) => {
-        //     //   setParent(response.data);
-        //     //   console.log(response.data);
-        //     // });
         await fetchData();
       }
     });
@@ -96,60 +86,62 @@ export default function Checkout() {
   };
 
   const onApprove = async () => {
-    // Update camper numShirts, paid
-    await axios.put(process.env.REACT_APP_API + "api/campers/updateCamper/" + camper?.id, {
-      ...camper,
-      dob: camper?.dob ? dateTimeToDateInput(camper.dob) : "",
-      numShirts: camper ? camper.numShirts + numShirts : numShirts,
-      paid: camper ? camper.paid + total : total,
-    });
-
-    // Update parent credit
-    await axios.put(process.env.REACT_APP_API + "api/parents/updateParent/" + parent?.id, {
-      ...parent,
-      credit: parent ? (total - parent?.credit > 0 ? 0 : parent?.credit - total) : 0,
-    });
-
-    // Post to registered_camper_weeks and payment_informations, one for each campWeeksSelected
-    const currentDateTime =
-      dateTimeToDateInput(new Date().toString()) + " " + dateTimeToMilitaryTime(new Date().toString());
-    if (campWeeksSelected) {
-      for (let week of campWeeksSelected) {
-        console.log(week);
-        // TODO: Add camper to appropriate group
-        // For now, they are put in the waitlist group
-        await axios
-          .post(process.env.REACT_APP_API + "api/registered_camper_weeks/addRegistered_Camper_Week", {
-            camper_id: camper?.id,
-            camp_week_id: week.id,
-            group_id: null,
-          })
-          .then(async (response) => {
-            console.log(response);
-            await axios.post(process.env.REACT_APP_API + "api/payment_informations/addPayment_Information", {
-              user_id: parent?.id,
-              registered_camper_weeks_id: response.data.registered_camper_weeks_id,
-              numShirts: 0,
-              totalCost: total,
-              totalPaidUSD: parent ? (total - parent?.credit < 0 ? 0 : total - parent?.credit) : 0,
-              totalPaidCredit: parent?.credit,
-              transactionTime: currentDateTime,
-            });
-          });
-      }
-    }
-    if (numShirts > 0) {
-      await axios.post(process.env.REACT_APP_API + "api/payment_informations/addPayment_Information", {
-        user_id: parent?.id,
-        numShirts: numShirts,
-        totalCost: total,
-        totalPaidUSD: parent ? (total - parent?.credit < 0 ? 0 : total - parent?.credit) : 0,
-        totalPaidCredit: parent?.credit,
-        transactionTime: currentDateTime,
+    if (parent && camper) {
+      // Update camper numShirts, paid
+      await axios.put(process.env.REACT_APP_API + "api/campers/updateCamper/" + camper.id, {
+        ...camper,
+        dob: dateTimeToDateInput(camper.dob),
+        numShirts: camper.numShirts + numShirts,
+        paid: camper.paid + total,
       });
-    }
 
-    history.replace("/parent/completedTransaction");
+      // Update parent credit
+      await axios.put(process.env.REACT_APP_API + "api/parents/updateParent/" + parent?.id, {
+        ...parent,
+        credit: total > parent.credit ? 0 : parent.credit - total,
+      });
+
+      // Post to registered_camper_weeks and payment_informations, one for each campWeeksSelected
+      const currentDateTime =
+        dateTimeToDateInput(new Date().toString()) + " " + dateTimeToMilitaryTime(new Date().toString());
+      if (campWeeksSelected) {
+        for (let week of campWeeksSelected) {
+          // console.log(week);
+          // TODO: Add camper to appropriate group
+          // For now, they are put in the waitlist group
+          await axios
+            .post(process.env.REACT_APP_API + "api/registered_camper_weeks/addRegistered_Camper_Week", {
+              camper_id: camper.id,
+              camp_week_id: week.id,
+              group_id: null,
+            })
+            .then(async (response) => {
+              // console.log(response);
+              await axios.post(process.env.REACT_APP_API + "api/payment_informations/addPayment_Information", {
+                user_id: parent?.id,
+                registered_camper_weeks_id: response.data.registered_camper_weeks_id,
+                numShirts: 0,
+                totalCost: total,
+                totalPaidUSD: total < parent.credit ? 0 : total - parent.credit,
+                totalPaidCredit: total < parent.credit ? total : parent.credit,
+                transactionTime: currentDateTime,
+              });
+            });
+        }
+      }
+      if (numShirts > 0) {
+        await axios.post(process.env.REACT_APP_API + "api/payment_informations/addPayment_Information", {
+          user_id: parent?.id,
+          numShirts: numShirts,
+          totalCost: total,
+          totalPaidUSD: total < parent.credit ? 0 : total - parent.credit,
+          totalPaidCredit: total < parent.credit ? total : parent.credit,
+          transactionTime: currentDateTime,
+        });
+      }
+
+      history.replace("/parent/completedTransaction");
+    }
   };
 
   const createOrder = (data: any, actions: any) => {

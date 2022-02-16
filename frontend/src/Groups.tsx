@@ -25,8 +25,8 @@ export default function Groups() {
   >([]);
   // const [selectedTerm, setSelectedTerm] = React.useState("");
   const [selectedWeek, setSelectedWeek] = React.useState<number>();
-  const [selectedGroup, setSelectedGroup] = React.useState("All");
-  const [selectedGroupId, setSelectedGroupId] = React.useState<number>(0);
+  const [selectedGroupType, setSelectedGroupType] = React.useState("All");
+  const [selectedGroup, setSelectedGroup] = React.useState<Group>();
   const [showCounselorPopup, setShowCounselorPopup] = React.useState(false);
   const [showCamperPopup, setShowCamperPopup] = React.useState(false);
   const [counselors, setCounselors] = React.useState<Counselor[]>([]);
@@ -67,7 +67,7 @@ export default function Groups() {
   };
 
   const handleGroupChange = (value: string) => {
-    setSelectedGroup(value);
+    setSelectedGroupType(value);
   };
 
   const handleWeekChange = (e: { target: { value: string } }) => {
@@ -76,9 +76,9 @@ export default function Groups() {
 
   // Counselor Popup Functions
 
-  const onClickShowCounselorPopup = (groupId: number) => {
+  const onClickShowCounselorPopup = (group: Group) => {
     setShowCounselorPopup(true);
-    setSelectedGroupId(groupId);
+    setSelectedGroup(group);
   };
 
   const removeCounselorFromGroup = async (id: number) => {
@@ -92,7 +92,7 @@ export default function Groups() {
     await axios.post(process.env.REACT_APP_API + "api/registered_counselor_weeks/addRegistered_Counselor_Week", {
       counselor_id: id,
       camp_week_id: selectedWeek,
-      group_id: selectedGroupId,
+      group_id: selectedGroup?.id,
     });
     await fetchRegisteredCounselorWeeksWithCounselors();
     setShowCounselorPopup(false);
@@ -108,9 +108,9 @@ export default function Groups() {
 
   // Camper Popup Functions
 
-  const onClickShowCamperPopup = (groupId: number) => {
+  const onClickShowCamperPopup = (group: Group) => {
     setShowCamperPopup(true);
-    setSelectedGroupId(groupId);
+    setSelectedGroup(group);
   };
 
   const removeCamperFromGroup = async (item: Registered_Camper_WeekWithCamper) => {
@@ -130,10 +130,19 @@ export default function Groups() {
   };
 
   const assignCamper = async (item: Registered_Camper_WeekWithCamper) => {
+    // Check to see if camp group is full
+    const numCampersInGroup = registeredCamperWeeksWithCamper.filter(
+      (camper) => camper.group_id === selectedGroup?.id
+    ).length;
+    if (selectedGroup && numCampersInGroup >= selectedGroup?.camperLimit) {
+      alert("This group is full. Please remove a camper to add another camper.");
+      return;
+    }
+    // Add camper to group
     await axios.put(process.env.REACT_APP_API + "api/registered_camper_weeks/updateRegistered_Camper_Week/" + item.id, {
       camper_id: item.camper_id,
       camp_week_id: item.camp_week_id,
-      group_id: selectedGroupId,
+      group_id: selectedGroup?.id,
     });
     await fetchRegisteredCamperWeeksWithCampers();
     setShowCamperPopup(false);
@@ -234,17 +243,16 @@ export default function Groups() {
 
         <Container>
           <br />
-          {selectedGroup === "All" ? <h4>👥 All Groups 👥</h4> : <h4>✏️ Edit Group: {selectedGroup}</h4>}
+          {selectedGroupType === "All" ? <h4>👥 All Groups 👥</h4> : <h4>✏️ Edit Group: {selectedGroupType}</h4>}
           <br />
-          <div className={selectedGroup === "All" ? "grid-container" : ""}>
+          <div className={selectedGroupType === "All" ? "grid-container" : ""}>
             {groups
               .filter((group) => group.camp_week_id === selectedWeek)
-              .filter((group) => (selectedGroup === "All" ? true : group.name.includes(selectedGroup)))
+              .filter((group) => (selectedGroupType === "All" ? true : group.name.includes(selectedGroupType)))
               .map((group) => (
                 <div key={group.id}>
                   <Row>
                     <Col>
-                      {/* TODO: Add input to set group limits for each group of each week */}
                       <GroupTable
                         group={group}
                         counselors={registeredCounselorWeeksWithCounselor.filter(
@@ -253,22 +261,22 @@ export default function Groups() {
                         campers={registeredCamperWeeksWithCamper.filter(
                           (item) => item.group_id === group.id && item.camp_week_id === selectedWeek
                         )}
-                        mutable={selectedGroup !== "All"}
+                        mutable={selectedGroupType !== "All"}
                         onRemoveCounselorClick={removeCounselorFromGroup}
                         onRemoveCamperClick={removeCamperFromGroup}
                       />
                     </Col>
-                    {selectedGroup !== "All" && (
+                    {selectedGroupType !== "All" && (
                       <Col xs="auto">
                         <br />
                         <br />
                         <br />
-                        <Button variant="outline-primary" onClick={() => onClickShowCounselorPopup(group.id)}>
+                        <Button variant="outline-primary" onClick={() => onClickShowCounselorPopup(group)}>
                           + Assign Counselor
                         </Button>
                         <br />
                         <br />
-                        <Button variant="primary" onClick={() => onClickShowCamperPopup(group.id)}>
+                        <Button variant="primary" onClick={() => onClickShowCamperPopup(group)}>
                           + Assign Camper
                         </Button>
                       </Col>

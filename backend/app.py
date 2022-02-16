@@ -634,8 +634,17 @@ def addEmergency_Contact():
 
 # PAYMENT INFORMATION
 @app.route("/payment_informations/getPayment_Informations")
-def getAllPayment_informations():
+def getPayment_informations():
     cursor.execute("select * from payment_informations")
+    row = cursor.fetchall()
+    return jsonify(row)
+
+
+@app.route("/payment_informations/getBasicPayment_InformationsWithUserInfo")
+def getBasicPayment_InformationsWithUserInfo():
+    cursor.execute("select distinct email, firstName, lastName, totalCost, totalPaidUSD, totalPaidCredit, "
+                   "transactionTime from payment_informations, parents where payment_informations.user_id = "
+                   "parents.id order by transactionTime desc")
     row = cursor.fetchall()
     return jsonify(row)
 
@@ -655,7 +664,6 @@ def getPayment_InformationByUser_idAndRegisteredCamperWeekID(user_id, registered
     return jsonify(row)
 
 
-# TODO: cannot add payment yet check everything once you get the add to work
 @app.route("/payment_informations/addPayment_Information", methods=["POST"])
 def addPayment_informations():
     data = request.get_json()
@@ -665,7 +673,6 @@ def addPayment_informations():
                    (data["user_id"], data["registered_camper_weeks_id"] if "registered_camper_weeks_id" in data else
                    None, data["numShirts"], data["totalCost"], data["totalPaidUSD"], data["totalPaidCredit"],
                     data["transactionTime"]))
-    # db.commit()
     return jsonify({"status": "success"})
 
 
