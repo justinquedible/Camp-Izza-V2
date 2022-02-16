@@ -4,8 +4,8 @@ import React from "react";
 import { Button, Container, Form, Row, Col, Modal, Tabs, Tab } from "react-bootstrap";
 import "./Dashboard.css";
 import { dateTimeToDateTimeInput, dateTimeToDateInput } from "./util/DateTimeUtil";
-import { filterAndSortWeeksCurrentYear } from "./util/FilterAndSortUtil";
-import { Camp_Week } from "./models/models";
+import { filterAndSortWeeksCurrentYear, sortGroups } from "./util/FilterAndSortUtil";
+import { Camp_Week, Group } from "./models/models";
 import { useHistory } from "react-router-dom";
 import axios from "axios";
 
@@ -13,8 +13,11 @@ export default function Sessions() {
   const history = useHistory();
   const [isSaving, setIsSaving] = React.useState(false);
   const [campWeeks, setCampWeeks] = React.useState<Camp_Week[]>([]);
+  const [groups, setGroups] = React.useState<Group[]>([]);
   const [earlyCutOff, setEarlyCutOff] = React.useState("");
+  const [selectedTerm, setSelectedTerm] = React.useState("");
   const [showAddWeeksPopup, setShowAddWeeksPopup] = React.useState(false);
+  const [showAddGroupPopup, setShowAddGroupPopup] = React.useState(false); 
 
   const [campWeekValues, setCampWeekValues] = React.useState<Camp_Week>({
     id: 0,
@@ -26,6 +29,55 @@ export default function Sessions() {
     regularCost: 0,
     earlyCutOff: "",
   });
+
+  const [groupValues, setGroupValues] = React.useState<Group>({
+    id: 0,
+    name: "",
+    camp_week_id: 0,
+    camperLimit: 0,
+  });
+
+  React.useEffect(() => {
+    (async () => {
+      await axios.get(process.env.REACT_APP_API + "api/camp_weeks/getCamp_Weeks").then((response) => {
+        for (let week of response.data) {
+          week.start = dateTimeToDateTimeInput(week.start);
+          week.end = dateTimeToDateTimeInput(week.end);
+          week.earlyCutOff = dateTimeToDateInput(week.earlyCutOff);
+        }
+        const sortedWeeks = filterAndSortWeeksCurrentYear(response.data);
+        setCampWeeks(sortedWeeks);
+        setEarlyCutOff(dateTimeToDateInput(sortedWeeks[0].earlyCutOff));
+      });
+      await axios.get(process.env.REACT_APP_API + "api/groups/getGroups").then((response) => {
+        setGroups(sortGroups(response.data));
+      })
+    })();
+  }, []);
+
+  const handleAddGroup = (name: string) => (e: { target: { value: any } }) => {
+    setGroupValues({ ...groupValues, [name]: e.target.value });
+  };
+
+  const handleAddGroupSubmit = async (e: { preventDefault: () => void }) => {
+    e.preventDefault();
+    await axios.post(process.env.REACT_APP_API + "api/groups/addGroups", {
+      ...groupValues,
+    });
+    setShowAddGroupPopup(false)
+    window.location.reload();
+  }; 
+
+  const handleGroupSubmit = async (e: { preventDefault: () => void }) => {
+    e.preventDefault();
+    setIsSaving(true);
+    for (let group of groups) {
+      await axios.put(process.env.REACT_APP_API + "api/groups/updateGroups/" + group.id, {
+        ...groups
+      });
+    }
+    setIsSaving(false);
+  };
 
   const handleAddWeek = (name: string) => (e: { target: { value: any } }) => {
     setCampWeekValues({ ...campWeekValues, [name]: e.target.value });
@@ -40,6 +92,30 @@ export default function Sessions() {
     setShowAddWeeksPopup(false)
     window.location.reload();
   }; 
+
+  const handleGroupChange = (index: number, field: string) => (e: { target: { value: any } }) => {
+    if (groups) {
+      if (field === "name") {
+        groups[index].name = e.target.value;
+        setGroups([...groups]);
+      } else if (field === "camperLimit") {
+        groups[index].camperLimit = e.target.value;
+        setGroups([...groups]);
+      }
+    }
+  };
+
+  const handleDeleteGroup = async (group_id: number) => {
+    await axios.get(process.env.REACT_APP_API + "api/registered_camper_weeks/getRegistered_Camper_WeekByCampWeekId/" + group_id).then(async (response) => {
+      if (response.data.length == 0){
+        await axios.delete(process.env.REACT_APP_API + "api/groups/deleteGroups/" + group_id);
+        window.location.reload();
+      }
+      else {
+        alert("There is a camper registered in this group! Please unasign campers to this group to delete.")
+      }
+    })
+  }; 
   
   const handleDeleteWeek = async (camp_week_id: number) => {
     await axios.get(process.env.REACT_APP_API + "api/registered_camper_weeks/getRegistered_Camper_WeekByCampWeekId/" + camp_week_id).then(async (response) => {
@@ -52,21 +128,6 @@ export default function Sessions() {
       }
     })
   }; 
-
-  React.useEffect(() => {
-    (async () => {
-      await axios.get(process.env.REACT_APP_API + "api/camp_weeks/getCamp_Weeks").then((response) => {
-        for (let week of response.data) {
-          week.start = dateTimeToDateTimeInput(week.start);
-          week.end = dateTimeToDateTimeInput(week.end);
-          week.earlyCutOff = dateTimeToDateInput(week.earlyCutOff);
-        }
-        const sortedWeeks = filterAndSortWeeksCurrentYear(response.data);
-        setCampWeeks(sortedWeeks);
-        setEarlyCutOff(dateTimeToDateInput(sortedWeeks[0].earlyCutOff));
-      });
-    })();
-  }, []);
 
   const handleDatesChange = (index: number, field: string) => (e: { target: { value: any } }) => {
     if (campWeeks) {
@@ -295,10 +356,108 @@ export default function Sessions() {
           </Form>
           </div>
         </Tab>
-        <Tab eventKey="group" title="Group">
+        <Tab eventKey="group" title="Groups">
           <br />
-          <h3> Group </h3>
+          <h3> Manage Groups </h3>
+          <div>
+            <Form>
 
+            {/* <div style={{ marginLeft: "40%", marginRight: "40%" }}>
+                <Form.Group as={Col}>
+                  <Form.Control as="select" onChange={(e) => setSelectedTerm(e.target.value)} style={{ textAlign: "center" }}>
+                    {Array.from(new Set(groups.map((group) => group.camp_week_id))).map((week) => (
+                      <option key={week} value={week}>
+                        {week}
+                      </option>
+                    ))}
+                  </Form.Control>
+                </Form.Group>
+              </div> */}
+              <div className="center">
+              <Button onClick={() => {setShowAddGroupPopup(true)}}>
+                Add Groups
+              </Button>
+              <Modal size="lg" show={showAddGroupPopup} onHide={() => setShowAddGroupPopup(false)}>
+                <Modal.Header closeButton>
+                  <Modal.Title>Add Groups</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                <Row>
+                  <Form.Group as={Col}>
+                    <Form.Label>Name</Form.Label>
+                    <input
+                      className="form-control"
+                      required
+                      value={groupValues.name}
+                      onChange={handleAddGroup("name")}
+                    />
+                  </Form.Group>
+                  <Form.Group as={Col}>
+                    <Form.Label>Group Limit </Form.Label>
+                    <input
+                      className="form-control"
+                      required
+                      value={groupValues.camperLimit}
+                      onChange={handleAddGroup("camperLimit")}
+                    />
+                  </Form.Group>
+                </Row>
+                </Modal.Body>
+                <Modal.Footer>
+                  <Button variant="secondary" onClick={() => setShowAddGroupPopup(false)}>
+                    Close
+                  </Button>
+                  <Button variant="primary" type="submit" onClick={handleAddGroupSubmit}>
+                  {isSaving ? "Submitting" : "Submit"}
+                  </Button>
+                </Modal.Footer>
+              </Modal>
+            </div>
+            <br />
+              <h5>
+                Groups
+              </h5>
+              
+              {groups.map((group, index) => ( 
+                <div>
+                  <Row>
+                  <Form.Group as={Col}>
+                    <Form.Label> Group Name </Form.Label>
+                    <input
+                      className="form-control"
+                      required
+                      value={group.name}
+                      onChange={handleGroupChange(index, "name")}
+                    />
+                  </Form.Group>
+                  <Form.Group as={Col}>
+                    <Form.Label>Group Limit</Form.Label>
+                    <Form.Control
+                      type="number"
+                      placeholder="0.00"
+                      value={group.camperLimit}
+                      required
+                      onChange={handleGroupChange(index, "camperLimit")}
+                    />
+                  </Form.Group>
+                </Row>
+                <div style={{textAlign: "center"}}>
+                  <Button variant="danger" onClick={() => handleDeleteGroup(group.id)}>
+                      Delete
+                  </Button>
+                </div>
+                <hr />
+                </div>
+              ))}
+              
+            <br />
+            <div className="center">
+              <Button variant="success" className="buttonTxt" type="submit" disabled={isSaving} onClick={handleGroupSubmit}>
+                {isSaving ? "Saving" : "Save"}
+              </Button>
+            </div>
+            </Form>
+          </div>
         </Tab>
       </Tabs>
       
