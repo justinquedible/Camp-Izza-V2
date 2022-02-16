@@ -368,6 +368,13 @@ def getRegistered_Camper_WeekByCampWeekId(camp_week_id):
     return jsonify(rows)
 
 
+@app.route("/registered_camper_weeks/getRegistered_Camper_WeekByGroupId/<group_id>")
+def getRegistered_Camper_WeekByCampWeekId(group_id):
+    cursor.execute("select * from registered_camper_weeks where group_id = %s", (group_id,))
+    rows = cursor.fetchall()
+    return jsonify(rows)
+
+
 # regsitered_camper_weeks join with campers
 @app.route("/registered_camper_weeks/getRegistered_Camper_WeeksWithCampers")
 def getRegistered_Camper_WeeksWithCampers():
@@ -409,6 +416,13 @@ def addRegistered_Camper_Week():
 def deleteRegistered_Camper_Week(registered_camper_weeks_id):
     cursor.execute("delete from registered_camper_weeks where id = %s ", (registered_camper_weeks_id,))
     return jsonify({"status": "success"})
+
+
+@app.route("/registered_camper_weeks/deleteRegistered_Camper_WeekByCampWeek/<int:camp_week_id>", methods=["DELETE"])
+def deleteRegistered_Camper_Week(camp_week_id):
+    cursor.execute("delete from registered_camper_weeks where camp_week_id = %s ", (camp_week_id,))
+    return jsonify({"status": "success"})
+
 
 
 @app.route("/registered_camper_weeks/getRegistered_Camper_WeekWithCamperIdAndCampWeekId/<int:camp_week_id>/"
