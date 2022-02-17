@@ -38,7 +38,7 @@ export default function ManageParents() {
   const handleParentClick = (parent_id: string) => {
     sessionStorage.setItem("parent_id", parent_id);
     history.push("/admin/householdForm");
-  }
+  };
 
   const handleGoBack = () => {
     history.goBack();
@@ -66,26 +66,28 @@ export default function ManageParents() {
                 </tr>
               </thead>
               <tbody>
-                {parents.map((parent) => (
-                  <tr key={parent.id}>
-                    <td>
-                      <Button onClick={() => handleParentClick(parent.id)}>
-                        {parent.firstName} {parent.lastName}
-                      </Button>
-                      {/* {parent.firstName} {parent.lastName} */}
-                    </td>
-                    <td>
-                      {campers
-                        .filter((camper) => camper.parent_id === parent.id)
-                        .map((camper) => (
-                          <p key={camper.id}>
-                            {camper.firstName} {camper.lastName}
-                          </p>
-                        ))}
-                    </td>
-                    <td>{parent.credit}</td>
-                  </tr>
-                ))}
+                {parents
+                  .filter((parent) => !!parent.firstName)
+                  .map((parent) => (
+                    <tr key={parent.id}>
+                      <td>
+                        <Button onClick={() => handleParentClick(parent.id)}>
+                          {parent.firstName} {parent.lastName}
+                        </Button>
+                        {/* {parent.firstName} {parent.lastName} */}
+                      </td>
+                      <td>
+                        {campers
+                          .filter((camper) => camper.parent_id === parent.id)
+                          .map((camper) => (
+                            <p key={camper.id}>
+                              {camper.firstName} {camper.lastName}
+                            </p>
+                          ))}
+                      </td>
+                      <td>{parent.credit}</td>
+                    </tr>
+                  ))}
               </tbody>
             </Table>
           </div>
