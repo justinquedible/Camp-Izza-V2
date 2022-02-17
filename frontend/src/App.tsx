@@ -2,7 +2,6 @@
 
 import React from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
-import "./Footer.css";
 import { HashRouter, Route, Switch } from "react-router-dom";
 import Login from "./Login";
 import SignupParent from "./SignupParent";
