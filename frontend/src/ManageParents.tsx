@@ -35,6 +35,11 @@ export default function ManageParents() {
     })();
   }, []);
 
+  const handleParentClick = (parent_id: string) => {
+    sessionStorage.setItem("parent_id", parent_id);
+    history.push("/admin/householdForm");
+  }
+
   const handleGoBack = () => {
     history.goBack();
   };
@@ -64,7 +69,10 @@ export default function ManageParents() {
                 {parents.map((parent) => (
                   <tr key={parent.id}>
                     <td>
-                      {parent.firstName} {parent.lastName}
+                      <Button onClick={() => handleParentClick(parent.id)}>
+                        {parent.firstName} {parent.lastName}
+                      </Button>
+                      {/* {parent.firstName} {parent.lastName} */}
                     </td>
                     <td>
                       {campers

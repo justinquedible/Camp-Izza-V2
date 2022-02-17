@@ -4,19 +4,21 @@ import "./Dashboard.css";
 import React from "react";
 import { Button, Container } from "react-bootstrap";
 import { useHistory } from "react-router-dom";
-import { getAuth } from "firebase/auth";
+import { getAuth, User } from "firebase/auth";
 import axios from "axios";
 import Campers from "./components/Campers";
 
 export default function ParentDashboard() {
   const [disableAddCamper, setDisableAddCamper] = React.useState(true);
   const [campers, setCampers] = React.useState([]);
+  const [user, setUser] = React.useState<User>();
   const auth = getAuth();
   const history = useHistory();
 
   React.useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
       if (user) {
+        setUser(user);
         axios.get(process.env.REACT_APP_API + "api/parents/getParent/" + user.uid).then((res) => {
           // console.log(res.data);
           setDisableAddCamper(!!!res.data.firstName);
@@ -30,6 +32,13 @@ export default function ParentDashboard() {
     return unsubscribe;
   }, [auth]);
 
+  const handleHouseholdClick = () => {
+    if (user){
+      sessionStorage.setItem("parent_id", user.uid);
+    }
+    history.push("/parent/householdForm")
+  }
+
   const handleAddCamper = async (e: { preventDefault: () => void }) => {
     sessionStorage.setItem("camper_id", "");
     history.push("/parent/camperForm");
@@ -39,7 +48,7 @@ export default function ParentDashboard() {
     <div className="Parent">
       <br />
       <Container className="Admin-Buttons">
-        <Button variant="primary" className="householdProfileButton" href="/#/parent/householdForm">
+        <Button variant="primary" className="householdProfileButton" onClick={handleHouseholdClick}>
           Household Profile
         </Button>
         <br />
