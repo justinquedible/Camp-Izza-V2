@@ -7,15 +7,8 @@ import { useHistory } from "react-router-dom";
 import axios from "axios";
 import logo from "./assets/logo.png";
 import divider from "./assets/divider.png";
-import { dateTimeToDateInput, dateTimeToDate } from "./util/DateTimeUtil";
-import {
-  Camper,
-  Parent,
-  Emergency_Contact,
-  Camper_Medical_Record,
-  Registered_Camper_Week,
-  Camp_Week,
-} from "./models/models";
+import { dateTimeToDateInput } from "./util/DateTimeUtil";
+import { Camper, Parent, Emergency_Contact, Camper_Medical_Record } from "./models/models";
 
 interface RegisteredCamperWeeksWithCampWeek {
   camp_week_id: number;
@@ -918,7 +911,7 @@ export default function EmergencyForm() {
           border: 0px solid #000000;
           transform: rotate(0rad) translateZ(0px);
           -webkit-transform: rotate(0rad) translateZ(0px);
-          width: 776px;
+          width: 1000px;
           height: 14.72px;
         "
       >
@@ -926,9 +919,9 @@ export default function EmergencyForm() {
           alt=""
           src=${divider}
           style="
-            width: 776px;
+            width: 890px;
             height: 14.72px;
-            margin-left: 0px;
+            margin-left: 30px;
             margin-top: 0px;
             transform: rotate(0rad) translateZ(0px);
             -webkit-transform: rotate(0rad) translateZ(0px);
@@ -1046,7 +1039,7 @@ export default function EmergencyForm() {
           border: 0px solid #000000;
           transform: rotate(0rad) translateZ(0px);
           -webkit-transform: rotate(0rad) translateZ(0px);
-          width: 776px;
+          width: 1000px;
           height: 14.72px;
         "
       >
@@ -1054,9 +1047,9 @@ export default function EmergencyForm() {
           alt=""
           src=${divider}
           style="
-            width: 776px;
+            width: 890px;
             height: 14.72px;
-            margin-left: 0px;
+            margin-left: 30px;
             margin-top: 0px;
             transform: rotate(0rad) translateZ(0px);
             -webkit-transform: rotate(0rad) translateZ(0px);
@@ -1129,7 +1122,7 @@ export default function EmergencyForm() {
           border: 0px solid #000000;
           transform: rotate(0rad) translateZ(0px);
           -webkit-transform: rotate(0rad) translateZ(0px);
-          width: 776px;
+          width: 1000px;
           height: 14.72px;
         "
       >
@@ -1137,9 +1130,9 @@ export default function EmergencyForm() {
           alt=""
           src=${divider}
           style="
-            width: 776px;
+            width: 890px;
             height: 14.72px;
-            margin-left: 0px;
+            margin-left: 30px;
             margin-top: 0px;
             transform: rotate(0rad) translateZ(0px);
             -webkit-transform: rotate(0rad) translateZ(0px);
@@ -1200,63 +1193,54 @@ export default function EmergencyForm() {
           </td>
         </tr>
         <tr class="c31">
-          <td class="c32" colspan="9" rowspan="1">
+        <td class="c25" colspan="9" rowspan="1">
             <p class="c7">
-              <span class="c11"> Will your child take any medications? </span>
-            </p>
-          </td>
-          <td class="c10" colspan="8" rowspan="1">
-            <p class="c7">
-              <span class="c11"> If yes, specify: ${data.medical_record?.medications}</span>
-            </p>
-          </td>
-          <td class="c25" colspan="9" rowspan="1">
-            <p class="c7">
-              <span class="c24 c11"> Allergies or Dietary Restrictions: ${data.medical_record?.allergies}</span>
+              <span class="c24 c11"> Allergies or Dietary Restrictions:</span>
             </p>
             <p class="c5">
-              <span class="c24 c11"> </span>
+              <span class="c24 c11">${data.medical_record?.allergies}</span>
+            </p>
+          </td>
+          <td class="c32" colspan="9" rowspan="1">
+            <p class="c7">
+              <span class="c11"> Will your child take any medications?</span>
+            </p>
+            <p class="c5">
+              <span class="c24 c11">${data.medical_record?.medications}</span>
+            </p>
+          </td>
+          <td class="c32" colspan="9" rowspan="1">
+            <p class="c7">
+              <span class="c24 c11"> Recent medical treatments?</span>
+            </p>
+            <p class="c5">
+              <span class="c24 c11">${data.medical_record?.medicalTreatments}</span>
             </p>
           </td>
         </tr>
         <tr class="c39">
           <td class="c32" colspan="9" rowspan="1">
             <p class="c7">
-              <span class="c11"> Are there any activities at camp that your child cannot participate in? &nbsp; </span>
-            </p>
-          </td>
-          <td class="c10" colspan="8" rowspan="1">
-            <p class="c7">
-              <span class="c11"> If yes, specify: ${data.medical_record?.restrictedActivities}</span>
-            </p>
-          </td>
-          <td class="c25" colspan="9" rowspan="1">
-            <p class="c7">
-              <span class="c11"> Has your child received all current immunizations? &nbsp; &nbsp; ${
-                data.medical_record?.immunizations
-              }</span>
-            </p>
-          </td>
-        </tr>
-        <tr class="c9">
-          <td class="c32" colspan="9" rowspan="1">
-            <p class="c7">
-              <span class="c24 c11"> Recent medical treatments?</span>
+              <span class="c11"> Are there any activities at camp that your child cannot participate in?</span>
             </p>
             <p class="c5">
-              <span class="c24 c11"> </span>
-            </p>
-          </td>
-          <td class="c10" colspan="8" rowspan="1">
-            <p class="c7">
-              <span class="c11"> If yes, specify: ${data.medical_record?.medicalTreatments}</span>
+              <span class="c24 c11">${data.medical_record?.restrictedActivities}</span>
             </p>
           </td>
           <td class="c25" colspan="9" rowspan="1">
             <p class="c7">
-              <span class="c11"> Date of last tetanus shot: ${dateTimeToDateInput(
-                data.medical_record?.tetanusDate
-              )}</span>
+              <span class="c11"> Has your child received all current immunizations?</span>
+            </p>
+            <p class="c5">
+              <span class="c24 c11">${data.medical_record?.immunizations}</span>
+            </p>
+          </td>
+          <td class="c25" colspan="9" rowspan="1">
+            <p class="c7">
+              <span class="c11"> Date of last tetanus shot:</span>
+            </p>
+            <p class="c5">
+              <span class="c24 c11">${dateTimeToDateInput(data.medical_record?.tetanusDate)}</span>
             </p>
           </td>
         </tr>
@@ -1272,7 +1256,7 @@ export default function EmergencyForm() {
           border: 0px solid #000000;
           transform: rotate(0rad) translateZ(0px);
           -webkit-transform: rotate(0rad) translateZ(0px);
-          width: 776px;
+          width: 1000px;
           height: 14.72px;
         "
       >
@@ -1280,9 +1264,9 @@ export default function EmergencyForm() {
           alt=""
           src=${divider}
           style="
-            width: 776px;
+            width: 890px;
             height: 14.72px;
-            margin-left: 0px;
+            margin-left: 30px;
             margin-top: 0px;
             transform: rotate(0rad) translateZ(0px);
             -webkit-transform: rotate(0rad) translateZ(0px);
