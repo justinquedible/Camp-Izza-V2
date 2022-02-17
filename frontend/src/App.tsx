@@ -96,6 +96,7 @@ function App() {
               <Route exact path={"/admin/camperScheduling"} component={CamperScheduling} />
               <Route exact path={"/admin/emergencyForm"} component={EmergencyForm} />
               <Route exact path={"/admin/manageParents"} component={ManageParents} />
+              <Route exact path={"/admin/householdForm"} component={HouseholdForm} />
               {/* Counselor */}
               <Route exact path={"/signupCounselor"} component={SignUpCounselor} />
               <Route exact path={"/counselor"} component={Counselor} />

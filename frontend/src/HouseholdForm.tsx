@@ -15,6 +15,8 @@ export default function HouseholdForm() {
   const [isSaving, setIsSaving] = React.useState(false);
   const checkbox1 = React.useRef<HTMLInputElement>(null);
   const checkbox2 = React.useRef<HTMLInputElement>(null);
+  const parent_id = sessionStorage.getItem("parent_id");
+
 
   const [parentValues, setParentValues] = React.useState<Parent>({
     id: "",
@@ -56,34 +58,31 @@ export default function HouseholdForm() {
   });
 
   React.useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged(async (user) => {
-      if (user) {
-        await axios.get(process.env.REACT_APP_API + "api/parents/getParent/" + user.uid).then((res) => {
-          setParentValues({ ...res.data });
-        });
-        await axios
-          .get(process.env.REACT_APP_API + "api/emergency_contacts/getEmergency_ContactsByUserID/" + user.uid)
-          .then((res) => {
-            setEmergency1Values({ ...res.data[0], authPickUp: Boolean(res.data[0].authPickUp) });
-            setEmergency2Values({ ...res.data[1], authPickUp: Boolean(res.data[1].authPickUp) });
-            if (checkbox1.current && checkbox2.current) {
-              checkbox1.current.checked = Boolean(res.data[0].authPickUp);
-              checkbox2.current.checked = Boolean(res.data[1].authPickUp);
-            }
-          });
+  (async  () => {
+    await axios.get(process.env.REACT_APP_API + "api/parents/getParent/" + parent_id).then((res) => {
+      setParentValues({ ...res.data });
+    });
+    await axios
+    .get(process.env.REACT_APP_API + "api/emergency_contacts/getEmergency_ContactsByUserID/" + parent_id)
+    .then((res) => {
+      setEmergency1Values({ ...res.data[0], authPickUp: Boolean(res.data[0].authPickUp) });
+      setEmergency2Values({ ...res.data[1], authPickUp: Boolean(res.data[1].authPickUp) });
+      if (checkbox1.current && checkbox2.current) {
+        checkbox1.current.checked = Boolean(res.data[0].authPickUp);
+        checkbox2.current.checked = Boolean(res.data[1].authPickUp);
       }
     });
-    return unsubscribe;
-  }, [auth]);
+  })();
+  },[]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     setIsSaving(true);
     e.preventDefault();
-    await axios.put(process.env.REACT_APP_API + "api/parents/updateParent/" + auth.currentUser?.uid, {
+    await axios.put(process.env.REACT_APP_API + "api/parents/updateParent/" + parent_id, {
       ...parentValues,
     });
     await axios
-      .get(process.env.REACT_APP_API + "api/emergency_contacts/getEmergency_ContactsByUserID/" + auth.currentUser?.uid)
+      .get(process.env.REACT_APP_API + "api/emergency_contacts/getEmergency_ContactsByUserID/" + parent_id)
       .then(async (res) => {
         await axios.put(
           process.env.REACT_APP_API + "api/emergency_contacts/updateEmergency_Contact/" + res.data[0].id,
@@ -99,7 +98,7 @@ export default function HouseholdForm() {
         );
       });
     setIsSaving(false);
-    history.push("/parent");
+    history.goBack();
   };
 
   const handleParentChange = (name: string) => (e: { target: { value: any } }) => {
@@ -114,11 +113,15 @@ export default function HouseholdForm() {
     setEmergency2Values({ ...emergency2Values, [name]: e.target.value });
   };
 
+  const handleBack = () => {
+    history.goBack();
+  };
+
   return (
     <div className={"HouseholdForm"}>
       <br />
       <Container className="Text-Form">
-        <Button variant="primary" className="backButton" href="/#/parent">
+        <Button variant="primary" className="backButton" onClick={handleBack}>
           Back
         </Button>
 
