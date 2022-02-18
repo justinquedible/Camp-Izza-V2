@@ -9,6 +9,8 @@ import ResetPassword from "./ResetPassword";
 import ResetConfirmation from "./ResetConfirmation";
 import UpdatePassword from "./UpdatePassword";
 import Parent from "./Parent";
+import ParentCampers from "./ParentCampers";
+import ParentFinances from "./ParentFinances";
 import HouseholdForm from "./HouseholdForm";
 import CamperForm from "./CamperForm";
 import CamperScheduling from "./CamperScheduling";
@@ -80,9 +82,12 @@ function App() {
               <Route exact path={"/updatePassword"} component={UpdatePassword} />
               {/* Parent */}
               <Route exact path={"/parent"} component={Parent} />
+              <Route exact path={"/parent/campers"} component={ParentCampers} />
               <Route exact path={"/parent/householdForm"} component={HouseholdForm} />
+              <Route exact path={"/parent/parentFinances"} component={ParentFinances} />
               <Route exact path={"/parent/camperForm"} component={CamperForm} />
               <Route exact path={"/parent/camperScheduling"} component={CamperScheduling} />
+              <Route exact path={"/parent/emergencyForm"} component={EmergencyForm} />
               <Route exact path={"/parent/checkout"} component={Checkout} />
               <Route exact path={"/parent/completedTransaction"} component={CompletedTransaction} />
               {/* Admin */}

@@ -16,6 +16,9 @@ export default function HouseholdForm() {
   const checkbox1 = React.useRef<HTMLInputElement>(null);
   const checkbox2 = React.useRef<HTMLInputElement>(null);
   const parent_id = sessionStorage.getItem("parent_id");
+  const [userRole, setUserRole] = React.useState("");
+  const [credit, setCredit] = React.useState(0);
+  const [isFieldReadOnly, setIsFieldReadOnly] = React.useState(true);
 
 
   const [parentValues, setParentValues] = React.useState<Parent>({
@@ -58,6 +61,20 @@ export default function HouseholdForm() {
   });
 
   React.useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged(async (user) => {
+      if (user) {
+        // await fetchCamperData();
+        await axios.get(process.env.REACT_APP_API + "api/users/getUser/" + user.uid).then((res) => {
+          if (res.data.role === "admin") {
+            setIsFieldReadOnly(false);
+          }
+          setUserRole(res.data.role);
+        });
+      }
+    });
+    return unsubscribe;
+  
+    },[auth]);
   (async  () => {
     await axios.get(process.env.REACT_APP_API + "api/parents/getParent/" + parent_id).then((res) => {
       setParentValues({ ...res.data });
@@ -73,7 +90,6 @@ export default function HouseholdForm() {
       }
     });
   })();
-  },[]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     setIsSaving(true);
@@ -377,6 +393,22 @@ export default function HouseholdForm() {
               </Col>
             </Row>
           </Form.Group>
+
+          {userRole === "admin" && (
+            <div>
+              <br />
+              <h5>Parent's Credit</h5>
+              <Form.Group as={Col} xs={4}>
+                <Form.Label>Credit</Form.Label>
+                <Form.Control
+                  type="number"
+                  value={credit}
+                  required
+                  onChange={(e) => setCredit(parseInt(e.target.value))}
+                />
+              </Form.Group>
+            </div>
+          )}
           <br />
 
           <div className="center">

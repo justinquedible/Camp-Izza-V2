@@ -116,6 +116,17 @@ export default function CamperScheduling() {
     window.location.reload();
   };
 
+  const handlePrice = (week: Camp_Week ) => {
+    let price = 0;
+    if (new Date() < new Date(earlyCutOffDate)){
+      price = week.earlyCost;
+    }
+    else{
+      price = week.regularCost
+    }
+    return price
+  }
+
   const handleBack = () => {
     sessionStorage.removeItem("camper_id");
     sessionStorage.removeItem("weeksSelected");
@@ -165,6 +176,7 @@ export default function CamperScheduling() {
                 <th>Week</th>
                 <th>Start</th>
                 <th>End</th>
+                <th>Price</th>
                 <th>Registration Status</th>
               </tr>
             </thead>
@@ -175,6 +187,7 @@ export default function CamperScheduling() {
                     <td>{item.name}</td>
                     <td>{dateTimeToDate(item.start)}</td>
                     <td>{dateTimeToDate(item.end)}</td>
+                    <td>${handlePrice(item)}</td>
                     {weeksRegistered.includes(item.id) ? (
                       <td>
                         Registered{" "}

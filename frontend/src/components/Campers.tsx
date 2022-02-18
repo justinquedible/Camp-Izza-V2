@@ -28,11 +28,15 @@ const Campers: React.FC<props> = ({ campers, type = "parent" }) => {
             {type === "parent" ? (
               <div>
                 <Card.Link onClick={() => handleCamperClick(camper.id)} href="/#/parent/camperForm">
-                  📝 Info
+                  👤 Info
                 </Card.Link>
                 <br />
                 <Card.Link onClick={() => handleCamperClick(camper.id)} href="/#/parent/camperScheduling">
                   📅 Scheduling
+                </Card.Link>
+                <br />
+                <Card.Link onClick={() => handleCamperClickEmergencyForm(camper.id)} href="/#/parent/emergencyForm">
+                  📝 Emergency Form
                 </Card.Link>
               </div>
             ) : (

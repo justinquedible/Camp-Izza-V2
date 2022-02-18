@@ -695,6 +695,18 @@ def getPayment_InformationByUser_idAndRegisteredCamperWeekID(user_id, registered
     return jsonify(row)
 
 
+@app.route("/payment_informations/campers/getPaymentInformationsAndCampers/<user_id>")
+def getPayment_InformationAndCampersWithUserId(user_id):
+    cursor.execute("select p.id, user_id, p.registered_camper_weeks_id, p.numShirts, p.totalCost, p.totalPaidUSD, "
+                   "p.totalPaidCredit, p.transactionTime, t1.id, t1.firstName, t1.lastName "
+                   "from payment_informations p, (select r.id, r.camper_id, c.firstName, c.lastName"
+                                                " from registered_camper_weeks r, campers c "
+                                                "where r.camper_id = c.id) t1 "
+                   "where p.registered_camper_weeks_id = t1.id")
+    row = cursor.fetchall()
+    return jsonify(row)
+
+
 @app.route("/payment_informations/addPayment_Information", methods=["POST"])
 def addPayment_informations():
     data = request.get_json()
