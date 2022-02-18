@@ -71,10 +71,9 @@ export default function ManageParents() {
                   .map((parent) => (
                     <tr key={parent.id}>
                       <td>
-                        <Button onClick={() => handleParentClick(parent.id)}>
+                        <Button variant="link" onClick={() => handleParentClick(parent.id)}>
                           {parent.firstName} {parent.lastName}
                         </Button>
-                        {/* {parent.firstName} {parent.lastName} */}
                       </td>
                       <td>
                         {campers
@@ -120,7 +119,7 @@ export default function ManageParents() {
                     <td>{payment.totalCost}</td>
                     <td>{payment.totalPaidUSD}</td>
                     <td>{payment.totalPaidCredit}</td>
-                    <td>{payment.transactionTime}</td>
+                    <td>{payment.transactionTime.substring(0, 25)}</td>
                   </tr>
                 ))}
               </tbody>
