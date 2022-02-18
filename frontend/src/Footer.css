@@ -1,16 +1,17 @@
-@import url('https://fonts.googleapis.com/css2?family=Comfortaa:wght@300;500;700&display=swap%27');
+@import url("https://fonts.googleapis.com/css2?family=Comfortaa:wght@300;500;700&display=swap%27");
 
-.footer{
-    padding: 1.5rem;
-    background-color: rgb(255, 224, 143);
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    margin-top: 50px;
-    min-height: 15vh;
+.footer {
+  padding-top: 10px;
+  background-color: rgb(255, 224, 143);
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  margin-top: 50px;
+  min-height: 10vh;
 }
 
-.mainText, .textbox{
+.mainText,
+.textbox {
   margin-left: auto;
   margin-right: auto;
   font-family: Comfortaa;
@@ -19,6 +20,6 @@
   font-weight: 700;
 }
 
-.textbox{
-    font-weight: 300;
+.textbox {
+  font-weight: 300;
 }

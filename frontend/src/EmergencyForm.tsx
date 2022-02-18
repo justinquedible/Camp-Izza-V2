@@ -99,7 +99,7 @@ export default function EmergencyForm() {
 
   return (
     <Container className="Admin-Buttons">
-      <div style={{ pageBreakAfter: "always" }}>
+      <div style={{}}>
         <Button onClick={handleBack}>Back</Button>
         <Spinner
           style={{ marginLeft: "50%", display: isLoading ? "block" : "none" }}
@@ -107,10 +107,14 @@ export default function EmergencyForm() {
           variant="primary"
         />
       </div>
-      {data.map((data) => (
+      {data.map((data, index, array) => (
         <div
           key={data.camper.id}
-          style={{ marginRight: "75px", paddingTop: "50px", pageBreakAfter: "always" }}
+          style={{
+            marginRight: "75px",
+            paddingTop: "50px",
+            pageBreakAfter: array.length === 1 ? undefined : "always",
+          }}
           dangerouslySetInnerHTML={{
             __html: `<html>
   <head>
@@ -1244,6 +1248,13 @@ export default function EmergencyForm() {
             </p>
           </td>
         </tr>
+        <tr class="c31">
+          <td class="c21" colspan="21" rowspan="1">
+            <p class="c7">
+              <span class="c11"> Comments: ${data.medical_record?.comments}</span>
+            </p>
+          </td>
+        </tr>
       </tbody>
     </table>
     <p class="c7">
@@ -1325,13 +1336,6 @@ export default function EmergencyForm() {
             .join("")}
         </tr>
         <tr class="c31">
-          <td class="c21" colspan="21" rowspan="1">
-            <p class="c7">
-              <span class="c11"> Comments: ${data.medical_record?.comments}</span>
-            </p>
-          </td>
-        </tr>
-        <tr class="c31">
           <td class="c6 c21" colspan="21" rowspan="1">
             <p class="c37">
               <span class="c11">
@@ -1359,20 +1363,17 @@ export default function EmergencyForm() {
         <tr class="c9">
           <td class="c44" colspan="17" rowspan="1">
             <p class="c7">
-              <span class="c11 c42"> Parent/Guardian signature </span>
+              <span class="c11 c42"> Parent/Guardian signature: </span>
             </p>
           </td>
           <td class="c45" colspan="4" rowspan="1">
             <p class="c7">
-              <span class="c11 c42"> Date </span>
+              <span class="c11 c42"> Date: </span>
             </p>
           </td>
         </tr>
       </tbody>
     </table>
-    <p class="c5">
-      <span class="c0"> </span>
-    </p>
   </body>
 </html>
 `,

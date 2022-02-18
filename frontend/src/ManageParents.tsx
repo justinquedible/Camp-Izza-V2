@@ -38,7 +38,7 @@ export default function ManageParents() {
   const handleParentClick = (parent_id: string) => {
     sessionStorage.setItem("parent_id", parent_id);
     history.push("/admin/householdForm");
-  }
+  };
 
   const handleGoBack = () => {
     history.goBack();
@@ -66,13 +66,13 @@ export default function ManageParents() {
                 </tr>
               </thead>
               <tbody>
+<<<<<<< HEAD
                 {parents.map((parent) => (
                   <tr key={parent.id}>
                     <td>
-                      <Button onClick={() => handleParentClick(parent.id)}>
+                      <Button variant="link" onClick={() => handleParentClick(parent.id)}>
                         {parent.firstName} {parent.lastName}
                       </Button>
-                      {/* {parent.firstName} {parent.lastName} */}
                     </td>
                     <td>
                       {campers
@@ -86,6 +86,30 @@ export default function ManageParents() {
                     <td>{parent.credit}</td>
                   </tr>
                 ))}
+=======
+                {parents
+                  .filter((parent) => !!parent.firstName)
+                  .map((parent) => (
+                    <tr key={parent.id}>
+                      <td>
+                        <Button onClick={() => handleParentClick(parent.id)}>
+                          {parent.firstName} {parent.lastName}
+                        </Button>
+                        {/* {parent.firstName} {parent.lastName} */}
+                      </td>
+                      <td>
+                        {campers
+                          .filter((camper) => camper.parent_id === parent.id)
+                          .map((camper) => (
+                            <p key={camper.id}>
+                              {camper.firstName} {camper.lastName}
+                            </p>
+                          ))}
+                      </td>
+                      <td>{parent.credit}</td>
+                    </tr>
+                  ))}
+>>>>>>> 91a627fc9be02a8b6b0cdc1341ba95108b12e39c
               </tbody>
             </Table>
           </div>
@@ -118,7 +142,7 @@ export default function ManageParents() {
                     <td>{payment.totalCost}</td>
                     <td>{payment.totalPaidUSD}</td>
                     <td>{payment.totalPaidCredit}</td>
-                    <td>{payment.transactionTime}</td>
+                    <td>{payment.transactionTime.substring(0,25)}</td>
                   </tr>
                 ))}
               </tbody>

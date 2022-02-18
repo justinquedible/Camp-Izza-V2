@@ -83,9 +83,11 @@ export default function Login() {
             {isLoading ? "Signing In..." : "Sign In"}
           </Button>
         </Form>
-        <br />
+        <p className="fineText">
+          To register a new camper, please sign up as "New Guardian"
+        </p>
 
-        <Button className="newuser-button" onClick={() => history.push("/signupParent")}>
+        <Button style={{marginTop: 10}}className="newuser-button" onClick={() => history.push("/signupParent")}>
           New Guardian
         </Button>
         <Button className="newuser-button" onClick={() => history.push("/signupCounselor")}>

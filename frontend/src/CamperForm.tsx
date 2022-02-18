@@ -462,21 +462,7 @@ export default function CamperForm() {
             </Form.Group>
           </Row>
 
-          {userRole === "admin" && (
-            <div>
-              <br />
-              <h5>Parent's Credit</h5>
-              <Form.Group as={Col} xs={4}>
-                <Form.Label>Credit</Form.Label>
-                <Form.Control
-                  type="number"
-                  value={credit}
-                  required
-                  onChange={(e) => setCredit(parseInt(e.target.value))}
-                />
-              </Form.Group>
-            </div>
-          )}
+          
 
           <div className="center">
             <Button type="submit" variant="success" className="buttonTxt" disabled={isSaving}>

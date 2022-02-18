@@ -35,9 +35,9 @@ export default function NavBar() {
     window.location.href = "/#/updatePassword";
   };
 
-  const handleSignOut = () => {
+  const handleSignOut = async () => {
     window.location.href = "/#/login";
-    auth.signOut();
+    await auth.signOut();
     window.location.reload();
     console.log("signed out");
   };
