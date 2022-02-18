@@ -53,7 +53,7 @@ export default function AdminDashboard() {
             </Button>
           </Col>
           <Col>
-            <Button disabled variant="outline-success" className="Admin-Button" href="/#/admin/roster">
+            <Button variant="outline-success" className="Admin-Button" href="/#/admin/roster">
               <img src={rosterIcon} alt="icon" />
               Roster
             </Button>

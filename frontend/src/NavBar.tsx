@@ -44,7 +44,7 @@ export default function NavBar() {
 
   return (
     <Navbar bg="light" expand="lg">
-      <Navbar.Brand href="#home">
+      <Navbar.Brand href="#/login">
         <img src={logo} alt={"Camp Izza Logo"} height="75" />
       </Navbar.Brand>
       <Navbar.Toggle aria-controls="basic-navbar-nav" />

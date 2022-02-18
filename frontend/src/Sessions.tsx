@@ -188,7 +188,7 @@ export default function Sessions() {
           <h3> Sessions </h3>
           <br />
           <div className={"sessionsForms"}>
-            <Form>
+            <Form onSubmit={handleSubmit}>
               <h5>Weeks</h5>
               {campWeeks.map((week, index) => (
                 <div key={week.id}>
@@ -262,114 +262,109 @@ export default function Sessions() {
                 >
                   Add Weeks
                 </Button>
-
-                <Modal size="lg" show={showAddWeeksPopup} onHide={() => setShowAddWeeksPopup(false)}>
-                  <Modal.Header closeButton>
-                    <Modal.Title>Add Weeks</Modal.Title>
-                  </Modal.Header>
-                  <Modal.Body>
-                    <Row>
-                      <Form.Group as={Col}>
-                        <Form.Label>Name</Form.Label>
-                        <input
-                          className="form-control"
-                          required
-                          placeholder="Week 1"
-                          value={campWeekValues.name}
-                          onChange={handleAddWeek("name")}
-                        />
-                      </Form.Group>
-                      <Form.Group as={Col}>
-                        <Form.Label>Term</Form.Label>
-                        <input
-                          className="form-control"
-                          required
-                          placeholder="Summer 2022"
-                          value={campWeekValues.term}
-                          onChange={handleAddWeek("term")}
-                        />
-                      </Form.Group>
-                    </Row>
-                    <Row>
-                      <Form.Group as={Col}>
-                        <Form.Label>Start</Form.Label>
-                        <input
-                          className="form-control"
-                          required
-                          type="datetime-local"
-                          value={campWeekValues.start}
-                          onChange={handleAddWeek("start")}
-                        />
-                      </Form.Group>
-                      <Form.Group as={Col}>
-                        <Form.Label>End</Form.Label>
-                        <input
-                          className="form-control"
-                          required
-                          type="datetime-local"
-                          value={campWeekValues.end}
-                          onChange={handleAddWeek("end")}
-                        />
-                      </Form.Group>
-                    </Row>
-                    <Row>
-                      <Form.Group as={Col}>
-                        <Form.Label>Weekly Price (Early Bird)</Form.Label>
-                        <Form.Control
-                          type="number"
-                          placeholder="0.00"
-                          value={campWeekValues.earlyCost}
-                          required
-                          onChange={handleAddWeek("earlyCost")}
-                        />
-                      </Form.Group>
-                      <Form.Group as={Col}>
-                        <Form.Label>Weekly Price (Regular)</Form.Label>
-                        <Form.Control
-                          type="number"
-                          placeholder="0.00"
-                          value={campWeekValues.regularCost}
-                          required
-                          onChange={handleAddWeek("regularCost")}
-                        />
-                      </Form.Group>
-                    </Row>
-                    <Form.Group>
-                      <Form.Label>Early Cut Off Date</Form.Label>
-                      <input
-                        className="form-control"
-                        required
-                        type="date"
-                        value={campWeekValues.earlyCutOff}
-                        onChange={handleAddWeek("earlyCutOff")}
-                      />
-                    </Form.Group>
-                  </Modal.Body>
-                  <Modal.Footer>
-                    <Button variant="secondary" onClick={() => setShowAddWeeksPopup(false)}>
-                      Close
-                    </Button>
-                    <Button variant="primary" type="submit" onClick={handleAddWeekSubmit}>
-                      {isSaving ? "Submitting" : "Submit"}
-                    </Button>
-                  </Modal.Footer>
-                </Modal>
               </div>
 
               <br />
               <div className="center">
-                <Button
-                  variant="success"
-                  className="buttonTxt"
-                  type="submit"
-                  disabled={isSaving}
-                  onClick={handleSubmit}
-                >
+                <Button variant="success" className="buttonTxt" type="submit" disabled={isSaving}>
                   {isSaving ? "Saving" : "Save"}
                 </Button>
               </div>
             </Form>
           </div>
+          <Modal size="lg" show={showAddWeeksPopup} onHide={() => setShowAddWeeksPopup(false)}>
+            <Form onSubmit={handleAddWeekSubmit}>
+              <Modal.Header closeButton>
+                <Modal.Title>Add Weeks</Modal.Title>
+              </Modal.Header>
+              <Modal.Body>
+                <Row>
+                  <Form.Group as={Col}>
+                    <Form.Label>Name</Form.Label>
+                    <input
+                      className="form-control"
+                      required
+                      placeholder="Week 1"
+                      value={campWeekValues.name}
+                      onChange={handleAddWeek("name")}
+                    />
+                  </Form.Group>
+                  <Form.Group as={Col}>
+                    <Form.Label>Term</Form.Label>
+                    <input
+                      className="form-control"
+                      required
+                      placeholder="Summer 2022"
+                      value={campWeekValues.term}
+                      onChange={handleAddWeek("term")}
+                    />
+                  </Form.Group>
+                </Row>
+                <Row>
+                  <Form.Group as={Col}>
+                    <Form.Label>Start</Form.Label>
+                    <input
+                      className="form-control"
+                      required
+                      type="datetime-local"
+                      value={campWeekValues.start}
+                      onChange={handleAddWeek("start")}
+                    />
+                  </Form.Group>
+                  <Form.Group as={Col}>
+                    <Form.Label>End</Form.Label>
+                    <input
+                      className="form-control"
+                      required
+                      type="datetime-local"
+                      value={campWeekValues.end}
+                      onChange={handleAddWeek("end")}
+                    />
+                  </Form.Group>
+                </Row>
+                <Row>
+                  <Form.Group as={Col}>
+                    <Form.Label>Weekly Price (Early Bird)</Form.Label>
+                    <Form.Control
+                      type="number"
+                      placeholder="0.00"
+                      value={campWeekValues.earlyCost}
+                      required
+                      onChange={handleAddWeek("earlyCost")}
+                    />
+                  </Form.Group>
+                  <Form.Group as={Col}>
+                    <Form.Label>Weekly Price (Regular)</Form.Label>
+                    <Form.Control
+                      type="number"
+                      placeholder="0.00"
+                      value={campWeekValues.regularCost}
+                      required
+                      onChange={handleAddWeek("regularCost")}
+                    />
+                  </Form.Group>
+                </Row>
+                <Form.Group>
+                  <Form.Label>Early Cut Off Date</Form.Label>
+                  <input
+                    className="form-control"
+                    required
+                    type="date"
+                    value={campWeekValues.earlyCutOff}
+                    onChange={handleAddWeek("earlyCutOff")}
+                  />
+                </Form.Group>
+              </Modal.Body>
+              <Modal.Footer>
+                <Button variant="secondary" onClick={() => setShowAddWeeksPopup(false)}>
+                  Close
+                </Button>
+                <Button variant="primary" type="submit">
+                  {isSaving ? "Submitting" : "Submit"}
+                </Button>
+              </Modal.Footer>
+            </Form>
+          </Modal>
         </Tab>
         <Tab eventKey="group" title="Groups">
           <br />
@@ -381,87 +376,18 @@ export default function Sessions() {
           <p>(e.g. Dates 1, Trees 2, etc.)</p>
           <br />
           <div>
-            <Form>
-              {/* <div style={{ marginLeft: "40%", marginRight: "40%" }}>
-                <Form.Group as={Col}>
-                  <Form.Control as="select" onChange={(e) => setSelectedTerm(e.target.value)} style={{ textAlign: "center" }}>
-                    {Array.from(new Set(groups.map((group) => group.camp_week_id))).map((week) => (
-                      <option key={week} value={week}>
-                        {week}
-                      </option>
-                    ))}
-                  </Form.Control>
-                </Form.Group>
-              </div> */}
-              <div className="center">
-                <Button
-                  onClick={() => {
-                    setShowAddGroupPopup(true);
-                  }}
-                >
-                  Add Groups
-                </Button>
-                <Modal size="lg" show={showAddGroupPopup} onHide={() => setShowAddGroupPopup(false)}>
-                  <Modal.Header closeButton>
-                    <Modal.Title>Add Groups</Modal.Title>
-                  </Modal.Header>
-                  <Modal.Body>
-                    <Row>
-                      <Form.Group as={Col}>
-                        <Form.Label>Name</Form.Label>
-                        <input
-                          className="form-control"
-                          required
-                          placeholder="Dates 1"
-                          value={groupValues.name}
-                          onChange={handleAddGroup("name")}
-                        />
-                      </Form.Group>
-                      <Form.Group as={Col}>
-                        <Form.Label>Camp Week ID</Form.Label>
-                        <Form.Control
-                          as="select"
-                          required
-                          value={groupValues.camp_week_id}
-                          onChange={handleAddGroup("camp_week_id")}
-                        >
-                          {campWeeks.map((week) => (
-                            <option key={week.id} value={week.id}>
-                              {week.name}
-                            </option>
-                          ))}
-                        </Form.Control>
-                        {/* <input
-                          className="form-control"
-                          required
-                          value={groupValues.camp_week_id}
-                          onChange={handleAddGroup("camp_week_id")}
-                        /> */}
-                      </Form.Group>
-                      <Form.Group as={Col}>
-                        <Form.Label>Group Limit</Form.Label>
-                        <input
-                          className="form-control"
-                          required
-                          value={groupValues.camperLimit}
-                          onChange={handleAddGroup("camperLimit")}
-                        />
-                      </Form.Group>
-                    </Row>
-                  </Modal.Body>
-                  <Modal.Footer>
-                    <Button variant="secondary" onClick={() => setShowAddGroupPopup(false)}>
-                      Close
-                    </Button>
-                    <Button variant="primary" type="submit" onClick={handleAddGroupSubmit}>
-                      {isSaving ? "Submitting" : "Submit"}
-                    </Button>
-                  </Modal.Footer>
-                </Modal>
-              </div>
+            <div className="center">
+              <Button
+                onClick={() => {
+                  setShowAddGroupPopup(true);
+                }}
+              >
+                Add Groups
+              </Button>
+            </div>
+            <Form onSubmit={handleGroupSubmit}>
               <br />
               <h5>Groups</h5>
-
               {groups.map((group, index) => (
                 <div key={index}>
                   <Row>
@@ -494,20 +420,68 @@ export default function Sessions() {
                   <hr />
                 </div>
               ))}
-
               <br />
               <div className="center">
-                <Button
-                  variant="success"
-                  className="buttonTxt"
-                  type="submit"
-                  disabled={isSaving}
-                  onClick={handleGroupSubmit}
-                >
+                <Button variant="success" className="buttonTxt" type="submit" disabled={isSaving}>
                   {isSaving ? "Saving" : "Save"}
                 </Button>
               </div>
             </Form>
+          </div>
+          <div className="center">
+            <Modal size="lg" show={showAddGroupPopup} onHide={() => setShowAddGroupPopup(false)}>
+              <Form onSubmit={handleAddGroupSubmit}>
+                <Modal.Header closeButton>
+                  <Modal.Title>Add Groups</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                  <Row>
+                    <Form.Group as={Col}>
+                      <Form.Label>Name</Form.Label>
+                      <input
+                        className="form-control"
+                        required
+                        placeholder="Dates 1"
+                        value={groupValues.name}
+                        onChange={handleAddGroup("name")}
+                      />
+                    </Form.Group>
+                    <Form.Group as={Col}>
+                      <Form.Label>Camp Week ID</Form.Label>
+                      <Form.Control
+                        as="select"
+                        required
+                        value={groupValues.camp_week_id}
+                        onChange={handleAddGroup("camp_week_id")}
+                      >
+                        {campWeeks.map((week) => (
+                          <option key={week.id} value={week.id}>
+                            {week.name}
+                          </option>
+                        ))}
+                      </Form.Control>
+                    </Form.Group>
+                    <Form.Group as={Col}>
+                      <Form.Label>Group Limit</Form.Label>
+                      <input
+                        className="form-control"
+                        required
+                        value={groupValues.camperLimit}
+                        onChange={handleAddGroup("camperLimit")}
+                      />
+                    </Form.Group>
+                  </Row>
+                </Modal.Body>
+                <Modal.Footer>
+                  <Button variant="secondary" onClick={() => setShowAddGroupPopup(false)}>
+                    Close
+                  </Button>
+                  <Button variant="primary" type="submit">
+                    {isSaving ? "Submitting" : "Submit"}
+                  </Button>
+                </Modal.Footer>
+              </Form>
+            </Modal>
           </div>
         </Tab>
       </Tabs>

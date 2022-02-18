@@ -92,7 +92,7 @@ export default function Checkout() {
         ...camper,
         dob: dateTimeToDateInput(camper.dob),
         numShirts: camper.numShirts + numShirts,
-        paid: camper.paid + total,
+        paid: camper.paid + (total > parent.credit ? total - parent.credit : 0),
       });
 
       // Update parent credit
@@ -319,12 +319,12 @@ export default function Checkout() {
                   <strong>Order Due</strong>
                 </td>
                 <td>
-                  <strong>${parent ? (total - parent?.credit < 0 ? 0 : total - parent?.credit) : 0}</strong>
+                  <strong>${parent ? (total < parent?.credit ? 0 : total - parent?.credit) : 0}</strong>
                 </td>
               </tr>
             </tbody>
           </Table>
-          {(parent ? (total - parent?.credit < 0 ? 0 : total - parent?.credit) : 0) ? (
+          {(parent ? total > parent?.credit : 0) ? (
             <PayPalScriptProvider
               options={{
                 "client-id": "AZC9nSofXqQT186_jNkgK-srfaV83p8HL2TbrL2_BqAZow_9UE5rwB3LIlySSXb1wEeef0ocCIxFP1bZ",
@@ -340,9 +340,9 @@ export default function Checkout() {
           ) : (
             <div>
               <Button variant="success" className="Admin-Button" onClick={onApprove}>
-                Register
+                Spend ${total} Credit and Register
               </Button>
-              <p style={{ marginLeft: 80 }}> *No Payment Required*</p>
+              <p style={{ marginLeft: 150 }}> *No Payment Required*</p>
             </div>
           )}
         </div>

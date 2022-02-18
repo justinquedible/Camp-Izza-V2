@@ -187,3 +187,17 @@ export interface GroupWithCamp_Week extends Group {
   camp_week_id: number;
   camp_week_name: string;
 }
+
+export type CamperRoster = Camper &
+  Parent &
+  Camper_Medical_Record & {
+    camper_id: number;
+    camperFirstName: string;
+    camperLastName: string;
+    parent_id: string;
+    parentFirstName: string;
+    parentLastName: string;
+    emergencyContact1: Emergency_Contact;
+    emergencyContact2: Emergency_Contact;
+    registeredWeeks: number[];
+  };
