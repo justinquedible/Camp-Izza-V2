@@ -17,7 +17,7 @@ export default function HouseholdForm() {
   const checkbox2 = React.useRef<HTMLInputElement>(null);
   const parent_id = sessionStorage.getItem("parent_id");
   const [userRole, setUserRole] = React.useState("");
-  const [credit, setCredit] = React.useState(0);
+  // const [credit, setCredit] = React.useState(0);
   const [isFieldReadOnly, setIsFieldReadOnly] = React.useState(true);
 
 
@@ -70,26 +70,40 @@ export default function HouseholdForm() {
           }
           setUserRole(res.data.role);
         });
+        await axios.get(process.env.REACT_APP_API + "api/parents/getParent/" + parent_id).then((res) => {
+          setParentValues({ ...res.data });
+        });
+        await axios
+        .get(process.env.REACT_APP_API + "api/emergency_contacts/getEmergency_ContactsByUserID/" + parent_id)
+        .then((res) => {
+          setEmergency1Values({ ...res.data[0], authPickUp: Boolean(res.data[0].authPickUp) });
+          setEmergency2Values({ ...res.data[1], authPickUp: Boolean(res.data[1].authPickUp) });
+          if (checkbox1.current && checkbox2.current) {
+            checkbox1.current.checked = Boolean(res.data[0].authPickUp);
+            checkbox2.current.checked = Boolean(res.data[1].authPickUp);
+          }
+        });
       }
     });
+    // (async  () => {
+    //   await axios.get(process.env.REACT_APP_API + "api/parents/getParent/" + parent_id).then((res) => {
+    //     setParentValues({ ...res.data });
+    //   });
+    //   await axios
+    //   .get(process.env.REACT_APP_API + "api/emergency_contacts/getEmergency_ContactsByUserID/" + parent_id)
+    //   .then((res) => {
+    //     setEmergency1Values({ ...res.data[0], authPickUp: Boolean(res.data[0].authPickUp) });
+    //     setEmergency2Values({ ...res.data[1], authPickUp: Boolean(res.data[1].authPickUp) });
+    //     if (checkbox1.current && checkbox2.current) {
+    //       checkbox1.current.checked = Boolean(res.data[0].authPickUp);
+    //       checkbox2.current.checked = Boolean(res.data[1].authPickUp);
+    //     }
+    //   });
+    // })();
     return unsubscribe;
   
     },[auth]);
-  (async  () => {
-    await axios.get(process.env.REACT_APP_API + "api/parents/getParent/" + parent_id).then((res) => {
-      setParentValues({ ...res.data });
-    });
-    await axios
-    .get(process.env.REACT_APP_API + "api/emergency_contacts/getEmergency_ContactsByUserID/" + parent_id)
-    .then((res) => {
-      setEmergency1Values({ ...res.data[0], authPickUp: Boolean(res.data[0].authPickUp) });
-      setEmergency2Values({ ...res.data[1], authPickUp: Boolean(res.data[1].authPickUp) });
-      if (checkbox1.current && checkbox2.current) {
-        checkbox1.current.checked = Boolean(res.data[0].authPickUp);
-        checkbox2.current.checked = Boolean(res.data[1].authPickUp);
-      }
-    });
-  })();
+    
 
   const handleSubmit = async (e: React.FormEvent) => {
     setIsSaving(true);
@@ -402,9 +416,9 @@ export default function HouseholdForm() {
                 <Form.Label>Credit</Form.Label>
                 <Form.Control
                   type="number"
-                  value={credit}
+                  value={parentValues.credit}
                   required
-                  onChange={(e) => setCredit(parseInt(e.target.value))}
+                  onChange={handleParentChange("credit")}
                 />
               </Form.Group>
             </div>
