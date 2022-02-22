@@ -4,7 +4,7 @@ import React from "react";
 import { Button, Container, Form, Row, Col, Modal, Tabs, Tab } from "react-bootstrap";
 import "./Dashboard.css";
 import { dateTimeToDateTimeInput, dateTimeToDateInput } from "./utils/DateTimeUtil";
-import { filterAndSortWeeksCurrentYear, sortGroups, sortGroupsWithCampWeeks } from "./utils/FilterAndSortUtil";
+import { filterAndSortWeeksCurrentYear, sortGroupsWithCampWeeks } from "./utils/FilterAndSortUtil";
 import { Camp_Week, Group, GroupWithCamp_Week } from "./models/models";
 import { useHistory } from "react-router-dom";
 import axios from "axios";
@@ -372,10 +372,12 @@ export default function Sessions() {
           <br />
           <h3> Manage Groups </h3>
           <p>
-            * Names should start with the type ("Dates", "Coconuts", "Trees", "Young Leaders", "Waitlist) and have a
+            * Names should start with the type ("Dates", "Coconuts", "Trees", "Young Leaders", "Waitlist") and have a
             number after it.
           </p>
           <p>(e.g. Dates 1, Trees 2, etc.)</p>
+          <p>* There should be at least 2 groups of each type and 1 Waitlist group for each week.</p>
+          <p>* Group Auto-assignment will only work if the rules above are followed.</p>
           <br />
           <div>
             <div className="center">

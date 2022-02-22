@@ -7,14 +7,19 @@ import "./HouseholdForm.css";
 import { useHistory } from "react-router-dom";
 import { dateTimeToTime, dateTimeToDate } from "./utils/DateTimeUtil";
 import { filterAndSortWeeksCurrentYear } from "./utils/FilterAndSortUtil";
+import { areGroupsFull } from "./utils/GroupUtil";
 import { Camp_Week, Camper, Registered_Camper_Week } from "./models/models";
 import axios from "axios";
+
+interface Camp_WeekWithStatus extends Camp_Week {
+  status: string;
+}
 
 export default function CamperScheduling() {
   const history = useHistory();
   const [isLoading, setIsLoading] = React.useState(true);
   const [camper, setCamper] = React.useState<Camper>();
-  const [campWeeks, setCampWeeks] = React.useState<Camp_Week[]>();
+  const [campWeeks, setCampWeeks] = React.useState<Camp_WeekWithStatus[]>([]);
   const [numShirts, setNumShirts] = React.useState(0);
   const [shirtPrice, setShirtPrice] = React.useState(0);
   const [weeksRegistered, setWeeksRegistered] = React.useState<number[]>([]);
@@ -25,10 +30,12 @@ export default function CamperScheduling() {
   React.useEffect(() => {
     setIsLoading(true);
     (async () => {
+      let grade = 0;
       await axios
         .get(process.env.REACT_APP_API + "api/campers/getCamper/" + sessionStorage.getItem("camper_id"))
         .then(async (response) => {
           setCamper(response.data);
+          grade = response.data.grade;
           await axios
             .get(process.env.REACT_APP_API + "api/shirts/getShirtByShirtNameAndSize/generic/" + response.data.shirtSize)
             .then((response) => {
@@ -36,8 +43,12 @@ export default function CamperScheduling() {
             });
           // console.log(response.data);
         });
-      await axios.get(process.env.REACT_APP_API + "api/camp_weeks/getCamp_Weeks").then((response) => {
-        setCampWeeks(filterAndSortWeeksCurrentYear(response.data));
+      await axios.get(process.env.REACT_APP_API + "api/camp_weeks/getCamp_Weeks").then(async (response) => {
+        const weeks = filterAndSortWeeksCurrentYear(response.data) as Camp_WeekWithStatus[];
+        for (let week of weeks) {
+          week.status = (await areGroupsFull(grade, week.id)) ? "Waitlist" : "Open";
+        }
+        setCampWeeks(weeks);
         setEarlyCutOffDate(
           new Date(response.data[0].earlyCutOff.substring(0, response.data[0].earlyCutOff.length - 3))
             .toDateString()
@@ -183,17 +194,19 @@ export default function CamperScheduling() {
                     <th>Start</th>
                     <th>End</th>
                     <th>Price</th>
+                    <th>Status</th>
                     <th>Registration Status</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {campWeeks ? (
+                  {campWeeks.length !== 0 ? (
                     campWeeks.map((item) => (
                       <tr key={item.id}>
                         <td>{item.name}</td>
                         <td>{dateTimeToDate(item.start)}</td>
                         <td>{dateTimeToDate(item.end)}</td>
                         <td>${handlePrice(item)}</td>
+                        <td>{item.status}</td>
                         {weeksRegistered.includes(item.id) ? (
                           <td>
                             Registered{" "}

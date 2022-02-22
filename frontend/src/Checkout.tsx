@@ -8,11 +8,11 @@ import axios from "axios";
 import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js";
 import { dateTimeToDate, dateTimeToTime, dateTimeToDateInput, dateTimeToMilitaryTime } from "./utils/DateTimeUtil";
 import { sortWeeks } from "./utils/FilterAndSortUtil";
-import { Camp_Week, Camper, Parent, Group } from "./models/models";
+import { findGroupID, areGroupsFull } from "./utils/GroupUtil";
+import { Camp_Week, Camper, Parent } from "./models/models";
 
-// TODO: make group extended interface including camper Count
-interface GroupWithCamperCount extends Group {
-  camperCount: number;
+interface Camp_WeekWithStatus extends Camp_Week {
+  status: string;
 }
 
 export default function Checkout() {
@@ -24,7 +24,7 @@ export default function Checkout() {
   const [isLoading, setIsLoading] = React.useState(true);
   const [parent, setParent] = React.useState<Parent>();
   const [camper, setCamper] = React.useState<Camper>();
-  const [campWeeksSelected, setCampWeeksSelected] = React.useState<Camp_Week[]>();
+  const [campWeeksSelected, setCampWeeksSelected] = React.useState<Camp_WeekWithStatus[]>();
   const [shirtPrice, setShirtPrice] = React.useState(0);
   const [total, setTotal] = React.useState(0);
   const [isEarlyBird, setIsEarlyBird] = React.useState(false);
@@ -33,10 +33,12 @@ export default function Checkout() {
     setIsLoading(true);
     (async () => {
       let shirtPrice = 0;
+      let grade = 0;
       await axios
         .get(process.env.REACT_APP_API + "api/campers/getCamper/" + sessionStorage.getItem("camper_id"))
         .then(async (response) => {
           setCamper(response.data);
+          grade = response.data.grade;
           await axios
             .get(process.env.REACT_APP_API + "api/parents/getParent/" + response.data.parent_id)
             .then((response) => {
@@ -51,8 +53,11 @@ export default function Checkout() {
             });
           // console.log(response.data);
         });
-      await axios.get(process.env.REACT_APP_API + "api/camp_weeks/getCamp_Weeks").then((response) => {
-        const weeksSelected = filterAndSortWeeksSelected(response.data);
+      await axios.get(process.env.REACT_APP_API + "api/camp_weeks/getCamp_Weeks").then(async (response) => {
+        const weeksSelected = filterAndSortWeeksSelected(response.data) as Camp_WeekWithStatus[];
+        for (let week of weeksSelected) {
+          week.status = (await areGroupsFull(grade, week.id)) ? "Waitlist" : "Open";
+        }
         setCampWeeksSelected(weeksSelected);
         let isEarlyBird = false;
         if (Date.now() < Date.parse(response.data[0].earlyCutOff)) {
@@ -82,67 +87,6 @@ export default function Checkout() {
     return sortWeeks(weeks);
   };
 
-  const findGroupId = async (grade: number, weekID: number) => {
-    let designatedGroupID = null;
-    let groupName = "";
-
-    // Define what grade belongs to what group
-    if ([0, 1].includes(grade)) {
-      groupName = "Dates";
-    } else if ([2, 3].includes(grade)) {
-      groupName = "Coconuts";
-    } else if ([4, 5, 6].includes(grade)) {
-      groupName = "Trees";
-    } else if ([7, 8].includes(grade)) {
-      groupName = "Young Leaders";
-    }
-
-    // Find group ids of group type they should be in
-    await axios
-      .get(`${process.env.REACT_APP_API}/api/groups/getGroupsByCampWeekIDAndName/${weekID}/${groupName}`)
-      .then(async (res) => {
-        const groups: GroupWithCamperCount[] = res.data;
-        groups.sort((a, b) => a.name.localeCompare(b.name));
-        for (let group of groups) {
-          const camperCount = (
-            await axios.get(`${process.env.REACT_APP_API}/api/groups/getNumOfCampersInGroup/${group.id}`)
-          ).data.camperCount;
-          group.camperCount = camperCount;
-        }
-        // console.log(groups);
-        // Find specific group id they should be in based on group limits and camper count
-        if (groups.length > 1) {
-          const group1 = groups[0];
-          const group2 = groups[1];
-          // If first group is not full and second group is empty, then put them in first group for that week.
-          if (group1.camperCount < group1.camperLimit && group2.camperCount === 0) {
-            designatedGroupID = group1.id;
-          }
-          // - If first and second group are not full, then put them in the group with less campers for that week.
-          else if (group1.camperCount < group1.camperLimit && group2.camperCount < group2.camperLimit) {
-            if (group1.camperCount < group2.camperCount) {
-              designatedGroupID = group1.id;
-            } else {
-              designatedGroupID = group2.id;
-            }
-          }
-          // - If first group is full and second group is not full, then put them in the second group for that week.
-          else if (group1.camperCount >= group1.camperLimit && group2.camperCount < group2.camperLimit) {
-            designatedGroupID = group2.id;
-          }
-          // - If the first and second group is full, then put them in the waitlist for that week
-          else if (group1.camperCount >= group1.camperLimit && group2.camperCount >= group2.camperLimit) {
-            await axios
-              .get(`${process.env.REACT_APP_API}/api/groups/getGroupsByCampWeekIDAndName/${weekID}/Waitlist`)
-              .then((res) => (designatedGroupID = res.data[0].id));
-          }
-        }
-      });
-
-    // console.log(designatedGroupID);
-    return designatedGroupID;
-  };
-
   const updateDatabase = async () => {
     if (parent && camper) {
       // Update camper numShirts, paid
@@ -165,7 +109,8 @@ export default function Checkout() {
       if (campWeeksSelected) {
         for (let week of campWeeksSelected) {
           // console.log(week);
-          const designatedGroupID = await findGroupId(camper.grade, week.id);
+          const designatedGroupID = await findGroupID(camper.grade, week.id);
+          // console.log(designatedGroupID);
           await axios
             .post(process.env.REACT_APP_API + "api/registered_camper_weeks/addRegistered_Camper_Week", {
               camper_id: camper.id,
@@ -244,10 +189,10 @@ export default function Checkout() {
             <Button variant="primary" className="backButton" onClick={handleBack}>
               Back
             </Button>
-            <Button variant="primary" className="backButton" onClick={updateDatabase}>
+            {/* <Button variant="primary" className="backButton" onClick={updateDatabase}>
               Test Checkout (To bypass payment)
-            </Button>
-            {/* <Button variant="outline-primary" className="backButton" onClick={() => findGroupId(1, 1)}>
+            </Button> */}
+            {/* <Button variant="outline-primary" className="backButton" onClick={() => findGroupID(1, 1)}>
               grade
             </Button> */}
             <br />
@@ -286,17 +231,18 @@ export default function Checkout() {
             </p>
             <br />
 
-            <Table>
+            <Table bordered striped>
               <thead>
                 <tr>
-                  <th> Item</th>
+                  <th>Item</th>
+                  <th>Status</th>
                   <th className="center-td"> Quantity</th>
                   <th className="center-td"> Price</th>
                 </tr>
               </thead>
               <tbody>
                 {campWeeksSelected && campWeeksSelected.length > 0 ? (
-                  campWeeksSelected.map((item: Camp_Week) => (
+                  campWeeksSelected.map((item) => (
                     <tr key={item.id}>
                       <td>
                         <strong>
@@ -305,8 +251,9 @@ export default function Checkout() {
                         <br />
                         Full Day: {dateTimeToTime(item.start)} - {dateTimeToTime(item.end)}
                       </td>
-                      <td> 1 </td>
-                      <td> ${isEarlyBird ? item.earlyCost : item.regularCost} </td>
+                      <td>{item.status}</td>
+                      <td>1</td>
+                      <td>${isEarlyBird ? item.earlyCost : item.regularCost}</td>
                     </tr>
                   ))
                 ) : (
@@ -320,6 +267,7 @@ export default function Checkout() {
                   <td>
                     <strong>Additional T Shirt(s)</strong>
                   </td>
+                  <td></td>
                   <td> {numShirts} </td>
                   <td>
                     ${numShirts * shirtPrice} ({numShirts} x ${shirtPrice})
