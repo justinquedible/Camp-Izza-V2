@@ -47,9 +47,9 @@ const Campers: React.FC<props> = ({ campers, type = "parent" }) => {
                 <Card.Link onClick={() => handleCamperClick(camper.id)} href="/#/admin/camperScheduling">
                   📖
                 </Card.Link>
-                <Card.Link onClick={() => handleCamperClick(camper.id)} href="/#/parent/camperScheduling">
+                {/* <Card.Link onClick={() => handleCamperClick(camper.id)} href="/#/parent/camperScheduling">
                   📆
-                </Card.Link>
+                </Card.Link> */}
                 <Card.Link onClick={() => handleCamperClickEmergencyForm(camper.id)} href="/#/admin/emergencyForm">
                   📝
                 </Card.Link>

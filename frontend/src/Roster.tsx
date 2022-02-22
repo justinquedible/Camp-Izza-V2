@@ -95,7 +95,7 @@ export default function Roster() {
           setProgress((i / numCampers) * 100);
         }
         setData(tempData);
-        console.log(tempData);
+        // console.log(tempData);
       });
       await new Promise((resolve) => setTimeout(resolve, 500));
       setisLoading(true);

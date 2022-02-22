@@ -66,7 +66,7 @@ export default function Sessions() {
       ...groupNoId,
     });
     setShowAddGroupPopup(false);
-    window.location.reload();
+    history.go(0);
   };
 
   const handleGroupSubmit = async (e: { preventDefault: () => void }) => {
@@ -78,6 +78,7 @@ export default function Sessions() {
       });
     }
     setIsSaving(false);
+    history.go(0);
   };
 
   const handleAddWeek = (name: string) => (e: { target: { value: any } }) => {
@@ -91,7 +92,7 @@ export default function Sessions() {
       ...campWeekNoId,
     });
     setShowAddWeeksPopup(false);
-    window.location.reload();
+    history.go(0);
   };
 
   const handleGroupChange = (index: number, field: string) => (e: { target: { value: any } }) => {
@@ -158,7 +159,7 @@ export default function Sessions() {
     }
   };
 
-  const handleSubmit = async (e: { preventDefault: () => void }) => {
+  const handleWeekSubmit = async (e: { preventDefault: () => void }) => {
     e.preventDefault();
     setIsSaving(true);
     for (let week of campWeeks) {
@@ -168,6 +169,7 @@ export default function Sessions() {
       });
     }
     setIsSaving(false);
+    history.go(0);
   };
 
   const handleBack = async () => {
@@ -188,7 +190,7 @@ export default function Sessions() {
           <h3> Sessions </h3>
           <br />
           <div className={"sessionsForms"}>
-            <Form onSubmit={handleSubmit}>
+            <Form onSubmit={handleWeekSubmit}>
               <h5>Weeks</h5>
               {campWeeks.map((week, index) => (
                 <div key={week.id}>
@@ -267,7 +269,7 @@ export default function Sessions() {
               <br />
               <div className="center">
                 <Button variant="success" className="buttonTxt" type="submit" disabled={isSaving}>
-                  {isSaving ? "Saving" : "Save"}
+                  {isSaving ? "Saving..." : "Save"}
                 </Button>
               </div>
             </Form>
@@ -423,7 +425,7 @@ export default function Sessions() {
               <br />
               <div className="center">
                 <Button variant="success" className="buttonTxt" type="submit" disabled={isSaving}>
-                  {isSaving ? "Saving" : "Save"}
+                  {isSaving ? "Saving..." : "Save"}
                 </Button>
               </div>
             </Form>
@@ -477,7 +479,7 @@ export default function Sessions() {
                     Close
                   </Button>
                   <Button variant="primary" type="submit">
-                    {isSaving ? "Submitting" : "Submit"}
+                    {isSaving ? "Submitting..." : "Submit"}
                   </Button>
                 </Modal.Footer>
               </Form>

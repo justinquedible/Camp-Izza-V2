@@ -599,6 +599,20 @@ def getGroupsWithCampWeeks():
     return jsonify(rows)
 
 
+@app.route("/groups/getGroupsByCampWeekIDAndName/<camp_week_id>/<group_name>")
+def getGroupsByCampWeekIDAndName(camp_week_id, group_name):
+    cursor.execute(f"select * from `groups` where camp_week_id = %s and name LIKE '{group_name}%'", (camp_week_id,))
+    rows = cursor.fetchall()
+    return jsonify(rows)
+
+
+@app.route("/groups/getNumOfCampersInGroup/<group_id>")
+def getNumOfCampersInGroup(group_id):
+    cursor.execute("select count(id) as camperCount from registered_camper_weeks where group_id = %s", (group_id,))
+    rows = cursor.fetchone()
+    return jsonify(rows)
+
+
 # A group
 @app.route("/groups/getGroup/<int:group_id>")
 def getGroup(group_id):
