@@ -114,7 +114,7 @@ export default function CamperScheduling() {
         week.id
       }/${sessionStorage.getItem("camper_id")}`
     );
-    window.location.reload();
+    history.go(0);
   };
 
   const handlePrice = (week: Camp_Week) => {
