@@ -6,8 +6,7 @@ import "./HouseholdForm.css";
 import { Counselor, Counselor_Medical_Record, Emergency_Contact } from "./models/models";
 import { getAuth } from "firebase/auth";
 import axios from "axios";
-import { dateTimeToDateInput } from "./util/DateTimeUtil";
-
+import { dateTimeToDateInput } from "./utils/DateTimeUtil";
 
 export default function CounselorForm() {
   const auth = getAuth();
@@ -24,7 +23,7 @@ export default function CounselorForm() {
     altPhone: "",
     group_id: 0,
     approved: false,
-    active: false
+    active: false,
   });
 
   const [medicalRecordValues, setMedicalRecordValues] = React.useState<Counselor_Medical_Record>({
@@ -38,7 +37,7 @@ export default function CounselorForm() {
     illnesses: "",
     immunizations: "",
     medications: "",
-    accommodations: ""
+    accommodations: "",
   });
 
   const [emergency1Values, setEmergency1Values] = React.useState<Emergency_Contact>({
@@ -61,7 +60,6 @@ export default function CounselorForm() {
     authPickUp: true,
   });
 
-
   React.useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged(async (user) => {
       if (user) {
@@ -72,17 +70,22 @@ export default function CounselorForm() {
         await axios
           .get(process.env.REACT_APP_API + "api/emergency_contacts/getEmergency_ContactsByUserID/" + user.uid)
           .then((res) => {
-            setEmergency1Values({ ...res.data[0]});
-            setEmergency2Values({ ...res.data[1]});
+            setEmergency1Values({ ...res.data[0] });
+            setEmergency2Values({ ...res.data[1] });
           });
-        await axios.get(process.env.REACT_APP_API + "api/counselor_medical_records/getCounselor_Medical_RecordByCounselorID/" + user.uid).then((res) => {
-          setMedicalRecordValues({ ...res.data });
-        });
+        await axios
+          .get(
+            process.env.REACT_APP_API +
+              "api/counselor_medical_records/getCounselor_Medical_RecordByCounselorID/" +
+              user.uid
+          )
+          .then((res) => {
+            setMedicalRecordValues({ ...res.data });
+          });
       }
     });
     return unsubscribe;
   }, [auth]);
-    
 
   const handleSubmit = async (e: React.FormEvent) => {
     setIsSaving(true);
@@ -107,8 +110,12 @@ export default function CounselorForm() {
           }
         );
       });
-      await axios
-      .get(process.env.REACT_APP_API + "api/counselor_medical_records/getCounselor_Medical_RecordByCounselorID/" + auth.currentUser?.uid)
+    await axios
+      .get(
+        process.env.REACT_APP_API +
+          "api/counselor_medical_records/getCounselor_Medical_RecordByCounselorID/" +
+          auth.currentUser?.uid
+      )
       .then(async (res) => {
         await axios.put(
           process.env.REACT_APP_API + "api/counselor_medical_records/updateCounselor_Medical_Record/" + res.data[2].id,
@@ -121,8 +128,6 @@ export default function CounselorForm() {
     setIsSaving(false);
     // history.push("/counselor");
   };
- ;
-
   const handleCounselorChange = (name: string) => (e: { target: { value: any } }) => {
     setCounselorValues({ ...counselorValues, [name]: e.target.value });
   };
@@ -198,7 +203,7 @@ export default function CounselorForm() {
             </Form.Group>
           </Row>
           <Row>
-          <Form.Group as={Col} controlId="phone">
+            <Form.Group as={Col} controlId="phone">
               <Form.Label>
                 <b>* </b>Phone Number
               </Form.Label>
@@ -294,7 +299,7 @@ export default function CounselorForm() {
           <Row>
             <Form.Group as={Col} controlId="allergies">
               <Form.Label>
-              Do you have any allergies and/or dietary restrictions? If <u>yes</u>, please list restrictions.
+                Do you have any allergies and/or dietary restrictions? If <u>yes</u>, please list restrictions.
               </Form.Label>
               <Form.Control value={medicalRecordValues.allergies} onChange={handleMedicalRecordChange("allergies")} />
             </Form.Group>
@@ -302,9 +307,8 @@ export default function CounselorForm() {
           <Row>
             <Form.Group as={Col} controlId="accommodations">
               <Form.Label>
-              Do you require any accommodations in order to perform the
-              duties of this job? If <u>yes</u>, please list the accommodations
-              you require.
+                Do you require any accommodations in order to perform the duties of this job? If <u>yes</u>, please list
+                the accommodations you require.
               </Form.Label>
               <Form.Control
                 value={medicalRecordValues.accommodations}
@@ -315,7 +319,7 @@ export default function CounselorForm() {
           <Row>
             <Form.Group as={Col} controlId="illnesses">
               <Form.Label>
-              Do you have any chronic conditions or illnesses? If <u>yes</u>, please list conditions.
+                Do you have any chronic conditions or illnesses? If <u>yes</u>, please list conditions.
               </Form.Label>
               <Form.Control value={medicalRecordValues.illnesses} onChange={handleMedicalRecordChange("illnesses")} />
             </Form.Group>
@@ -323,7 +327,7 @@ export default function CounselorForm() {
           <Row>
             <Form.Group as={Col} controlId="medications">
               <Form.Label>
-              Will you be taking any medication at camp? If <u>yes</u>, please list medications.
+                Will you be taking any medication at camp? If <u>yes</u>, please list medications.
               </Form.Label>
               <Form.Control
                 value={medicalRecordValues.medications}
@@ -334,9 +338,8 @@ export default function CounselorForm() {
           <Row>
             <Form.Group as={Col} controlId="immunizations">
               <Form.Label>
-              Have you received all required immunizations? Please see
-              the job description for a detailed list of the required
-              immunizations.
+                Have you received all required immunizations? Please see the job description for a detailed list of the
+                required immunizations.
               </Form.Label>
               <Form.Control
                 as="select"
@@ -349,7 +352,6 @@ export default function CounselorForm() {
               </Form.Control>
             </Form.Group>
           </Row>
-
 
           <h5>Emergency Contact 1</h5>
           <Row>
@@ -446,4 +448,4 @@ export default function CounselorForm() {
       </Container>
     </div>
   );
-};
+}

@@ -5,8 +5,8 @@ import React from "react";
 import { Button, Container, Form, Table } from "react-bootstrap";
 import "./HouseholdForm.css";
 import { useHistory } from "react-router-dom";
-import { dateTimeToTime, dateTimeToDate } from "./util/DateTimeUtil";
-import { filterAndSortWeeksCurrentYear } from "./util/FilterAndSortUtil";
+import { dateTimeToTime, dateTimeToDate } from "./utils/DateTimeUtil";
+import { filterAndSortWeeksCurrentYear } from "./utils/FilterAndSortUtil";
 import { Camp_Week, Camper, Registered_Camper_Week } from "./models/models";
 import { getAuth } from "firebase/auth";
 import axios from "axios";
@@ -116,16 +116,15 @@ export default function CamperScheduling() {
     window.location.reload();
   };
 
-  const handlePrice = (week: Camp_Week ) => {
+  const handlePrice = (week: Camp_Week) => {
     let price = 0;
-    if (new Date() < new Date(earlyCutOffDate)){
+    if (new Date() < new Date(earlyCutOffDate)) {
       price = week.earlyCost;
+    } else {
+      price = week.regularCost;
     }
-    else{
-      price = week.regularCost
-    }
-    return price
-  }
+    return price;
+  };
 
   const handleBack = () => {
     sessionStorage.removeItem("camper_id");

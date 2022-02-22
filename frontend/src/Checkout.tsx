@@ -6,8 +6,8 @@ import "./HouseholdForm.css";
 import { useHistory } from "react-router-dom";
 import axios from "axios";
 import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js";
-import { dateTimeToDate, dateTimeToTime, dateTimeToDateInput, dateTimeToMilitaryTime } from "./util/DateTimeUtil";
-import { sortWeeks } from "./util/FilterAndSortUtil";
+import { dateTimeToDate, dateTimeToTime, dateTimeToDateInput, dateTimeToMilitaryTime } from "./utils/DateTimeUtil";
+import { sortWeeks } from "./utils/FilterAndSortUtil";
 import { Camp_Week, Camper, Parent } from "./models/models";
 import { getAuth } from "firebase/auth";
 

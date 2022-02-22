@@ -3,8 +3,8 @@
 import React from "react";
 import { Button, Container, Form, Row, Col, Modal, Tabs, Tab } from "react-bootstrap";
 import "./Dashboard.css";
-import { dateTimeToDateTimeInput, dateTimeToDateInput } from "./util/DateTimeUtil";
-import { filterAndSortWeeksCurrentYear, sortGroups, sortGroupsWithCampWeeks } from "./util/FilterAndSortUtil";
+import { dateTimeToDateTimeInput, dateTimeToDateInput } from "./utils/DateTimeUtil";
+import { filterAndSortWeeksCurrentYear, sortGroups, sortGroupsWithCampWeeks } from "./utils/FilterAndSortUtil";
 import { Camp_Week, Group, GroupWithCamp_Week } from "./models/models";
 import { useHistory } from "react-router-dom";
 import axios from "axios";

@@ -9,7 +9,7 @@ import {
   Registered_Camper_WeekWithCamper,
   Registered_Counselor_WeekWithCounselor,
 } from "./models/models";
-import { filterAndSortWeeksCurrentYear, sortGroups } from "./util/FilterAndSortUtil";
+import { filterAndSortWeeksCurrentYear, sortGroups } from "./utils/FilterAndSortUtil";
 import GroupTable from "./components/GroupTable";
 import { useHistory } from "react-router-dom";
 

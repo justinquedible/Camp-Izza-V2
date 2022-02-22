@@ -7,7 +7,7 @@ import { useHistory } from "react-router-dom";
 import axios from "axios";
 import logo from "./assets/logo.png";
 import divider from "./assets/divider.png";
-import { dateTimeToDateInput } from "./util/DateTimeUtil";
+import { dateTimeToDateInput } from "./utils/DateTimeUtil";
 import { Camper, Parent, Emergency_Contact, Camper_Medical_Record } from "./models/models";
 
 interface RegisteredCamperWeeksWithCampWeek {

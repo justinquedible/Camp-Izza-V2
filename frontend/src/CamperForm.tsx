@@ -6,7 +6,7 @@ import { Button, Container, Form, Row, Col } from "react-bootstrap";
 import { useHistory } from "react-router-dom";
 import { getAuth } from "firebase/auth";
 import axios from "axios";
-import { dateTimeToDateInput } from "./util/DateTimeUtil";
+import { dateTimeToDateInput } from "./utils/DateTimeUtil";
 import { Camper, Camper_Medical_Record, Registered_Camper_WeekWithCamper, Parent } from "./models/models";
 
 export default function CamperForm() {
@@ -461,8 +461,6 @@ export default function CamperForm() {
               />
             </Form.Group>
           </Row>
-
-          
 
           <div className="center">
             <Button type="submit" variant="success" className="buttonTxt" disabled={isSaving}>

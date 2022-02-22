@@ -5,7 +5,7 @@ import { Button, Container, Table } from "react-bootstrap";
 import "./Dashboard.css";
 import { useHistory } from "react-router-dom";
 import { Counselor } from "./models/models";
-import { dateTimeToDateInput } from "./util/DateTimeUtil";
+import { dateTimeToDateInput } from "./utils/DateTimeUtil";
 import axios from "axios";
 
 export default function ManageCounselors() {
