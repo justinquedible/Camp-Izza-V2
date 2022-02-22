@@ -30,7 +30,7 @@ export default function ParentFinances() {
             .then((res) => {
               setPaymentInfo(res.data);
             });
-            
+
         })();
       }, []);
     
@@ -58,8 +58,7 @@ export default function ParentFinances() {
             <Table className={"manageTable"} striped bordered>
             <thead>
                 <tr>
-                <td>Parent Email</td>
-                <td>Parent Name</td>
+                <td>Camper</td>
                 <td>Total Cost</td>
                 <td>Total Paid (USD)</td>
                 <td>Total Paid (Credit)</td>

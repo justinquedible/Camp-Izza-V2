@@ -4,6 +4,8 @@ import mysql.connector
 import os
 from config import config
 from PrefixMiddleware import PrefixMiddleware
+import smtplib
+from email.message import EmailMessage
 
 app = Flask(__name__)
 app.wsgi_app = PrefixMiddleware(app.wsgi_app, prefix='/api')
@@ -794,6 +796,16 @@ def getCountOfCampersInGroups():
                    "on `groups`.id = t2.id")
     row = cursor.fetchall()
     return jsonify(row)
+
+
+@app.route("/registrationConfirmation")
+def emailRegistrationConfirmation(parent_email):
+    with smtplib.SMTP("localhost", 301) as smtp:
+        subject = "Registration Confirmation"
+        body = "Thank you for registering"
+        msg = f'Subject: {subject} \n\n {body}'
+        smtp.sendmail("info@campizza.com", parent_email, msg)
+
 
 
 if __name__ == "__main__":
