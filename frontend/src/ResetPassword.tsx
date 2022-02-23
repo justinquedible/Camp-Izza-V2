@@ -15,7 +15,7 @@ export default function ResetPassword() {
     e.preventDefault();
     sendPasswordResetEmail(auth, email)
       .then(() => {
-        console.log("email sent");
+        console.log("email sent to", email);
         history.push("/resetConfirmation");
       })
       .catch((error) => {

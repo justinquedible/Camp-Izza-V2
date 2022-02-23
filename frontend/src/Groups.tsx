@@ -10,6 +10,7 @@ import {
   Registered_Counselor_WeekWithCounselor,
 } from "./models/models";
 import { filterAndSortWeeksCurrentYear, sortGroups } from "./utils/FilterAndSortUtil";
+import { findGradeLevels } from "./utils/GroupUtil";
 import GroupTable from "./components/GroupTable";
 import { useHistory } from "react-router-dom";
 
@@ -76,8 +77,8 @@ export default function Groups() {
   // Counselor Popup Functions
 
   const onClickShowCounselorPopup = (group: Group) => {
-    setShowCounselorPopup(true);
     setSelectedGroup(group);
+    setShowCounselorPopup(true);
   };
 
   const removeCounselorFromGroup = async (id: number) => {
@@ -108,8 +109,8 @@ export default function Groups() {
   // Camper Popup Functions
 
   const onClickShowCamperPopup = (group: Group) => {
-    setShowCamperPopup(true);
     setSelectedGroup(group);
+    setShowCamperPopup(true);
   };
 
   const removeCamperFromGroup = async (item: Registered_Camper_WeekWithCamper) => {
@@ -121,19 +122,23 @@ export default function Groups() {
     await fetchRegisteredCamperWeeksWithCampers();
   };
 
-  const filteredCampers = () => {
+  const filteredCampers = (withGrade = false) => {
     // loop through registeredCamperWeeksWithCamper, filter campers to exclude those that are assigned to any group for the selected week
+    let gradeLevels: number[] = [0, 1, 2, 3, 4, 5, 6, 7, 8];
+    if (selectedGroup && withGrade) {
+      gradeLevels = findGradeLevels(selectedGroup.name);
+    }
     return registeredCamperWeeksWithCamper.filter(
-      (item) => item.camp_week_id === selectedWeek && item.group_id === null
+      (item) => item.camp_week_id === selectedWeek && item.group_id === null && gradeLevels.includes(item.grade)
     );
   };
 
   const assignCamper = async (item: Registered_Camper_WeekWithCamper) => {
     // Check to see if camp group is full
-    const numCampersInGroup = registeredCamperWeeksWithCamper.filter(
+    const numOfCampersInGroup = registeredCamperWeeksWithCamper.filter(
       (camper) => camper.group_id === selectedGroup?.id
     ).length;
-    if (selectedGroup && numCampersInGroup >= selectedGroup?.camperLimit) {
+    if (selectedGroup && numOfCampersInGroup >= selectedGroup?.camperLimit) {
       alert("This group is full. Please remove a camper to add another camper.");
       return;
     }
@@ -178,7 +183,7 @@ export default function Groups() {
       </Modal.Header>
       <Modal.Body style={{ height: "300px" }}>
         <ListGroup>
-          {filteredCampers().map((item) => (
+          {filteredCampers(true).map((item) => (
             <ListGroup.Item key={item.id}>
               <Button variant="success" size={"sm"} onClick={() => assignCamper(item)}>
                 Assign
@@ -238,6 +243,9 @@ export default function Groups() {
           <ToggleButton value={"Young Leaders"} variant="outline-info">
             Young Leaders
           </ToggleButton>
+          <ToggleButton value={"Waitlist"} variant="outline-info">
+            Waitlist
+          </ToggleButton>
         </ToggleButtonGroup>
 
         <Container>
@@ -283,6 +291,18 @@ export default function Groups() {
                   </Row>
                 </div>
               ))}
+          </div>
+          <div>
+            <br />
+            <br />
+            <h5>Unassigned Campers</h5>
+            <ListGroup>
+              {filteredCampers().map((item) => (
+                <ListGroup.Item key={item.id}>
+                  {item.firstName} {item.lastName} {`(Grade ${item.grade !== 0 ? item.grade : "K"}, ${item.gender})`}
+                </ListGroup.Item>
+              ))}
+            </ListGroup>
           </div>
         </Container>
 

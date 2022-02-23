@@ -5,24 +5,42 @@ interface GroupWithCamperCount extends Group {
   camperCount: number;
 }
 
+// Find what grade levels the group should have
+export function findGradeLevels(groupName: string) {
+  if (groupName.startsWith("Dates")) {
+    return [0, 1];
+  } else if (groupName.startsWith("Coconuts")) {
+    return [2, 3];
+  } else if (groupName.startsWith("Trees")) {
+    return [4, 5, 6];
+  } else if (groupName.startsWith("Young Leaders")) {
+    return [7, 8];
+  } else {
+    return [1, 2, 3, 4, 5, 6, 7, 8];
+  }
+}
+
+// Find what group the camper should be in given their grade
+export function findGroupType(grade: number) {
+  if ([0, 1].includes(grade)) {
+    return "Dates";
+  } else if ([2, 3].includes(grade)) {
+    return "Coconuts";
+  } else if ([4, 5, 6].includes(grade)) {
+    return "Trees";
+  } else if ([7, 8].includes(grade)) {
+    return "Young Leaders";
+  }
+  return "";
+}
+
 export async function areGroupsFull(grade: number, weekID: number) {
   let isGroupFull = false;
-  let groupName = "";
-
-  // Define what grade belongs to what group
-  if ([0, 1].includes(grade)) {
-    groupName = "Dates";
-  } else if ([2, 3].includes(grade)) {
-    groupName = "Coconuts";
-  } else if ([4, 5, 6].includes(grade)) {
-    groupName = "Trees";
-  } else if ([7, 8].includes(grade)) {
-    groupName = "Young Leaders";
-  }
+  const groupType = findGroupType(grade);
 
   // Find group ids of group type they should be in
   await axios
-    .get(`${process.env.REACT_APP_API}/api/groups/getGroupsByCampWeekIDAndName/${weekID}/${groupName}`)
+    .get(`${process.env.REACT_APP_API}/api/groups/getGroupsByCampWeekIDAndName/${weekID}/${groupType}`)
     .then(async (res) => {
       const groups: GroupWithCamperCount[] = res.data;
       groups.sort((a, b) => a.name.localeCompare(b.name));
@@ -48,22 +66,11 @@ export async function areGroupsFull(grade: number, weekID: number) {
 
 export async function findGroupID(grade: number, weekID: number) {
   let designatedGroupID = null;
-  let groupName = "";
-
-  // Define what grade belongs to what group
-  if ([0, 1].includes(grade)) {
-    groupName = "Dates";
-  } else if ([2, 3].includes(grade)) {
-    groupName = "Coconuts";
-  } else if ([4, 5, 6].includes(grade)) {
-    groupName = "Trees";
-  } else if ([7, 8].includes(grade)) {
-    groupName = "Young Leaders";
-  }
+  const groupType = findGroupType(grade);
 
   // Find group ids of group type they should be in
   await axios
-    .get(`${process.env.REACT_APP_API}/api/groups/getGroupsByCampWeekIDAndName/${weekID}/${groupName}`)
+    .get(`${process.env.REACT_APP_API}/api/groups/getGroupsByCampWeekIDAndName/${weekID}/${groupType}`)
     .then(async (res) => {
       const groups: GroupWithCamperCount[] = res.data;
       groups.sort((a, b) => a.name.localeCompare(b.name));
@@ -103,6 +110,6 @@ export async function findGroupID(grade: number, weekID: number) {
       }
     });
 
-  console.log(designatedGroupID);
+  // console.log(designatedGroupID);
   return designatedGroupID;
 }

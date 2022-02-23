@@ -96,12 +96,17 @@ export default function CamperScheduling() {
     // find when parent paid from payment informations table using user id and registered camp week id
     for (let registeredCamperWeek of registeredCamperWeeks) {
       if (registeredCamperWeek.camp_week_id === week.id) {
-        const res = await axios.get(
-          `${process.env.REACT_APP_API}/api/payment_informations/getPayment_InformationByUserIDAndRegisteredCamperWeekID/${camper?.parent_id}/${registeredCamperWeek.id}`
-        );
-        // Only refunds credit of the week has not started
-        if (new Date() < new Date(week.start)) {
-          if (new Date(res.data.transactionTime) < new Date(earlyCutOffDate)) {
+        const paymentInformation = (
+          await axios.get(
+            `${process.env.REACT_APP_API}/api/payment_informations/getPayment_InformationByUserIDAndRegisteredCamperWeekID/${camper?.parent_id}/${registeredCamperWeek.id}`
+          )
+        ).data;
+        // Only refunds credit if the week has not started or if camper is in waitlist group
+        const group = (
+          await axios.get(`${process.env.REACT_APP_API}/api/groups/getGroup/${registeredCamperWeek.group_id}`)
+        ).data;
+        if (new Date() < new Date(week.start) || group.name.startsWith("Waitlist")) {
+          if (new Date(paymentInformation.transactionTime) < new Date(earlyCutOffDate)) {
             // console.log("before cutoff");
             refundCreditAmt = week.earlyCost;
           } else {
@@ -109,6 +114,7 @@ export default function CamperScheduling() {
             // console.log("after cutoff");
           }
         }
+        break;
       }
     }
     // Update parent's credit
@@ -181,9 +187,8 @@ export default function CamperScheduling() {
               Camp Prices (Regular): <u>${campWeeks ? campWeeks[0].regularCost : ""}/week</u>
             </p>
             <br />
-            <p>* Holiday weeks are less than regular weeks. (Discounted price will show on checkout page).</p>
-            <br />
-            <p>** Unregistering from a camp week will refund you credit equal to the price of that week.</p>
+            <p>* Unregistering from a camp week will refund you credit matching the price of that week.</p>
+            <p>** Please email info@campizza.com to request a refund in USD instead of credit.</p>
             <br />
             <br />
             <Form>

@@ -1,5 +1,5 @@
 import React from "react";
-import { Button } from "react-bootstrap";
+import { Container, Button } from "react-bootstrap";
 import { useHistory } from "react-router-dom";
 import { getAuth } from "firebase/auth";
 import axios from "axios";
@@ -31,19 +31,15 @@ const CompletedTransaction = () => {
   };
 
   return (
-    <div style={{ textAlign: "center" }}>
-      <br />
-      <br />
-      <br />
-      <br />
-      <br />
-      <br />
+    <Container style={{ textAlign: "center", paddingTop: 150 }}>
       <h1>Thank you for registering!</h1>
+      <br />
+      <h4>An email will be sent to you shortly.</h4>
       <br />
       <Button variant="outline-primary" className="backButton" onClick={handleBack}>
         Back to Dashboard
       </Button>
-    </div>
+    </Container>
   );
 };
 

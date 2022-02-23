@@ -4,8 +4,7 @@ import mysql.connector
 import os
 from config import config
 from PrefixMiddleware import PrefixMiddleware
-import smtplib
-from email.message import EmailMessage
+from registrationEmail import sendRegistrationEmail
 
 app = Flask(__name__)
 app.wsgi_app = PrefixMiddleware(app.wsgi_app, prefix='/api')
@@ -780,35 +779,16 @@ def addShirt():
 @app.route("/shirts/deleteShirt/<shirt_id>", methods=["DELETE"])
 def deleteShirt(shirt_id):
     cursor.execute("delete from shirts where id = %s ", (shirt_id,))
-
     return jsonify({"status": "success"})
 
 
-@app.route("/count/campersInGroups")
-def getCountOfCampersInGroups():
-    cursor.execute("select `groups`.id, `groups`.name, t2.num, t2.camperLimit "
-                   "from `groups` "
-                   "left join (select t1.id, t1.name, t1.camperLimit, COUNT(*) num "
-                              "from registered_camper_weeks r, (select g.id, g.name, gl.camperLimit "
-                                                                "from `groups` g "
-                                                                "join group_limits gl on g.id = gl.id) t1 "
-                              "where r.group_id = t1.id group by r.group_id) t2 "
-                   "on `groups`.id = t2.id")
-    row = cursor.fetchall()
-    return jsonify(row)
-
-
-@app.route("/registrationConfirmation")
-def emailRegistrationConfirmation(parent_email):
-    with smtplib.SMTP("localhost", 301) as smtp:
-        subject = "Registration Confirmation"
-        body = "Thank you for registering"
-        msg = f'Subject: {subject} \n\n {body}'
-        smtp.sendmail("info@campizza.com", parent_email, msg)
-
+@app.route("/emails/sendRegistrationEmail", methods=["POST"])
+def send_registration_email():
+    data = request.get_json()
+    sendRegistrationEmail(data["sendToEmail"], data["camperName"], data["weekDetails"])
+    return jsonify({"status": "success"})
 
 
 if __name__ == "__main__":
     from waitress import serve
-
     serve(app, host="0.0.0.0", port=os.environ.get("PORT", 8080))

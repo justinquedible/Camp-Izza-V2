@@ -22,9 +22,10 @@ export default function Checkout() {
   const numShirts = numShirtsStr ? parseInt(numShirtsStr) : 0;
 
   const [isLoading, setIsLoading] = React.useState(true);
+  const [isProcessing, setIsProcessing] = React.useState(false);
   const [parent, setParent] = React.useState<Parent>();
   const [camper, setCamper] = React.useState<Camper>();
-  const [campWeeksSelected, setCampWeeksSelected] = React.useState<Camp_WeekWithStatus[]>();
+  const [campWeeksSelected, setCampWeeksSelected] = React.useState<Camp_WeekWithStatus[]>([]);
   const [shirtPrice, setShirtPrice] = React.useState(0);
   const [total, setTotal] = React.useState(0);
   const [isEarlyBird, setIsEarlyBird] = React.useState(false);
@@ -88,6 +89,7 @@ export default function Checkout() {
   };
 
   const updateDatabase = async () => {
+    setIsProcessing(true);
     if (parent && camper) {
       // Update camper numShirts, paid
       await axios.put(process.env.REACT_APP_API + "api/campers/updateCamper/" + camper.id, {
@@ -106,31 +108,30 @@ export default function Checkout() {
       // Post to registered_camper_weeks and payment_informations, one for each campWeeksSelected
       const currentDateTime =
         dateTimeToDateInput(new Date().toString()) + " " + dateTimeToMilitaryTime(new Date().toString());
-      if (campWeeksSelected) {
-        for (let week of campWeeksSelected) {
-          // console.log(week);
-          const designatedGroupID = await findGroupID(camper.grade, week.id);
-          // console.log(designatedGroupID);
-          await axios
-            .post(process.env.REACT_APP_API + "api/registered_camper_weeks/addRegistered_Camper_Week", {
-              camper_id: camper.id,
-              camp_week_id: week.id,
-              group_id: designatedGroupID,
-            })
-            .then(async (response) => {
-              // console.log(response);
-              await axios.post(process.env.REACT_APP_API + "api/payment_informations/addPayment_Information", {
-                user_id: parent?.id,
-                registered_camper_weeks_id: response.data.registered_camper_weeks_id,
-                numShirts: 0,
-                totalCost: total,
-                totalPaidUSD: total < parent.credit ? 0 : total - parent.credit,
-                totalPaidCredit: total < parent.credit ? total : parent.credit,
-                transactionTime: currentDateTime,
-              });
+      for (let week of campWeeksSelected) {
+        // console.log(week);
+        const designatedGroupID = await findGroupID(camper.grade, week.id);
+        // console.log(designatedGroupID);
+        await axios
+          .post(process.env.REACT_APP_API + "api/registered_camper_weeks/addRegistered_Camper_Week", {
+            camper_id: camper.id,
+            camp_week_id: week.id,
+            group_id: designatedGroupID,
+          })
+          .then(async (response) => {
+            // console.log(response);
+            await axios.post(process.env.REACT_APP_API + "api/payment_informations/addPayment_Information", {
+              user_id: parent?.id,
+              registered_camper_weeks_id: response.data.registered_camper_weeks_id,
+              numShirts: 0,
+              totalCost: total,
+              totalPaidUSD: total < parent.credit ? 0 : total - parent.credit,
+              totalPaidCredit: total < parent.credit ? total : parent.credit,
+              transactionTime: currentDateTime,
             });
-        }
+          });
       }
+
       if (numShirts > 0) {
         await axios.post(process.env.REACT_APP_API + "api/payment_informations/addPayment_Information", {
           user_id: parent?.id,
@@ -142,7 +143,26 @@ export default function Checkout() {
         });
       }
 
+      await sendEmail();
+
       history.replace("/parent/completedTransaction");
+    }
+  };
+
+  const sendEmail = async () => {
+    if (parent && camper && campWeeksSelected) {
+      await axios.post(process.env.REACT_APP_API + "api/emails/sendRegistrationEmail", {
+        sendToEmail: parent.email,
+        camperName: `${camper.firstName} ${camper.lastName}`,
+        weekDetails: campWeeksSelected.map(
+          (week) =>
+            `${week.name}: ${dateTimeToDate(week.start)} - ${dateTimeToDate(week.end)}, ${dateTimeToTime(
+              week.start
+            )} - ${dateTimeToTime(week.end)}, $${isEarlyBird ? week.earlyCost : week.regularCost} ${
+              week.status === "Waitlist" ? "(WAITLIST)" : ""
+            }`
+        ),
+      });
     }
   };
 
@@ -178,11 +198,20 @@ export default function Checkout() {
 
   return (
     <div>
-      {isLoading ? (
+      {isLoading && (
         <div className="center" style={{ paddingTop: 150 }}>
           <Spinner animation="border" variant="primary" />
         </div>
-      ) : (
+      )}
+      {isProcessing && (
+        <div className="center" style={{ paddingTop: 150 }}>
+          <h1>Processing Transaction...</h1>
+          <br />
+          <h4>Please do not refresh your browser.</h4>
+          <Spinner animation="border" variant="primary" />
+        </div>
+      )}
+      {!isLoading && !isProcessing && (
         <div className="Checkout">
           <br />
           <Container className="Checkout-Table">
@@ -241,7 +270,7 @@ export default function Checkout() {
                 </tr>
               </thead>
               <tbody>
-                {campWeeksSelected && campWeeksSelected.length > 0 ? (
+                {campWeeksSelected.length > 0 ? (
                   campWeeksSelected.map((item) => (
                     <tr key={item.id}>
                       <td>
