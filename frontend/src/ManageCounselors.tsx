@@ -29,7 +29,7 @@ export default function ManageCounselors() {
         const active_counselors = [];
         const archived_counselors = [];
         const pending_counselors = [];
-        for (let c of response.data) {
+        for (let c of counselors) {
           if (c.active && c.approved) {
             active_counselors.push(c);
           } else if (c.approved && !c.active) {
