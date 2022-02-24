@@ -1,7 +1,7 @@
 // Page for parents to fill out their child's camper form
 
 import React from "react";
-import { Button, Container, Form, FormCheck, Col, Row } from "react-bootstrap";
+import { Button, Container, Form, Col, Row } from "react-bootstrap";
 import "./HouseholdForm.css";
 import { Counselor, Counselor_Medical_Record, Emergency_Contact } from "./models/models";
 import { getAuth } from "firebase/auth";

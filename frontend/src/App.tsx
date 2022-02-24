@@ -23,21 +23,21 @@ import ManageCampers from "./ManageCampers";
 import Groups from "./Groups";
 import EmergencyForm from "./EmergencyForm";
 import ManageParents from "./ManageParents";
+import SignUpCounselor from "./SignupCounselor";
+import Counselor from "./Counselor";
+import CounselorForm from "./CounselorForm";
 
 import AdminAttendance from "./AdminAttendance";
 import AttendanceReport from "./AttendanceReport";
 import BonusCamper from "./BonusCamper";
-import SignUpCounselor from "./SignupCounselor";
 import Pending from "./Pending";
 import Profile from "./Profile";
 import Roster from "./Roster";
-import Counselor from "./Counselor";
 import CounselorAttendance from "./CounselorAttendance";
 import AdminProtected from "./AdminProtected";
 import AdminCamperForm from "./AdminCamperForm";
 import CamperInfo from "./CamperInfo";
 import CounselorInfo from "./CounselorInfo";
-import CounselorForm from "./CounselorForm";
 import AttendanceOfCounselor from "./AttendanceOfCounselor";
 
 import NavBarInstance from "./NavBar";
@@ -105,6 +105,7 @@ function App() {
               {/* Counselor */}
               <Route exact path={"/signupCounselor"} component={SignUpCounselor} />
               <Route exact path={"/counselor"} component={Counselor} />
+              <Route exact path={"/counselor/counselorForm"} component={CounselorForm} />
 
               <Route exact path={"/admin/attendance"} component={AdminAttendance} />
               <Route exact path={"/admin/attendance/bonuscamper"} component={BonusCamper} />
@@ -114,7 +115,6 @@ function App() {
               <Route exact path={"/CamperInfo"} component={CamperInfo} />
               <Route exact path={"/Profile"} component={Profile} />
               <Route exact path={"/counselorInfo"} component={CounselorInfo} />
-              <Route exact path={"/counselorForm"} component={CounselorForm} />
               <Route exact path={"/counselor/takeAttendance"} component={CounselorAttendance} />
               <Route exact path={"/counselor/myAttendance"} component={AttendanceOfCounselor} />
             </Switch>

@@ -54,7 +54,7 @@ export default function SignupParent() {
               authPickUp: false,
             });
           }
-          history.push("/parent");
+          history.replace("/parent");
         })
         .catch((error) => {
           setIsLoading(false);

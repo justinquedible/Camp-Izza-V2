@@ -32,7 +32,7 @@ export default function SignUpCounselor() {
             firstName: "",
             lastName: "",
             gender: "",
-            dob: "",
+            dob: "2022-01-01",
             phone: "",
             altPhone: "",
             approved: false,
@@ -60,7 +60,7 @@ export default function SignUpCounselor() {
               authPickUp: true,
             });
           }
-          history.push("/counselor");
+          history.replace("/counselor");
         })
         .catch((error) => {
           setIsLoading(false);

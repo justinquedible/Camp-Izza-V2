@@ -20,13 +20,13 @@ export default function AdminDashboard() {
         <Row className="Admin-Buttons-rows">
           <Col>
             <Button variant="outline-success" className="Admin-Button" href="/#/admin/manageCampers">
-              <img src={campersIcon} alt="icon" />
+              <img src={campersIcon} alt="camper icon" />
               Campers
             </Button>
           </Col>
           <Col>
             <Button variant="outline-success" className="Admin-Button" href="/#/admin/groups">
-              <img src={groupsIcon} alt="icon" />
+              <img src={groupsIcon} alt="group icon" />
               Groupings
             </Button>
           </Col>
@@ -34,13 +34,13 @@ export default function AdminDashboard() {
         <Row className="Admin-Buttons-rows">
           <Col>
             <Button variant="outline-success" className="Admin-Button" href="/#/admin/sessions">
-              <img src={sessionsIcon} alt="icon" />
+              <img src={sessionsIcon} alt=" sessions icon" />
               Sessions
             </Button>
           </Col>
           <Col>
             <Button variant="outline-success" className="Admin-Button" href="/#/admin/manageCounselors">
-              <img src={counselorsIcon} alt="icon" />
+              <img src={counselorsIcon} alt="counselor icon" />
               Counselors
             </Button>
           </Col>
@@ -48,13 +48,13 @@ export default function AdminDashboard() {
         <Row className="Admin-Buttons-rows">
           <Col>
             <Button disabled variant="outline-success" className="Admin-Button" href="/#/admin/attendance">
-              <img src={attendanceIcon} alt="icon" />
+              <img src={attendanceIcon} alt="attendance icon" />
               Counselor Attendance
             </Button>
           </Col>
           <Col>
             <Button variant="outline-success" className="Admin-Button" href="/#/admin/roster">
-              <img src={rosterIcon} alt="icon" />
+              <img src={rosterIcon} alt="roster icon" />
               Roster
             </Button>
           </Col>
@@ -62,7 +62,7 @@ export default function AdminDashboard() {
         <div className="Counselor-Buttons">
           <Col>
             <Button variant="outline-success" className="Admin-Button" href="/#/admin/manageParents">
-              <img src={groupsIcon} alt="icon" />
+              <img src={groupsIcon} alt="parents icon" />
               Parents
             </Button>
           </Col>

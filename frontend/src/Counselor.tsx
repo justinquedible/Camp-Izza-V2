@@ -3,7 +3,6 @@
 import React from "react";
 import { Button, Container, Col } from "react-bootstrap";
 import "./Dashboard.css";
-import { useHistory } from "react-router-dom";
 import { getAuth } from "firebase/auth";
 import axios from "axios";
 import campersIcon from "./assets/campers-icon.png";
@@ -13,20 +12,13 @@ import groupsIcon from "./assets/groups-icon.png";
 
 export default function CounselorDashboard() {
   const auth = getAuth();
-  const history = useHistory();
   const [disableCounselor, setDisableCounselor] = React.useState(true);
 
   React.useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
       if (user) {
         axios.get(process.env.REACT_APP_API + "api/counselors/getCounselor/" + user.uid).then((res) => {
-          console.log(res.data);
-          setDisableCounselor(!!!res.data);
-          console.log(disableCounselor);
-          // axios.get(process.env.REACT_APP_API + "api/campers/getCampersByParentID/" + user.uid).then((res) => {
-          // console.log(res.data);
-          // setCampers(res.data);
-          // });
+          setDisableCounselor(!!!res.data.firstName);
         });
       }
     });
@@ -40,8 +32,8 @@ export default function CounselorDashboard() {
       <h3> Counselor Dashboard </h3>
       <div className="Counselor-Buttons">
         <Col>
-          <Button variant="outline-success" className="Admin-Button" href="/#/CounselorForm">
-            <img src={counselorsIcon} />
+          <Button variant="outline-success" className="Admin-Button" href="/#/counselor/CounselorForm">
+            <img src={counselorsIcon} alt="profile icon" />
             My Profile
           </Button>
 
@@ -51,7 +43,7 @@ export default function CounselorDashboard() {
             disabled={disableCounselor}
             href="/#/counselor/myAttendance"
           >
-            <img src={attendanceIcon} />
+            <img src={attendanceIcon} alt="my attendance icon" />
             My Attendance
           </Button>
 
@@ -61,7 +53,7 @@ export default function CounselorDashboard() {
             disabled={disableCounselor}
             href="/#/counselor/takeAttendance"
           >
-            <img src={campersIcon} />
+            <img src={campersIcon} alt="camper attendance icon" />
             Camper Attendance
           </Button>
 
@@ -71,7 +63,7 @@ export default function CounselorDashboard() {
             disabled={disableCounselor}
             // href="/#/counselorInfo"
           >
-            <img src={groupsIcon} />
+            <img src={groupsIcon} alt="groups icon" />
             Camper Groups
           </Button>
         </Col>

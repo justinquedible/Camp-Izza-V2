@@ -58,6 +58,7 @@ export default function ManageCounselors() {
           ...c,
           dob: dateTimeToDateInput(c.dob),
         });
+        break;
       }
     }
 
@@ -73,6 +74,7 @@ export default function ManageCounselors() {
           ...c,
           dob: dateTimeToDateInput(c.dob),
         });
+        break;
       }
     }
 
@@ -88,6 +90,7 @@ export default function ManageCounselors() {
           ...c,
           dob: dateTimeToDateInput(c.dob),
         });
+        break;
       }
     }
 

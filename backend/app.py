@@ -107,10 +107,10 @@ def getCounselor(counselor_id):
 @app.route("/counselors/addCounselor", methods=["POST"])
 def addCounselor():
     data = request.get_json()
-    cursor.execute("insert into counselors (id, email, firstName, lastName, gender, dob, phone, altphone, "
+    cursor.execute("insert into counselors (id, email, firstName, lastName, gender, dob, phone, altPhone, "
                    "approved, active) values (%s, %s, %s, %s, %s, %s,%s, %s, %s,%s)",
                    (data["id"], data["email"], data["firstName"], data["lastName"], data["gender"], data["dob"],
-                    data["phone"], data["altphone"], data["approved"], data["active"]))
+                    data["phone"], data["altPhone"], data["approved"], data["active"]))
     return jsonify({"status": "success"})
 
 
