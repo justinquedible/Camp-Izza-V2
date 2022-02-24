@@ -702,7 +702,7 @@ def getBasicPayment_InformationsWithUserInfo():
     return jsonify(row)
 
 
-@app.route("/payment_informations/getPayment_Information/<user_id>")
+@app.route("/payment_informations/getPayment_InformationByUser_id/<user_id>")
 def getPayment_InformationByUser_id(user_id):
     cursor.execute("select distinct totalCost, totalPaidUSD, totalPaidCredit, transactionTime "
                    "from payment_informations "

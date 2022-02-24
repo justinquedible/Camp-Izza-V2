@@ -68,7 +68,6 @@ export default function Roster() {
       });
       await axios.get(`${process.env.REACT_APP_API}/api/campers/getCampersRoster`).then(async (res) => {
         const tempData = res.data;
-        const numCampers = tempData.length;
         for (let i = 0; i < tempData.length; i++) {
           await axios
             .get(
@@ -92,7 +91,7 @@ export default function Roster() {
                 registeredWeeks: res.data.map((week: any) => week.registered_camp_week_id),
               };
             });
-          setProgress((i / numCampers) * 100);
+          setProgress(Math.trunc((i / tempData.length) * 100));
         }
         setData(tempData);
         // console.log(tempData);
