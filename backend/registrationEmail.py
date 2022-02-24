@@ -18,26 +18,32 @@ def sendRegistrationEmail(sendTo, camperName, weekDetails):
     You have registered {camperName} for the following week(s)!
     """
     text += "\n".join([weekDetail for weekDetail in weekDetails])
-    text += f"""\
-    As soon as a spot becomes available for a week you are on the waitlist for, you will be contacted.
-    If a space does not become available, you will receive a full refund for that week.
-    """
+    for weekDetail in weekDetails:
+        if "waitlist" in weekDetail.lower():
+            text += f"""\
+            As soon as a spot becomes available for a week you are on the waitlist for, you will be contacted.
+            If a space does not become available, you will receive a full refund for that week.
+            """
+            break
 
     html = f"""\
     <html>
-      <body>
-        <h2>Weeks Registered</h2>
-        <p>You have registered {camperName} for the following week(s)!</p>
-        <ul>
+        <body>
+            <h2>Weeks Registered</h2>
+            <p>You have registered {camperName} for the following week(s)!</p>
+            <ul>
     """
-    html += "\n".join([f"<li>{weekDetail}</li>" for weekDetail in weekDetails])
+    html += "\n".join([f"<li>{weekDetail}</li>" for weekDetail in weekDetails]) + "</ul>"
+    for weekDetail in weekDetails:
+        if "waitlist" in weekDetail.lower():
+            html += """
+                <p>As soon as a spot becomes available for a week you are on the waitlist for, you will be contacted.</p>
+                <p>If a space does not become available, you will receive a full refund for that week.</p>
+            """
     html += """
-        </ul>
-        <p>As soon as a spot becomes available for a week you are on the waitlist for, you will be contacted.</p>
-        <p>If a space does not become available, you will receive a full refund for that week.</p>
-      </body>
-    </html>
-    """
+                  </body>
+            </html>
+            """
 
     part1 = MIMEText(text, "plain")
     part2 = MIMEText(html, "html")

@@ -243,7 +243,7 @@ export default function Groups() {
           <ToggleButton value={"Young Leaders"} variant="outline-info">
             Young Leaders
           </ToggleButton>
-          <ToggleButton value={"Waitlist"} variant="outline-info">
+          <ToggleButton value={"Waitlist"} variant="outline-secondary">
             Waitlist
           </ToggleButton>
         </ToggleButtonGroup>

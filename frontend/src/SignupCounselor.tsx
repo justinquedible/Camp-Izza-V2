@@ -6,7 +6,6 @@ import { Link, useHistory } from "react-router-dom";
 import { Form, Button } from "react-bootstrap";
 import { getAuth, createUserWithEmailAndPassword, UserCredential } from "firebase/auth";
 import axios from "axios";
-import { ajaxTransport } from "jquery";
 
 export default function SignUpCounselor() {
   const [email, setEmail] = React.useState("");
