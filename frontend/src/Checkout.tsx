@@ -163,6 +163,8 @@ export default function Checkout() {
             }`
         ),
         total: total,
+        totalPaidUSD: total < parent.credit ? 0 : total - parent.credit,
+        totalPaidCredit: total < parent.credit ? total : parent.credit,
       });
     }
   };

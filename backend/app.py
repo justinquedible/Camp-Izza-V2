@@ -803,7 +803,7 @@ def deleteShirt(shirt_id):
 @app.route("/emails/sendRegistrationEmail", methods=["POST"])
 def send_registration_email():
     data = request.get_json()
-    sendRegistrationEmail(data["sendToEmail"], data["camperName"], data["weekDetails"], data["total"])
+    sendRegistrationEmail(data["sendToEmail"], data["camperName"], data["weekDetails"], data["total"], data["totalPaidUSD"], data["totalPaidCredit"])
     return jsonify({"status": "success"})
 
 

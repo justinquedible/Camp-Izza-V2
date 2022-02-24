@@ -34,7 +34,11 @@ const CompletedTransaction = () => {
     <Container style={{ textAlign: "center", paddingTop: 150 }}>
       <h1>Thank you for registering!</h1>
       <br />
-      <h4>An email will be sent to you shortly.</h4>
+      <h4>
+        An email will be sent to you shortly from <u>info@campizza.com</u>.
+      </h4>
+      <br />
+      <p>If you don't see it, make sure to check your spam or junk mail for the confirmation email.</p>
       <br />
       <Button variant="outline-primary" className="backButton" onClick={handleBack}>
         Back to Dashboard

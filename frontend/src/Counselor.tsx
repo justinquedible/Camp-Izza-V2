@@ -21,7 +21,7 @@ export default function CounselorDashboard() {
         axios.get(process.env.REACT_APP_API + "api/counselors/getCounselor/" + user.uid).then((res) => {
           setDisableCounselor(!!!res.data.firstName || !res.data.approved || !res.data.active);
           if (!!!res.data.firstName) {
-            setMessage("Please fill out your Profile to to complete your sign up process.");
+            setMessage("Please fill out your Profile to complete your sign up process.");
           } else if (!res.data.approved) {
             setMessage("Your account is pending approval.");
           } else if (!res.data.active) {
@@ -49,7 +49,7 @@ export default function CounselorDashboard() {
             variant="outline-success"
             className="Admin-Button"
             disabled={disableCounselor}
-            href="/#/counselor/myAttendance"
+            // href="/#/counselor/myAttendance"
           >
             <img src={attendanceIcon} alt="my attendance icon" />
             My Attendance
@@ -59,7 +59,7 @@ export default function CounselorDashboard() {
             variant="outline-success"
             className="Admin-Button"
             disabled={disableCounselor}
-            href="/#/counselor/takeAttendance"
+            // href="/#/counselor/takeAttendance"
           >
             <img src={campersIcon} alt="camper attendance icon" />
             Camper Attendance

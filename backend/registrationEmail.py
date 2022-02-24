@@ -4,7 +4,7 @@ from email.mime.multipart import MIMEMultipart
 from datetime import datetime
 
 
-def sendRegistrationEmail(sendTo, camperName, weekDetails, total):
+def sendRegistrationEmail(sendTo, camperName, weekDetails, total, totalPaidUSD, totalPaidCredit):
     port = 465  # For SSL
     sender_email = "info@campizza.com"
     receiver_email = f"{sendTo}"
@@ -28,7 +28,9 @@ def sendRegistrationEmail(sendTo, camperName, weekDetails, total):
             """
             break
     text += f"""\
-    Total Amount Paid: ${total}
+    Total Amount Paid (USD): ${totalPaidUSD}
+    Total Amount Paid (Credit): ${totalPaidCredit}
+    Total Amount Paid (USD + Credit): ${total}
     Transaction Date: {datetime.now().strftime("%m/%d/%Y %H:%M:%S")}
     
     Camp Izza is a 501 (c)(3) non-profit organization registered in the state of California with federal tax ID 
@@ -47,7 +49,9 @@ def sendRegistrationEmail(sendTo, camperName, weekDetails, total):
     """
     html += "\n".join([f"<li>{weekDetail}</li>" for weekDetail in weekDetails]) + "</ul>"
     html += f"""
-    <p>Total Amount Paid: ${total}</p>
+    <p>Total Amount Paid (USD): ${totalPaidUSD}</p>
+    <p>Total Amount Paid (Credit): ${totalPaidCredit}</p>
+    <p>Total Amount Paid (USD + Credit): ${total}</p>
     <p>Transaction Date: {datetime.now().strftime("%m/%d/%Y %H:%M:%S")}</p>
     """
     for weekDetail in weekDetails:
