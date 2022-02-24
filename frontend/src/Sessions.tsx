@@ -184,9 +184,9 @@ export default function Sessions() {
       <br />
       <br />
       <Tabs>
+        {/* Sessions Tab */}
         <Tab eventKey="sessions" title="Sessions">
           <br />
-
           <h3> Sessions </h3>
           <br />
           <div className={"sessionsForms"}>
@@ -274,6 +274,8 @@ export default function Sessions() {
               </div>
             </Form>
           </div>
+
+          {/* Add Weeks Popup */}
           <Modal size="lg" show={showAddWeeksPopup} onHide={() => setShowAddWeeksPopup(false)}>
             <Form onSubmit={handleAddWeekSubmit}>
               <Modal.Header closeButton>
@@ -368,6 +370,8 @@ export default function Sessions() {
             </Form>
           </Modal>
         </Tab>
+
+        {/* Manage Groups Tab */}
         <Tab eventKey="group" title="Groups">
           <br />
           <h3> Manage Groups </h3>
@@ -390,6 +394,11 @@ export default function Sessions() {
               </Button>
             </div>
             <Form onSubmit={handleGroupSubmit}>
+              <div className="center" style={{ marginTop: 25 }}>
+                <Button variant="success" className="buttonTxt" type="submit" disabled={isSaving}>
+                  {isSaving ? "Saving..." : "Save"}
+                </Button>
+              </div>
               <br />
               <h5>Groups</h5>
               {groups.map((group, index) => (
@@ -432,6 +441,8 @@ export default function Sessions() {
               </div>
             </Form>
           </div>
+
+          {/* Add Group Popup */}
           <div className="center">
             <Modal size="lg" show={showAddGroupPopup} onHide={() => setShowAddGroupPopup(false)}>
               <Form onSubmit={handleAddGroupSubmit}>

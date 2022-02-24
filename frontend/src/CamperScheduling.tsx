@@ -102,6 +102,10 @@ export default function CamperScheduling() {
           )
         ).data;
         // Only refunds credit if the week has not started or if camper is in waitlist group
+        if (!registeredCamperWeek.group_id) {
+          alert("Email info@campizza.com to assign this camper to a group. Then you will be able to unregsiter.");
+          return;
+        }
         const group = (
           await axios.get(`${process.env.REACT_APP_API}/api/groups/getGroup/${registeredCamperWeek.group_id}`)
         ).data;
