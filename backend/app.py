@@ -133,6 +133,13 @@ def getCampers():
     return jsonify(rows)
 
 
+@app.route("/campers/getCampersWithRegisteredCamperWeeks")
+def getCampersWithRegisteredCamperWeeks():
+    cursor.execute("select * from campers, registered_camper_weeks where campers.id = registered_camper_weeks.camper_id")
+    rows = cursor.fetchall()
+    return jsonify(rows)
+
+
 @app.route("/campers/getCampersRoster")
 def getCampersRoster():
     cursor.execute("select c.id as camper_id, c.firstName as camperFirstName, c.lastName as camperLastName, c.*, "
@@ -697,7 +704,18 @@ def getBasicPayment_InformationsWithUserInfo():
 
 @app.route("/payment_informations/getPayment_Information/<user_id>")
 def getPayment_InformationByUser_id(user_id):
-    cursor.execute("select * from payment_informations where user_id = %s", (user_id,))
+    cursor.execute("select distinct totalCost, totalPaidUSD, totalPaidCredit, transactionTime "
+                   "from payment_informations "
+                   "where user_id = %s order by transactionTime desc", (user_id,))
+    row = cursor.fetchall()
+    return jsonify(row)
+
+
+@app.route("/payment_informations/getBasicPayment_InformationsWithUserInfoAndRegisteredCamperWeeks/")
+def getBasicPayment_InformationsWithUserInfoAndRegisteredCamperWeeks():
+    cursor.execute("select distinct email, firstName, lastName, totalCost, totalPaidUSD, totalPaidCredit, transactionTime, registered_camper_weeks_id "
+                   "from payment_informations, parents "
+                   "where payment_informations.user_id = parents.id order by transactionTime desc")
     row = cursor.fetchall()
     return jsonify(row)
 
