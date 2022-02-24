@@ -2,7 +2,9 @@ import React from "react";
 import { Button, Container, Table, Tabs, Tab } from "react-bootstrap";
 import "./Dashboard.css";
 import { useHistory } from "react-router-dom";
-import { Parent, Camper, Payment_Information } from "./models/models";
+import { getAuth, User } from "firebase/auth";
+import { dateTimeToDate, dateTimeToTime } from "./utils/DateTimeUtil";
+import { Camper, Payment_Information } from "./models/models";
 import axios from "axios";
 
 interface Payment_InformationWithParents extends Payment_Information {
@@ -13,32 +15,21 @@ interface Payment_InformationWithParents extends Payment_Information {
 
 export default function ParentFinances() {
     const history = useHistory();
-    const [parents, setParents] = React.useState<Parent[]>([]);
-    const [campers, setCampers] = React.useState<Camper[]>([]);
+    const auth = getAuth();
+    const [user, setUser] = React.useState<User>();
     const [paymentInfo, setPaymentInfo] = React.useState<Payment_InformationWithParents[]>([]);
   
     React.useEffect(() => {
-        (async () => {
-          await axios.get(process.env.REACT_APP_API + "api/parents/getParents").then((res) => {
-            setParents(res.data);
-          });
-          await axios.get(process.env.REACT_APP_API + "api/campers/getCampers").then((res) => {
-            setCampers(res.data);
-          });
-          await axios
-            .get(process.env.REACT_APP_API + "api/payment_informations/getBasicPayment_InformationsWithUserInfo")
-            .then((res) => {
-              setPaymentInfo(res.data);
-            });
-
-        })();
-      }, []);
-    
-  
-    const handleParentClick = (parent_id: string) => {
-      sessionStorage.setItem("parent_id", parent_id);
-      history.push("/parent");
-    }
+        const unsubscribe = auth.onAuthStateChanged((user) => {
+            if (user) {
+                setUser(user);
+                axios.get(process.env.REACT_APP_API + "api/payment_informations/getPayment_Information/" + user.uid).then((res) => {
+                    setPaymentInfo(res.data);
+                });
+            }
+        });
+        return unsubscribe;
+      }, [auth]);
   
     const handleGoBack = () => {
       history.goBack();
@@ -58,7 +49,7 @@ export default function ParentFinances() {
             <Table className={"manageTable"} striped bordered>
             <thead>
                 <tr>
-                <td>Camper</td>
+                {/* <td>Camper</td> */}
                 <td>Total Cost</td>
                 <td>Total Paid (USD)</td>
                 <td>Total Paid (Credit)</td>
@@ -66,18 +57,18 @@ export default function ParentFinances() {
                 </tr>
             </thead>
             <tbody>
-                {/* {paymentInfo.map((payment, index) => (
+                {paymentInfo.map((payment, index) => (
                 <tr key={index}>
-                    <td>{payment.email}</td>
-                    <td>
+                    {/* <td>{payment.email}</td> */}
+                    {/* <td>
                     {payment.firstName} {payment.lastName}
-                    </td>
+                    </td> */}
                     <td>{payment.totalCost}</td>
                     <td>{payment.totalPaidUSD}</td>
                     <td>{payment.totalPaidCredit}</td>
-                    <td>{payment.transactionTime.substring(0,25)}</td>
+                    <td>{dateTimeToDate(payment.transactionTime) + " " + dateTimeToTime(payment.transactionTime)}</td>
                 </tr>
-                ))} */}
+                ))}
             </tbody>
             </Table>
         </div>

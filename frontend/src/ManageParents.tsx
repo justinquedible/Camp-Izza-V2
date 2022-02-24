@@ -6,6 +6,7 @@ import "./Dashboard.css";
 import { useHistory } from "react-router-dom";
 import { Parent, Camper, Payment_Information } from "./models/models";
 import axios from "axios";
+import { dateTimeToDate, dateTimeToTime } from "./utils/DateTimeUtil";
 
 interface Payment_InformationWithParents extends Payment_Information {
   email: string;
@@ -120,7 +121,7 @@ export default function ManageParents() {
                     <td>{payment.totalCost}</td>
                     <td>{payment.totalPaidUSD}</td>
                     <td>{payment.totalPaidCredit}</td>
-                    <td>{payment.transactionTime.substring(0, 25)}</td>
+                    <td>{dateTimeToDate(payment.transactionTime) + " " + dateTimeToTime(payment.transactionTime)}</td>
                   </tr>
                 ))}
               </tbody>
