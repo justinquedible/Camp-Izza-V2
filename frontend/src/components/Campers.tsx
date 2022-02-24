@@ -9,6 +9,9 @@ interface props {
 }
 
 const Campers: React.FC<props> = ({ campers, type = "parent" }) => {
+  const windowWidth = window.innerWidth;
+  const cardPerRow = windowWidth > 1000 ? "4" : windowWidth > 700 ? "2" : "1";
+
   const handleCamperClick = (id: number) => {
     sessionStorage.setItem("camper_id", id.toString());
   };
@@ -18,7 +21,12 @@ const Campers: React.FC<props> = ({ campers, type = "parent" }) => {
   };
 
   return (
-    <div style={{ display: "grid", gridTemplateColumns: `repeat(${type === "parent" ? "3" : "4"}, minmax(0, 1fr))` }}>
+    <div
+      style={{
+        display: "grid",
+        gridTemplateColumns: `repeat(${type === "parent" ? "1" : cardPerRow}, minmax(0, 1fr))`,
+      }}
+    >
       {campers.map((camper) => (
         <Card key={camper.id} border="success" style={{ width: "auto", margin: "15px" }}>
           <Card.Body>

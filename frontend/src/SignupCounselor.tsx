@@ -31,7 +31,7 @@ export default function SignUpCounselor() {
             email: userCredential.user.email,
             firstName: "",
             lastName: "",
-            gender: "",
+            gender: "male",
             dob: "2022-01-01",
             phone: "",
             altPhone: "",

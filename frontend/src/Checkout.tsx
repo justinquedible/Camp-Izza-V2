@@ -162,6 +162,7 @@ export default function Checkout() {
               week.status === "Waitlist" ? "(WAITLIST)" : ""
             }`
         ),
+        total: total,
       });
     }
   };
@@ -214,7 +215,7 @@ export default function Checkout() {
       {!isLoading && !isProcessing && (
         <div className="Checkout">
           <br />
-          <Container className="Checkout-Table">
+          <Container className="Checkout-Table" style={{ width: "95%" }}>
             <Button variant="primary" className="backButton" onClick={handleBack}>
               Back
             </Button>
@@ -226,7 +227,7 @@ export default function Checkout() {
             </Button> */}
             <br />
             <br />
-            <h3> Checkout </h3>
+            <h3>Checkout</h3>
             <br />
 
             <p>
@@ -236,17 +237,20 @@ export default function Checkout() {
             <p> Terms and Conditions </p>
             <p className="terms">
               I am aware of the camp activities described on the camp website and I give my permission for my child to
-              participate in these activities, unless indicated. <br />
+              participate in these activities, unless indicated.
+              <br />
               The information submitted is true to the best of my knowledge. I understand that I am financially
-              responsible for all fees and that all payments must be received by the first day of camp. All fees are
-              non-refundable and there will be no refunds or exchanges for missed days. Guardians agree to screen their
-              children for symptoms of illness or infection and keep their children home if symptoms are found.
+              responsible for all fees and that the registration is complete when payment has been received. All fees
+              are non-refundable and there will be no refunds or exchanges for missed days. Guardians agree to screen
+              their children for symptoms of illness or infection and keep their children home if symptoms are found.
               Guardians agree to notify Camp Izza if their child is ill or will not be attending as expected. Camp
               Director will attempt to call guardians and/or emergency contacts if campers do not attend camp when
-              expected. <br />
+              expected.
+              <br />
               I authorize Camp Izza to have and use the photos and video of my child to be used in promotional
               materials.
-              <br />I agree to release, hold harmless, and indemnify Camp Izza, its trustees, staff, family members of
+              <br />
+              I agree to release, hold harmless, and indemnify Camp Izza, its trustees, staff, family members of
               employees, vendors, students, volunteers or insurers, or their heirs or representatives for any and all
               claims of any nature whatsoever, including, but not limited to, those related to and arising from personal
               injuries, illnesses, or fatality that my child may suffer or incur while he/she is on the Camp Izza campus
@@ -255,8 +259,8 @@ export default function Checkout() {
               claims of any third parties (including, but not exclusively, members of the child's family and other camp
               participants) for damages or losses incurred by them as a result of a child's participation in Camp Izza
               or presence on campus.
-              <br />I understand that registration is on a first-come, first serve basis, that my child spot will only
-              be reserved upon receipt of payment and that returned checks will incur a $25 fee.
+              <br />I understand that registration is on a first-come, first serve basis, that my child's spot will only
+              be reserved upon receipt of payment, and that returned checks will incur a $25 fee.
             </p>
             <br />
 
@@ -265,8 +269,8 @@ export default function Checkout() {
                 <tr>
                   <th>Item</th>
                   <th>Status</th>
-                  <th className="center-td"> Quantity</th>
-                  <th className="center-td"> Price</th>
+                  <th>Qty</th>
+                  <th>Price</th>
                 </tr>
               </thead>
               <tbody>
@@ -278,7 +282,7 @@ export default function Checkout() {
                           {item.name}: {dateTimeToDate(item.start)} - {dateTimeToDate(item.end)}
                         </strong>
                         <br />
-                        Full Day: {dateTimeToTime(item.start)} - {dateTimeToTime(item.end)}
+                        {dateTimeToTime(item.start)} - {dateTimeToTime(item.end)}
                       </td>
                       <td>{item.status}</td>
                       <td>1</td>
@@ -342,11 +346,11 @@ export default function Checkout() {
                   />
                 </PayPalScriptProvider>
               ) : (
-                <div>
+                <div className="center">
                   <Button variant="success" className="Admin-Button" onClick={updateDatabase}>
                     Spend ${total} Credit and Register
                   </Button>
-                  <p style={{ marginLeft: 150 }}> *No Payment Required*</p>
+                  <p>*No Payment Required*</p>
                 </div>
               )}
             </div>

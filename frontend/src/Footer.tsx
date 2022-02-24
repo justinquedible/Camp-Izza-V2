@@ -12,7 +12,7 @@ const FooterInstance = (
             #26-2174441.
           </Container>
           <Container fluid>
-            PO Box 50326, Irvine CA, 92690 • (949) 422-8123
+            PO Box 50326, Irvine CA, 92612 • (949) 422-8123
             <br /> © 2022 Camp Izza
           </Container>
         </div>

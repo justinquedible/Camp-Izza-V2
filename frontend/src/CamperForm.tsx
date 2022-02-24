@@ -211,7 +211,7 @@ export default function CamperForm() {
         <Form onSubmit={handleSubmit}>
           <h5>Camper Info</h5>
           <Row>
-            <Form.Group as={Col} controlId="camperFirstName">
+            <Form.Group as={Col} className="form-field-md" controlId="camperFirstName">
               <Form.Label>
                 <b>* </b>First Name
               </Form.Label>
@@ -222,7 +222,7 @@ export default function CamperForm() {
                 onChange={handleCamperChange("firstName")}
               />
             </Form.Group>
-            <Form.Group as={Col} controlId="camperLirstName">
+            <Form.Group as={Col} className="form-field-md" controlId="camperLirstName">
               <Form.Label>
                 <b>* </b>Last Name
               </Form.Label>
@@ -233,7 +233,7 @@ export default function CamperForm() {
                 onChange={handleCamperChange("lastName")}
               />
             </Form.Group>
-            <Form.Group as={Col} xs="3" controlId="camperGender">
+            <Form.Group as={Col} xs="3" className="form-field-sm" controlId="camperGender">
               <Form.Label>
                 <b>* </b>Gender
               </Form.Label>
@@ -251,7 +251,7 @@ export default function CamperForm() {
             </Form.Group>
           </Row>
           <Row>
-            <Form.Group as={Col} controlId="camperDob">
+            <Form.Group as={Col} className="form-field-md" controlId="camperDob">
               <Form.Label>
                 <b>* </b>Date of Birth
               </Form.Label>
@@ -263,7 +263,7 @@ export default function CamperForm() {
                 onChange={handleCamperChange("dob")}
               />
             </Form.Group>
-            <Form.Group as={Col} controlId="camperShirtSize">
+            <Form.Group as={Col} className="form-field-sm" controlId="camperShirtSize">
               <Form.Label>
                 <b>* </b>Shirt Size
               </Form.Label>
@@ -283,7 +283,7 @@ export default function CamperForm() {
             </Form.Group>
           </Row>
           <Row>
-            <Form.Group as={Col} controlId="camperGrade">
+            <Form.Group as={Col} className="form-field-md" controlId="camperGrade">
               <Form.Label>
                 <b>* </b>Grade Level in Upcoming Fall
               </Form.Label>
@@ -303,7 +303,7 @@ export default function CamperForm() {
                 ))}
               </Form.Control>
             </Form.Group>
-            <Form.Group as={Col} controlId="camperSchool">
+            <Form.Group as={Col} className="form-field-md" controlId="camperSchool">
               <Form.Label>
                 <b>* </b>School Name
               </Form.Label>
@@ -314,7 +314,7 @@ export default function CamperForm() {
           <br />
           <h5>Health Info</h5>
           <Row>
-            <Form.Group as={Col} controlId="doctorName">
+            <Form.Group as={Col} className="form-field-md" controlId="doctorName">
               <Form.Label>
                 <b>* </b>Primary Physician's Name
               </Form.Label>
@@ -324,7 +324,7 @@ export default function CamperForm() {
                 onChange={handleMedicalRecordChange("doctorName")}
               />
             </Form.Group>
-            <Form.Group as={Col} controlId="doctorPhone">
+            <Form.Group as={Col} className="form-field-md" controlId="doctorPhone">
               <Form.Label>
                 <b>* </b>Primary Physician's Phone Number
               </Form.Label>
@@ -340,7 +340,7 @@ export default function CamperForm() {
             </Form.Group>
           </Row>
           <Row>
-            <Form.Group as={Col} controlId="insuranceCarrier">
+            <Form.Group as={Col} className="form-field-md" controlId="insuranceCarrier">
               <Form.Label>
                 <b>* </b>Insurance Carrier
               </Form.Label>
@@ -350,7 +350,7 @@ export default function CamperForm() {
                 onChange={handleMedicalRecordChange("insuranceCarrier")}
               />
             </Form.Group>
-            <Form.Group as={Col} controlId="policyHolder">
+            <Form.Group as={Col} className="form-field-md" controlId="policyHolder">
               <Form.Label>
                 <b>* </b>Policy Holder's Name
               </Form.Label>

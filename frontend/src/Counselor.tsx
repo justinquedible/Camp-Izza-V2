@@ -13,12 +13,20 @@ import groupsIcon from "./assets/groups-icon.png";
 export default function CounselorDashboard() {
   const auth = getAuth();
   const [disableCounselor, setDisableCounselor] = React.useState(true);
+  const [message, setMessage] = React.useState("");
 
   React.useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
       if (user) {
         axios.get(process.env.REACT_APP_API + "api/counselors/getCounselor/" + user.uid).then((res) => {
-          setDisableCounselor(!!!res.data.firstName);
+          setDisableCounselor(!!!res.data.firstName || !res.data.approved || !res.data.active);
+          if (!!!res.data.firstName) {
+            setMessage("Please fill out your Profile to to complete your sign up process.");
+          } else if (!res.data.approved) {
+            setMessage("Your account is pending approval.");
+          } else if (!res.data.active) {
+            setMessage("Your account has been archived.");
+          }
         });
       }
     });
@@ -26,10 +34,10 @@ export default function CounselorDashboard() {
   }, [auth]);
 
   return (
-    <Container className="Admin-Buttons">
+    <Container className="Admin-Buttons" style={{ maxWidth: 500 }}>
       <br />
       <br />
-      <h3> Counselor Dashboard </h3>
+      <h3>Counselor Dashboard</h3>
       <div className="Counselor-Buttons">
         <Col>
           <Button variant="outline-success" className="Admin-Button" href="/#/counselor/CounselorForm">
@@ -68,9 +76,7 @@ export default function CounselorDashboard() {
           </Button>
         </Col>
       </div>
-      {disableCounselor && (
-        <p style={{ textAlign: "center" }}>Please fill out your Profile to to complete your sign up process.</p>
-      )}
+      {disableCounselor && <p style={{ textAlign: "center" }}>{message}</p>}
     </Container>
   );
 }

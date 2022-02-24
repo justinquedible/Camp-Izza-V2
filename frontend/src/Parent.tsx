@@ -1,69 +1,78 @@
+import "./Dashboard.css";
 import React from "react";
-import { Button, Container, Row, Col } from "react-bootstrap";
+import { Button, Container, Col, Spinner } from "react-bootstrap";
 import { useHistory } from "react-router-dom";
 import { getAuth, User } from "firebase/auth";
 import axios from "axios";
-import "./Dashboard.css";
 import campersIcon from "./assets/campers-icon.png";
 import counselorsIcon from "./assets/counselors-icon.png";
 
-
-
 export default function Parent() {
-    const [disableParent, setDisableParent] = React.useState(true);
-    // const [campers, setCampers] = React.useState([]);
-    const [user, setUser] = React.useState<User>();
-    const auth = getAuth();
-    const history = useHistory();
-  
-    React.useEffect(() => {
-      const unsubscribe = auth.onAuthStateChanged((user) => {
-        if (user) {
-          setUser(user);
-          axios.get(process.env.REACT_APP_API + "api/parents/getParent/" + user.uid).then((res) => {
-            // console.log(res.data);
-            setDisableParent(!!!res.data.firstName);
-            // axios.get(process.env.REACT_APP_API + "api/campers/getCampersByParentID/" + user.uid).then((res) => {
-            //   // console.log(res.data);
-            //   setCampers(res.data);
-            // });
-          });
-        }
-      });
-      return unsubscribe;
-    }, [auth]);
-  
-    const handleHouseholdClick = () => {
-      if (user){
-        sessionStorage.setItem("parent_id", user.uid);
+  const [isLoading, setIsLoading] = React.useState(true);
+  const [disableParent, setDisableParent] = React.useState(true);
+  const [user, setUser] = React.useState<User>();
+  const auth = getAuth();
+  const history = useHistory();
+
+  React.useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged(async (user) => {
+      setIsLoading(true);
+      if (user) {
+        setUser(user);
+        await axios.get(process.env.REACT_APP_API + "api/parents/getParent/" + user.uid).then((res) => {
+          setDisableParent(!!!res.data.firstName);
+        });
+        setIsLoading(false);
       }
-      history.push("/parent/householdForm")
+    });
+    return unsubscribe;
+  }, [auth]);
+
+  const handleHouseholdClick = () => {
+    if (user) {
+      sessionStorage.setItem("parent_id", user.uid);
     }
-    return (
-        <div className="Parent">
-        <br />
-        <Container className="Admin-Buttons">
-            <h3> Parent/Guardian Dashboard </h3>
-            <br />
-            <div className="Counselor-Buttons">
+    history.push("/parent/householdForm");
+  };
+  return (
+    <Container className="Admin-Buttons" style={{ maxWidth: 500 }}>
+      {isLoading ? (
+        <div className="center">
+          <Spinner animation="border" variant="primary" />
+        </div>
+      ) : (
+        <div>
+          <br />
+          <h3> Parent/Guardian Dashboard </h3>
+          <br />
+          <div className="Counselor-Buttons">
             <Col>
-                <Button variant="outline-success" className="Admin-Button" onClick={handleHouseholdClick}>
-                    <img src={counselorsIcon} />
-                    Household
-                </Button>
-                <Button variant="outline-success" className="Admin-Button" href="/#/parent/campers" disabled={disableParent}>
-                    <img src={campersIcon} alt="icon" />
-                    Campers
-                </Button>
-                <Button variant="outline-success" className="Admin-Button" href="/#/parent/parentFinances"disabled={disableParent}>
-                    {/* <img src={groupsIcon} alt="icon" /> */}
-                    💰 Finances 
-                </Button>
-                
+              <Button variant="outline-success" className="Admin-Button" onClick={handleHouseholdClick}>
+                <img src={counselorsIcon} alt="household icon" />
+                Household
+              </Button>
+              <Button
+                variant="outline-success"
+                className="Admin-Button"
+                href="/#/parent/campers"
+                disabled={disableParent}
+              >
+                <img src={campersIcon} alt="campers icon" />
+                Campers
+              </Button>
+              <Button
+                variant="outline-success"
+                className="Admin-Button"
+                href="/#/parent/parentFinances"
+                disabled={disableParent}
+              >
+                💰 Payments
+              </Button>
             </Col>
             {disableParent && <p>Please fill out the Household Profile to add a camper</p>}
-            </div>
-        </Container>
+          </div>
         </div>
-    );
+      )}
+    </Container>
+  );
 }

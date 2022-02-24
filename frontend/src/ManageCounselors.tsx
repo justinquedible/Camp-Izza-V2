@@ -23,7 +23,8 @@ export default function ManageCounselors() {
           c.active = Boolean(c.active);
           // console.log(c);
         }
-        setCounselors(response.data);
+        const counselors: Counselor[] = response.data;
+        setCounselors(counselors.filter((c) => !!c.firstName));
         // console.log(response.data);
         const active_counselors = [];
         const archived_counselors = [];

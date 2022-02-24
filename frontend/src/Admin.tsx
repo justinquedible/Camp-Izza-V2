@@ -59,14 +59,14 @@ export default function AdminDashboard() {
             </Button>
           </Col>
         </Row>
-        <div className="Counselor-Buttons">
+        <Row>
           <Col>
             <Button variant="outline-success" className="Admin-Button" href="/#/admin/manageParents">
               <img src={groupsIcon} alt="parents icon" />
               Parents
             </Button>
           </Col>
-        </div>
+        </Row>
       </Container>
     </div>
   );

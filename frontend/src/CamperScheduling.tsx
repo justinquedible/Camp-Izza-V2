@@ -2,7 +2,7 @@
 // Parents can register their child for specific weeks and go to checkout
 
 import React from "react";
-import { Button, Container, Form, Table, Spinner } from "react-bootstrap";
+import { Button, Container, Form, Table, Spinner, Col, Row } from "react-bootstrap";
 import "./HouseholdForm.css";
 import { useHistory } from "react-router-dom";
 import { dateTimeToTime, dateTimeToDate } from "./utils/DateTimeUtil";
@@ -162,108 +162,105 @@ export default function CamperScheduling() {
           <Spinner animation="border" variant="primary" />
         </Container>
       ) : (
-        <div>
+        <Container className="Schedule-Table" style={{ width: "95%" }}>
           <br />
-          <Container className="Schedule-Table">
-            <Button variant="primary" className="backButton" onClick={handleBack}>
-              Back
-            </Button>
-            <br />
-            <br />
-            <h3> Camper Scheduling </h3>
-            <br />
-            <p>
-              {" "}
-              Scheduling for: <u>{camper ? camper?.firstName + " " + camper?.lastName : ""}</u>
-            </p>
-            <br />
-            <p>
-              Camp Times:{" "}
-              <u>{campWeeks && `${dateTimeToTime(campWeeks[0].start)} - ${dateTimeToTime(campWeeks[0].end)}`}</u>
-            </p>
-            <br />
-            <p>
-              Camp Prices (Early Bird) (Register by {earlyCutOffDate}):{" "}
-              <u>${campWeeks ? campWeeks[0].earlyCost : ""}/week</u>
-            </p>
-            <br />
-            <p>
-              Camp Prices (Regular): <u>${campWeeks ? campWeeks[0].regularCost : ""}/week</u>
-            </p>
-            <br />
-            <p>* Unregistering from a camp week will refund you credit matching the price of that week.</p>
-            <p>** Please email info@campizza.com to request a refund in USD instead of credit.</p>
-            <br />
-            <br />
-            <Form>
-              <Table striped bordered className="schedule">
-                <thead>
-                  <tr>
-                    <th>Week</th>
-                    <th>Start</th>
-                    <th>End</th>
-                    <th>Price</th>
-                    <th>Status</th>
-                    <th>Registration Status</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {campWeeks.length !== 0 ? (
-                    campWeeks.map((item) => (
-                      <tr key={item.id}>
-                        <td>{item.name}</td>
-                        <td>{dateTimeToDate(item.start)}</td>
-                        <td>{dateTimeToDate(item.end)}</td>
-                        <td>${handlePrice(item)}</td>
-                        <td>{item.status}</td>
-                        {weeksRegistered.includes(item.id) ? (
-                          <td>
-                            Registered{" "}
-                            <Button variant="danger" style={{ marginLeft: 50 }} onClick={() => handleUnregister(item)}>
-                              Unregister
-                            </Button>
-                          </td>
-                        ) : (
-                          <td>
-                            <select onChange={handleChange(item.id)} defaultValue={"not-reg"}>
-                              <option value="not-reg">Not Registered</option>
-                              <option value="reg">Full Day</option>
-                            </select>
-                          </td>
-                        )}
-                      </tr>
-                    ))
-                  ) : (
-                    <tr>
-                      <td> No Camp Weeks This Year </td>
+          <Button variant="primary" className="backButton" onClick={handleBack}>
+            Back
+          </Button>
+          <br />
+          <br />
+          <h3>Camper Registration</h3>
+          <br />
+          <p>
+            Camper Name: <u>{camper ? camper?.firstName + " " + camper?.lastName : ""}</u>
+          </p>
+          <br />
+          <p>
+            Camp Times:{" "}
+            <u>{campWeeks && `${dateTimeToTime(campWeeks[0].start)} - ${dateTimeToTime(campWeeks[0].end)}`}</u>
+          </p>
+          <br />
+          <p>
+            Camp Fees: <u>${campWeeks ? campWeeks[0].regularCost : ""}/week</u>
+          </p>
+          <br />
+          <p>
+            Early Bird (Register by {earlyCutOffDate}): <u>${campWeeks ? campWeeks[0].earlyCost : ""}/week</u>
+          </p>
+          <br />
+          {window.innerWidth < 600 && <p>Swipe across the table to view more</p>}
+          <Form>
+            <Table striped bordered responsive className="schedule">
+              <thead>
+                <tr>
+                  <th style={{ minWidth: 90 }}>Week</th>
+                  <th style={{ minWidth: 100 }}>Start</th>
+                  <th style={{ minWidth: 100 }}>End</th>
+                  <th>Price</th>
+                  <th>Status</th>
+                  <th style={{ minWidth: 200 }}>Registration Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                {campWeeks.length !== 0 ? (
+                  campWeeks.map((item) => (
+                    <tr key={item.id}>
+                      <td>{item.name}</td>
+                      <td>{dateTimeToDate(item.start)}</td>
+                      <td>{dateTimeToDate(item.end)}</td>
+                      <td>${handlePrice(item)}</td>
+                      <td>{item.status}</td>
+                      {weeksRegistered.includes(item.id) ? (
+                        <td>
+                          <Row>
+                            <Col>Registered</Col>
+                            <Col>
+                              <Button variant="danger" onClick={() => handleUnregister(item)}>
+                                Unregister
+                              </Button>
+                            </Col>
+                          </Row>
+                        </td>
+                      ) : (
+                        <td>
+                          <select onChange={handleChange(item.id)} defaultValue={"not-reg"}>
+                            <option value="not-reg">Not Registered</option>
+                            <option value="reg">Register</option>
+                          </select>
+                        </td>
+                      )}
                     </tr>
-                  )}
-                </tbody>
-              </Table>
-              <br />
-              <br />
-              <em>Every camper gets 1 free shirt.</em>
-              <p>
-                {camper?.firstName} currently has <u>{camper?.numShirts}</u> shirt(s).
-              </p>
-              <br /># of Additional T-Shirts (${shirtPrice} each) &nbsp;
-              <input
-                type="number"
-                min="0"
-                placeholder="0"
-                className="numberInput"
-                onChange={(e) => setNumShirts(parseInt(e.target.value ? e.target.value : "0"))}
-                defaultValue="0"
-              />
-              <br />
-              <div className="center">
-                <Button variant="success" className="buttonTxt" type="submit" onClick={handleSubmit}>
-                  Checkout
-                </Button>
-              </div>
-            </Form>
-          </Container>
-        </div>
+                  ))
+                ) : (
+                  <tr>
+                    <td> No Camp Weeks This Year </td>
+                  </tr>
+                )}
+              </tbody>
+            </Table>
+            <p>* Unregistering from a camp week will refund you credit matching the price of that week.</p>
+            <br />
+            <em>Every camper gets 1 free shirt.</em>
+            <p>
+              {camper?.firstName} currently has <u>{camper?.numShirts}</u> shirt(s).
+            </p>
+            <br /># of Additional T-Shirts (${shirtPrice} each) &nbsp;
+            <input
+              type="number"
+              min="0"
+              placeholder="0"
+              className="numberInput"
+              onChange={(e) => setNumShirts(parseInt(e.target.value ? e.target.value : "0"))}
+              defaultValue="0"
+            />
+            <br />
+            <div className="center">
+              <Button variant="success" className="buttonTxt" type="submit" onClick={handleSubmit}>
+                Checkout
+              </Button>
+            </div>
+          </Form>
+        </Container>
       )}
     </div>
   );

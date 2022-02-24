@@ -244,19 +244,21 @@ export default function HouseholdForm() {
               </Form.Label>
               <Form.Control required value={parentValues.city} onChange={handleParentChange("city")} />
             </Form.Group>
-            <Form.Group as={Col} xs="3" controlId="state">
+            <Form.Group as={Col} controlId="state">
               <Form.Label>
                 <b>* </b>State
               </Form.Label>
               <Form.Control required value={parentValues.state} onChange={handleParentChange("state")} />
             </Form.Group>
-            <Form.Group as={Col} xs="2" controlId="postalCode">
+          </Row>
+          <Row>
+            <Form.Group as={Col} controlId="postalCode">
               <Form.Label>
                 <b>* </b>ZIP Code
               </Form.Label>
               <Form.Control required value={parentValues.zipCode} onChange={handleParentChange("zipCode")} />
             </Form.Group>
-            <Form.Group as={Col} xs="3" controlId="country">
+            <Form.Group as={Col} controlId="country">
               <Form.Label>
                 <b>* </b>Country
               </Form.Label>
