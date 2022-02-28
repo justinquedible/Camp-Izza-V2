@@ -35,7 +35,7 @@ export default function ParentDashboard() {
   };
 
   const handleGoBack = () => {
-    history.goBack();
+    history.push("/parent");
   };
 
   return (
@@ -46,24 +46,20 @@ export default function ParentDashboard() {
         </div>
       ) : (
         <div>
-          <br />
           <Button variant="primary" className="backButton" onClick={handleGoBack}>
             Back
           </Button>
           <br />
           <br />
-          <h3> Parent / Guardian Dashboard </h3>
+          <h3>My Camper(s)</h3>
           <div className="row">
             <div className="col text-center">
-              <p>My Campers</p>
-              <br />
-              <p>Instructions: Register camper(s) for the sessions you want by clicking on "📆 Scheduling".</p>
-              <br />
-              <Campers campers={campers} />
               <br />
               <Button variant="success" className="addCamperButton" onClick={handleAddCamper}>
                 + Add New Camper
               </Button>
+              <br />
+              <Campers campers={campers} />
             </div>
           </div>
         </div>

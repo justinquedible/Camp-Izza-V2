@@ -149,7 +149,6 @@ export default function CamperScheduling() {
   };
 
   const handleBack = () => {
-    sessionStorage.removeItem("camper_id");
     sessionStorage.removeItem("weeksSelected");
     sessionStorage.removeItem("numShirts");
     history.goBack();

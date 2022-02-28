@@ -20,6 +20,7 @@ export default function CamperForm() {
   const [credit, setCredit] = React.useState(0);
   const [parent, setParent] = React.useState<Parent>();
   const camper_id = sessionStorage.getItem("camper_id");
+  const formMode: "add" | "edit" = sessionStorage.getItem("camper_id") === "" ? "add" : "edit";
 
   const [camperValues, setCamperValues] = React.useState<Camper>({
     id: 0,
@@ -110,15 +111,27 @@ export default function CamperForm() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSaving(true);
-    if (camper_id === "") {
-      const res = await axios.post(process.env.REACT_APP_API + "api/campers/addCamper", {
-        ...camperValues,
-        parent_id: auth.currentUser?.uid,
-      });
-      await axios.post(process.env.REACT_APP_API + "api/camper_medical_records/addCamper_Medical_Record", {
-        ...medicalRecordValues,
-        camper_id: res.data.camper_id,
-      });
+    let newCamperID = 0;
+    if (formMode === "add") {
+      // const res = await axios.post(process.env.REACT_APP_API + "api/campers/addCamper", {
+      //   ...camperValues,
+      //   parent_id: auth.currentUser?.uid,
+      // });
+      // await axios.post(process.env.REACT_APP_API + "api/camper_medical_records/addCamper_Medical_Record", {
+      //   ...medicalRecordValues,
+      //   camper_id: res.data.camper_id,
+      await axios
+        .post(process.env.REACT_APP_API + "api/campers/addCamper", {
+          ...camperValues,
+          parent_id: auth.currentUser?.uid,
+        })
+        .then(async (res) => {
+          await axios.post(process.env.REACT_APP_API + "api/camper_medical_records/addCamper_Medical_Record", {
+            ...medicalRecordValues,
+            camper_id: res.data.camper_id,
+          });
+          newCamperID = res.data.camper_id;
+        });
     } else {
       await axios.put(process.env.REACT_APP_API + "api/campers/updateCamper/" + camper_id, {
         ...camperValues,
@@ -140,8 +153,14 @@ export default function CamperForm() {
     sessionStorage.removeItem("camper_id");
     if (userRole === "admin") {
       history.push("/admin/manageCampers");
-    } else {
-      history.push("/parent");
+    } else if (userRole === "parent") {
+      // set sessionitem of camper_id to camper's id
+      if (formMode === "add") {
+        sessionStorage.setItem("camper_id", newCamperID.toString());
+        history.push("/parent/camperScheduling");
+      } else if (formMode === "edit") {
+        history.push("/parent/campers");
+      }
     }
   };
 
@@ -156,7 +175,11 @@ export default function CamperForm() {
   const handleDeleteCamper = async (e: { preventDefault: () => void }) => {
     await axios.delete(process.env.REACT_APP_API + "api/campers/deleteCamper/" + sessionStorage.getItem("camper_id"));
     sessionStorage.removeItem("camper_id");
-    history.push("/parent");
+    if (userRole === "admin") {
+      history.replace("/admin/manageCampers");
+    } else {
+      history.replace("/parent/campers");
+    }
   };
 
   const handleDeleteCamperForm = () => {
@@ -173,7 +196,7 @@ export default function CamperForm() {
   };
 
   const handleGoBack = () => {
-    sessionStorage.removeItem("camper_id");
+    // sessionStorage.removeItem("camper_id");
     history.goBack();
   };
 
@@ -463,9 +486,21 @@ export default function CamperForm() {
           </Row>
 
           <div className="center">
-            <Button type="submit" variant="success" className="buttonTxt" disabled={isSaving}>
-              {isSaving ? "Saving..." : "Save"}
-            </Button>
+            {formMode === "add" ? (
+              <Button
+                type="submit"
+                variant="success"
+                className="buttonTxt"
+                disabled={isSaving}
+                style={{ width: "auto" }}
+              >
+                {isSaving ? "Adding..." : "Add Camper"}
+              </Button>
+            ) : (
+              <Button type="submit" variant="success" className="buttonTxt" disabled={isSaving}>
+                {isSaving ? "Saving..." : "Save"}
+              </Button>
+            )}
           </div>
           <br />
           <hr />

@@ -126,13 +126,12 @@ export default function HouseholdForm() {
 
   return (
     <div className={"HouseholdForm"}>
-      <br />
       <Container className="Text-Form">
         <Button variant="primary" className="backButton" onClick={handleBack}>
           Back
         </Button>
 
-        <h3>Household Profile</h3>
+        <h3>Guardian Information</h3>
         <br />
         <p>
           <b>*</b> Indicates a mandatory field.

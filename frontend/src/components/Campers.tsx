@@ -40,7 +40,7 @@ const Campers: React.FC<props> = ({ campers, type = "parent" }) => {
                 </Card.Link>
                 <br />
                 <Card.Link onClick={() => handleCamperClick(camper.id)} href="/#/parent/camperScheduling">
-                  📅 Scheduling
+                  📅 Edit/View Registration
                 </Card.Link>
                 <br />
                 <Card.Link onClick={() => handleCamperClickEmergencyForm(camper.id)} href="/#/parent/emergencyForm">

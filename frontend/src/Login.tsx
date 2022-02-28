@@ -16,7 +16,7 @@ export default function Login() {
 
   const routeUser = React.useCallback(
     async (user: User) => {
-      axios.get(process.env.REACT_APP_API + "api/users/getUser/" + user.uid).then((res) => {
+      await axios.get(process.env.REACT_APP_API + "api/users/getUser/" + user.uid).then((res) => {
         // console.log(res.data);
         setIsLoading(false);
         if (res.data.role === "parent") {
@@ -83,11 +83,9 @@ export default function Login() {
             {isLoading ? "Signing In..." : "Sign In"}
           </Button>
         </Form>
-        <p className="fineText">
-          To register a new camper, please sign up as "New Guardian"
-        </p>
+        <p className="fineText">To register a new camper, please sign up as "New Guardian"</p>
 
-        <Button style={{marginTop: 10}}className="newuser-button" onClick={() => history.push("/signupParent")}>
+        <Button style={{ marginTop: 10 }} className="newuser-button" onClick={() => history.push("/signupParent")}>
           New Guardian
         </Button>
         <Button className="newuser-button" onClick={() => history.push("/signupCounselor")}>
