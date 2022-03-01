@@ -8,7 +8,7 @@ def sendRegistrationEmail(sendTo, camperName, weekDetails, total, totalPaidUSD, 
     port = 465  # For SSL
     sender_email = "info@campizza.com"
     receiver_email = f"{sendTo}"
-    password = "fmbudhyxhglbhiis"
+    password = "dnutczznfcpycxsy"
 
     message = MIMEMultipart("alternative")
     message["Subject"] = f"Camp Izza Registration Summary for {camperName}"
