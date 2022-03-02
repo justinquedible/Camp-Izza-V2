@@ -2,7 +2,7 @@
 
 import "./Login.css";
 import React from "react";
-import { Form, Button } from "react-bootstrap";
+import { Form, Button, Spinner } from "react-bootstrap";
 import { useHistory } from "react-router-dom";
 import { getAuth, signInWithEmailAndPassword, User } from "firebase/auth";
 import axios from "axios";
@@ -81,6 +81,7 @@ export default function Login() {
 
           <Button variant="outline-primary" className="login-button" type="submit" disabled={isLoading}>
             {isLoading ? "Signing In..." : "Sign In"}
+            {isLoading ? <Spinner animation="border" variant="primary" className="ml-2" /> : null}
           </Button>
         </Form>
         <p className="fineText">To register a new camper, please sign up as "New Guardian"</p>

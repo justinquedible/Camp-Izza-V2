@@ -962,6 +962,12 @@ export default function EmergencyForm() {
           <td class="c26" colspan="13" rowspan="1">
             <p class="c7">
               <span class="c11"> Address: &nbsp; ${data.parent?.addressLine1}</span>
+              <br />
+              <span class="c11" style="margin-left: 48px">${data.parent?.addressLine2}</span>
+              <br />
+              <span class="c11" style="margin-left: 48px">${data.parent?.city}, ${data.parent?.state} ${
+              data.parent?.zipCode
+            } ${data.parent?.country}</span>
             </p>
           </td>
           <td class="c3" colspan="6" rowspan="1">
