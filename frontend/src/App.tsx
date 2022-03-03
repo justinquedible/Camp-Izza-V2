@@ -22,23 +22,18 @@ import ManageCounselors from "./ManageCounselors";
 import ManageCampers from "./ManageCampers";
 import Groups from "./Groups";
 import EmergencyForm from "./EmergencyForm";
+import Roster from "./Roster";
 import ManageParents from "./ManageParents";
 import SignUpCounselor from "./SignupCounselor";
 import Counselor from "./Counselor";
 import CounselorForm from "./CounselorForm";
 
-import AdminAttendance from "./AdminAttendance";
-import AttendanceReport from "./AttendanceReport";
-import BonusCamper from "./BonusCamper";
-import Pending from "./Pending";
-import Profile from "./Profile";
-import Roster from "./Roster";
-import CounselorAttendance from "./CounselorAttendance";
-import AdminProtected from "./AdminProtected";
-import AdminCamperForm from "./AdminCamperForm";
-import CamperInfo from "./CamperInfo";
-import CounselorInfo from "./CounselorInfo";
-import AttendanceOfCounselor from "./AttendanceOfCounselor";
+// import AdminAttendance from "./AdminAttendance";
+// import AttendanceReport from "./AttendanceReport";
+// import CounselorAttendance from "./CounselorAttendance";
+// import CamperInfo from "./CamperInfo";
+// import CounselorInfo from "./CounselorInfo";
+// import AttendanceOfCounselor from "./AttendanceOfCounselor";
 
 import NavBarInstance from "./NavBar";
 import FooterInstance from "./Footer";
@@ -106,17 +101,15 @@ function App() {
               <Route exact path={"/signupCounselor"} component={SignUpCounselor} />
               <Route exact path={"/counselor"} component={Counselor} />
               <Route exact path={"/counselor/counselorForm"} component={CounselorForm} />
+              <Route exact path={"/counselor/groups"} component={Groups} />
 
-              <Route exact path={"/admin/attendance"} component={AdminAttendance} />
-              <Route exact path={"/admin/attendance/bonuscamper"} component={BonusCamper} />
-              <Route exact path={"/admin/AttendanceReport"} component={AttendanceReport} />
-              <Route exact path={"/admin/AdminCamperForm"} component={AdminCamperForm} />
-              <Route exact path={"/counselor/pending"} component={Pending} />
-              <Route exact path={"/CamperInfo"} component={CamperInfo} />
-              <Route exact path={"/Profile"} component={Profile} />
-              <Route exact path={"/counselorInfo"} component={CounselorInfo} />
-              <Route exact path={"/counselor/takeAttendance"} component={CounselorAttendance} />
-              <Route exact path={"/counselor/myAttendance"} component={AttendanceOfCounselor} />
+              {/* Unfinished Pages */}
+              {/* <Route exact path={"/admin/attendance"} component={AdminAttendance} /> */}
+              {/* <Route exact path={"/admin/AttendanceReport"} component={AttendanceReport} /> */}
+              {/* <Route exact path={"/counselor/takeAttendance"} component={CounselorAttendance} /> */}
+              {/* <Route exact path={"/counselor/myAttendance"} component={AttendanceOfCounselor} /> */}
+              {/* <Route exact path={"/CamperInfo"} component={CamperInfo} /> */}
+              {/* <Route exact path={"/counselorInfo"} component={CounselorInfo} /> */}
             </Switch>
           </div>
         </HashRouter>

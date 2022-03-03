@@ -81,7 +81,7 @@ export default function Login() {
 
           <Button variant="outline-primary" className="login-button" type="submit" disabled={isLoading}>
             {isLoading ? "Signing In..." : "Sign In"}
-            {isLoading ? <Spinner animation="border" variant="primary" className="ml-2" /> : null}
+            {isLoading ? <Spinner animation="border" variant="primary" /> : null}
           </Button>
         </Form>
         <p className="fineText">To register a new camper, please sign up as "New Guardian"</p>

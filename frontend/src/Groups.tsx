@@ -103,7 +103,9 @@ export default function Groups() {
     const counselorsRegisteredForSelectedWeek = registeredCounselorWeeksWithCounselor
       .filter((item) => item.camp_week_id === selectedWeek)
       .map((item) => item.counselor_id);
-    return counselors.filter((counselor) => !counselorsRegisteredForSelectedWeek.includes(counselor.id));
+    return counselors.filter(
+      (counselor) => counselor.active && !counselorsRegisteredForSelectedWeek.includes(counselor.id)
+    );
   };
 
   // Camper Popup Functions

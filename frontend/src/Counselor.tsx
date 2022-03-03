@@ -69,7 +69,7 @@ export default function CounselorDashboard() {
             variant="outline-success"
             className="Admin-Button"
             disabled={disableCounselor}
-            // href="/#/counselorInfo"
+            href="/#/counselor/groups"
           >
             <img src={groupsIcon} alt="groups icon" />
             Camper Groups
