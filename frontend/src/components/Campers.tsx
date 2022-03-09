@@ -1,6 +1,5 @@
 // Component used in Parent.tsx to display a list of campers of a parent
 
-import * as React from "react";
 import { Card, Row } from "react-bootstrap";
 
 interface props {

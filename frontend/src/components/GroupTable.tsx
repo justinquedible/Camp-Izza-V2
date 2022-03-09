@@ -1,8 +1,7 @@
 // Component used in Parent.tsx to display a list of campers of a parent
 
 import "../Dashboard.css";
-import * as React from "react";
-import { Table, Row, Col, Button } from "react-bootstrap";
+import { Table, Row, Button } from "react-bootstrap";
 import { Group, Registered_Counselor_WeekWithCounselor, Registered_Camper_WeekWithCamper } from "../models/models";
 
 // NOTE: id values of counselors and campers are the id of their respective registered_counselor_week and

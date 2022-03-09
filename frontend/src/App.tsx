@@ -27,10 +27,10 @@ import ManageParents from "./ManageParents";
 import SignUpCounselor from "./SignupCounselor";
 import Counselor from "./Counselor";
 import CounselorForm from "./CounselorForm";
+import CamperAttendance from "./CamperAttendance";
 
 // import AdminAttendance from "./AdminAttendance";
 // import AttendanceReport from "./AttendanceReport";
-// import CounselorAttendance from "./CounselorAttendance";
 // import CamperInfo from "./CamperInfo";
 // import CounselorInfo from "./CounselorInfo";
 // import AttendanceOfCounselor from "./AttendanceOfCounselor";
@@ -102,11 +102,11 @@ function App() {
               <Route exact path={"/counselor"} component={Counselor} />
               <Route exact path={"/counselor/counselorForm"} component={CounselorForm} />
               <Route exact path={"/counselor/groups"} component={Groups} />
+              <Route exact path={"/counselor/camperAttendance"} component={CamperAttendance} />
 
               {/* Unfinished Pages */}
               {/* <Route exact path={"/admin/attendance"} component={AdminAttendance} /> */}
               {/* <Route exact path={"/admin/AttendanceReport"} component={AttendanceReport} /> */}
-              {/* <Route exact path={"/counselor/takeAttendance"} component={CounselorAttendance} /> */}
               {/* <Route exact path={"/counselor/myAttendance"} component={AttendanceOfCounselor} /> */}
               {/* <Route exact path={"/CamperInfo"} component={CamperInfo} /> */}
               {/* <Route exact path={"/counselorInfo"} component={CounselorInfo} /> */}
