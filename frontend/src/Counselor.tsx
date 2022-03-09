@@ -1,9 +1,10 @@
 // Page for counselors to view their dashboard
 
-import React from "react";
-import { Button, Container, Col, Spinner } from "react-bootstrap";
 import "./Dashboard.css";
+import React from "react";
+import { Button, Container, Col } from "react-bootstrap";
 import { getAuth } from "firebase/auth";
+import LoadingIcon from "./components/LoadingIcon";
 import axios from "axios";
 import campersIcon from "./assets/campers-icon.png";
 import counselorsIcon from "./assets/counselors-icon.png";
@@ -42,9 +43,7 @@ export default function CounselorDashboard() {
       <br />
       <h3>Counselor Dashboard</h3>
       {isLoading ? (
-        <div className="center">
-          <Spinner animation="border" variant="primary" />
-        </div>
+        <LoadingIcon />
       ) : (
         <div className="Counselor-Buttons">
           <Col>
