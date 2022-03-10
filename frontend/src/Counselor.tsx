@@ -55,21 +55,21 @@ export default function CounselorDashboard() {
             <Button
               variant="outline-success"
               className="Admin-Button"
-              disabled={disableCounselor}
+              disabled={true} // change to `disabled={disableCounselor}` when page is finished developing
               // href="/#/counselor/myAttendance"
             >
               <img src={attendanceIcon} alt="my attendance icon" />
-              My Attendance
+              My Attendance (In Development)
             </Button>
 
             <Button
               variant="outline-success"
               className="Admin-Button"
-              disabled={disableCounselor}
-              href="/#/counselor/camperAttendance"
+              disabled={true} // change to `disabled={disableCounselor}` when page is finished developing
+              // href="/#/counselor/camperAttendance"
             >
               <img src={campersIcon} alt="camper attendance icon" />
-              Camper Attendance
+              Camper Attendance (In Development)
             </Button>
 
             <Button

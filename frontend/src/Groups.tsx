@@ -19,14 +19,18 @@ import {
   Counselor,
   Registered_Camper_WeekWithCamper,
   Registered_Counselor_WeekWithCounselor,
+  User,
 } from "./models/models";
 import { filterAndSortWeeksCurrentYear, sortGroups } from "./utils/FilterAndSortUtil";
 import { findGradeLevels } from "./utils/GroupUtil";
 import GroupTable from "./components/GroupTable";
 import { useHistory } from "react-router-dom";
+import { getAuth } from "firebase/auth";
 
 export default function Groups() {
+  const auth = getAuth();
   const history = useHistory();
+  const [user, setUser] = React.useState<User>();
   const [isLoading, setIsLoading] = React.useState(true);
   const [weeks, setWeeks] = React.useState<Camp_Week[]>([]);
   const [groups, setGroups] = React.useState<Group[]>([]);
@@ -45,6 +49,29 @@ export default function Groups() {
   const [counselors, setCounselors] = React.useState<Counselor[]>([]);
 
   React.useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged(async (user) => {
+      if (user) {
+        setIsLoading(true);
+        await axios.get(process.env.REACT_APP_API + "api/users/getUser/" + user.uid).then((res) => {
+          setUser(res.data);
+        });
+        await axios.get(process.env.REACT_APP_API + "api/camp_weeks/getCamp_Weeks").then((res) => {
+          const weeks = filterAndSortWeeksCurrentYear(res.data);
+          setWeeks(weeks);
+          setSelectedWeek(weeks[0].id);
+        });
+        await axios.get(process.env.REACT_APP_API + "api/groups/getGroups").then((res) => {
+          setGroups(sortGroups(res.data));
+        });
+        await fetchRegisteredCounselorWeeksWithCounselors();
+        await fetchRegisteredCamperWeeksWithCampers();
+        await axios.get(process.env.REACT_APP_API + "api/counselors/getCounselors").then((res) => {
+          setCounselors(res.data);
+        });
+      }
+      setIsLoading(false);
+    });
+
     (async () => {
       setIsLoading(true);
       await axios.get(process.env.REACT_APP_API + "api/camp_weeks/getCamp_Weeks").then((res) => {
@@ -62,6 +89,7 @@ export default function Groups() {
       });
       setIsLoading(false);
     })();
+    return unsubscribe;
   }, []);
 
   const fetchRegisteredCounselorWeeksWithCounselors = async () => {
@@ -239,27 +267,28 @@ export default function Groups() {
               </Form.Control>
             </Form.Group>
           </Form>
-
-          <ToggleButtonGroup type="radio" name="options" onChange={handleGroupChange}>
-            <ToggleButton value={"All"} variant="outline-dark">
-              All
-            </ToggleButton>
-            <ToggleButton value={"Dates"} variant="outline-success">
-              Dates
-            </ToggleButton>
-            <ToggleButton value={"Coconuts"} variant="outline-warning">
-              Coconuts
-            </ToggleButton>
-            <ToggleButton value={"Trees"} variant="outline-danger">
-              Trees
-            </ToggleButton>
-            <ToggleButton value={"Young Leaders"} variant="outline-info">
-              Young Leaders
-            </ToggleButton>
-            <ToggleButton value={"Waitlist"} variant="outline-secondary">
-              Waitlist
-            </ToggleButton>
-          </ToggleButtonGroup>
+          {user && user.role === "admin" && (
+            <ToggleButtonGroup type="radio" name="options" onChange={handleGroupChange}>
+              <ToggleButton value={"All"} variant="outline-dark">
+                All
+              </ToggleButton>
+              <ToggleButton value={"Dates"} variant="outline-success">
+                Dates
+              </ToggleButton>
+              <ToggleButton value={"Coconuts"} variant="outline-warning">
+                Coconuts
+              </ToggleButton>
+              <ToggleButton value={"Trees"} variant="outline-danger">
+                Trees
+              </ToggleButton>
+              <ToggleButton value={"Young Leaders"} variant="outline-info">
+                Young Leaders
+              </ToggleButton>
+              <ToggleButton value={"Waitlist"} variant="outline-secondary">
+                Waitlist
+              </ToggleButton>
+            </ToggleButtonGroup>
+          )}
 
           <Container>
             <br />
