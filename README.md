@@ -1,6 +1,8 @@
 # Camp-Izza-V2
 
-Camp Izza system using Python backend
+Camp Izza system
+
+[READ THIS](https://docs.google.com/document/d/1t-UyAWExnCTzk7ccbi0RS1cKKVUCMZW5ToOoJdGMGzo/edit?usp=sharing) before getting started.
 
 ---
 
@@ -32,7 +34,7 @@ Camp Izza system using Python backend
 ### Frontend
 
 - Go into `frontend` directory
-- Make sure `.env.production.local` exists with the `REACT_APP_API` variable defined, shown in https://docs.google.com/document/d/1fAfbJJXjKoAPjt6Mar7kA0XmjmiffQPdKZba_k4r3J8/edit?usp=sharing (Email info@campizza.com for access)
+- Make sure `.env.production.local` exists with the `REACT_APP_API` variable defined, shown in [this doc](https://docs.google.com/document/d/1fAfbJJXjKoAPjt6Mar7kA0XmjmiffQPdKZba_k4r3J8/edit?usp=sharing) (Email info@campizza.com for access)
 - Run `npm run build`
 - Log into firebase with `firebase login`
 - Run `firebase deploy`
