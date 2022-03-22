@@ -10,6 +10,8 @@ app = Flask(__name__)
 app.wsgi_app = PrefixMiddleware(app.wsgi_app, prefix='/api')
 CORS(app)
 
+# Example api call
+# localhost:5000/api/users/getUsers
 
 # USERS
 # All users
