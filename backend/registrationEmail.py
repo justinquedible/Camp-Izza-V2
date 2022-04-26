@@ -61,6 +61,7 @@ def sendRegistrationEmail(sendTo, camperName, weekDetails, total, totalPaidUSD, 
                 <p>As soon as a spot becomes available for a week you are on the waitlist for, you will be contacted.</p>
                 <p>If a space does not become available, you will receive a full refund for that week.</p>
             """
+            break
 
     html += f"""\
     <div style="padding-top: 10px; background-color: rgb(255, 224, 143); bottom: 0; left: 0; width: 100%; margin-top: 50px; min-height: 10vh;">
