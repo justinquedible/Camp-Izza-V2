@@ -8,6 +8,7 @@ import SignupParent from "./SignupParent";
 import ResetPassword from "./ResetPassword";
 import ResetConfirmation from "./ResetConfirmation";
 import UpdatePassword from "./UpdatePassword";
+import UpdateEmail from "./UpdateEmail";
 import Parent from "./Parent";
 import ParentCampers from "./ParentCampers";
 import ParentFinances from "./ParentFinances";
@@ -75,6 +76,7 @@ function App() {
               <Route exact path={"/resetPassword"} component={ResetPassword} />
               <Route exact path={"/resetConfirmation"} component={ResetConfirmation} />
               <Route exact path={"/updatePassword"} component={UpdatePassword} />
+              <Route exact path={"/updateEmail"} component={UpdateEmail} />
               {/* Parent */}
               <Route exact path={"/parent"} component={Parent} />
               <Route exact path={"/parent/campers"} component={ParentCampers} />

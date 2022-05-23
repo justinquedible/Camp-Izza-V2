@@ -36,6 +36,17 @@ def getUser(user_id):
     return jsonify(row)
 
 
+@app.route("/users/updateUserEmail/<user_id>", methods=["PUT"])
+def updateUserEmail(user_id):
+    db = mysql.connector.connect(**config)
+    cursor = db.cursor(dictionary=True)
+    data = request.get_json()
+    cursor.execute("update users set email=%s where id = %s",
+                   (data["email"], user_id,))
+    cursor.close()
+    return jsonify({"status": "success"})
+
+
 @app.route("/users/addUser", methods=["POST"])
 def addUser():
     db = mysql.connector.connect(**config)

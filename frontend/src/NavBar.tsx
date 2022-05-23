@@ -35,6 +35,10 @@ export default function NavBar() {
     window.location.href = "/#/updatePassword";
   };
 
+  const handleChangeEmail = () => {
+    window.location.href = "/#/updateEmail";
+  };
+
   const handleSignOut = async () => {
     window.location.href = "/#/login";
     await auth.signOut();
@@ -68,6 +72,8 @@ export default function NavBar() {
           {user ? (
             <NavDropdown title={user.email} id="basic-nav-dropdown">
               <NavDropdown.Item onClick={handleChangePassword}>Change Password</NavDropdown.Item>
+              <NavDropdown.Divider />
+              <NavDropdown.Item onClick={handleChangeEmail}>Change Email</NavDropdown.Item>
               <NavDropdown.Divider />
               <NavDropdown.Item onClick={handleSignOut}>Sign Out</NavDropdown.Item>
             </NavDropdown>

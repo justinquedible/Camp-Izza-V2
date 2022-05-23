@@ -6,7 +6,7 @@ import { useHistory } from "react-router-dom";
 import { Form, Button } from "react-bootstrap";
 import { getAuth, updatePassword, signInWithEmailAndPassword } from "firebase/auth";
 
-export default function UpdatePasswordRequest() {
+export default function UpdatePassword() {
   const [passwordOld, setPasswordOld] = React.useState("");
   const [password, setPassword] = React.useState("");
   const [passwordConfirm, setPasswordConfirm] = React.useState("");
